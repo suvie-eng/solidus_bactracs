@@ -11,7 +11,6 @@ gem 'libnotify'
 gem 'database_cleaner'
 gem 'rspec-rails'
 gem 'spork'
-gem 'fuubar'
 gem 'pry-rails'
 gem 'factory_girl_rails', '~> 4.2.1'
 
