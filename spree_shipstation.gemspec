@@ -11,18 +11,23 @@ Gem::Specification.new do |s|
   s.email     = 'josh@godynamo.com'
   s.homepage  = 'http://www.godynamo.com'
 
-  #s.files       = `git ls-files`.split("\n")
-  #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
+  # s.files       = `git ls-files`.split("\n")
+  # s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'solidus_core', '~> 1.1'
+  s.add_dependency 'solidus_core', '1.1'
 
+  s.add_development_dependency 'solidus_auth_devise'
   s.add_development_dependency 'capybara', '~> 2.2'
   s.add_development_dependency 'coffee-rails'
-  s.add_development_dependency 'factory_girl', '~> 4.2.0'
+  s.add_development_dependency 'factory_girl'
+  s.add_development_dependency 'factory_girl_rails'
+  s.add_development_dependency 'database_cleaner'
+  s.add_development_dependency 'timecop'
   s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'rspec-rails',  '~> 3'
+  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rspec-rails', '~> 3'
   s.add_development_dependency 'sass-rails'
   s.add_development_dependency 'sqlite3'
 end
