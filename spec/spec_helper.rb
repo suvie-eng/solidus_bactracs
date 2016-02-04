@@ -1,11 +1,12 @@
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
 
-require File.expand_path('../dummy/config/environment.rb',  __FILE__)
+require File.expand_path('../dummy/config/environment.rb', __FILE__)
 
 require 'rspec/rails'
 require 'factory_girl'
 require 'ffaker'
+require 'database_cleaner'
 FactoryGirl.find_definitions
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -19,6 +20,8 @@ require 'spree/testing_support/authorization_helpers'
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
 
   # == URL Helpers
   #
