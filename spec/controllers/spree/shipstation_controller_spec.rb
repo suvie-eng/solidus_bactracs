@@ -1,32 +1,47 @@
 require 'spec_helper'
 
-describe Spree::ShipstationController do
+describe Spree::ShipstationController, type: :controller do
+  render_views
+
   before do
-    controller.stub(check_authorization: false, spree_current_user: FactoryGirl.create(:user))
-    @request.accept = 'application/xml'
+    described_class.stub(check_authorization: false, spree_current_user: FactoryGirl.create(:user))
+    @request.env['HTTP_ACCEPT'] = 'application/xml'
   end
 
-  context "logged in" do
+  context 'logged in' do
+
     before { login }
 
-    context "export" do
-      let(:shipments) { mock }
+    context 'export' do
+      let(:shipments) { create_list(:shipment, 5) }
+      let(:params) do
+        {
+          action: 'export',
+          start_date: '01/01/2016 00:00',
+          end_date: '12/31/2016 00:00',
+          format: 'xml',
+        }
+      end
 
       before do
-        Spree::Shipment.stub_chain(:exportable, :between).with(Time.new(2013, 12, 31,  8, 0, 0, "+00:00"),
-                                                               Time.new(2014,  1, 13, 23, 0, 0, "+00:00"))
-                                                         .and_return(shipments)
-        shipments.stub_chain(:page, :per).and_return(:some_shipments)
+        Spree::Shipment.stub_chain(:exportable, :between).with(Time.new(2013, 12, 31, 8, 0, 0, '+00:00'),
+                                                               Time.new(2014, 1, 13, 23, 0, 0, '+00:00'))
+                       .and_return(shipments)
+        shipments.stub_chain(:page, :per).and_return(shipments)
 
+        # get "/shipstation", use_route: "spree", params: { action: :export, start_date: '12/31/2013 8:00', end_date: '1/13/2014 23:00' }
         get :export, start_date: '12/31/2013 8:00', end_date: '1/13/2014 23:00', use_route: :spree
       end
 
-      specify { response.should be_success }
-      specify { assigns(:shipments).should == :some_shipments}
+      it 'is successful', :aggregate_failures do
+        expect(response).to be_success
+        expect(resopnse).to render_template(:export)
+        expect(assigns(:shipments)).to == shipments
+      end
     end
 
-    context "shipnotify" do
-      let(:notice) { mock(:notice) }
+    context 'shipnotify' do
+      let(:notice) { double(:notice) }
 
       before do
         Spree::ShipmentNotice.should_receive(:new)
@@ -34,7 +49,7 @@ describe Spree::ShipstationController do
                              .and_return(notice)
       end
 
-      context "shipment found" do
+      context 'shipment found' do
         before do
           notice.should_receive(:apply).and_return(true)
 
@@ -45,10 +60,10 @@ describe Spree::ShipstationController do
         specify { response.body.should =~ /success/ }
       end
 
-      context "shipment not found" do
+      context 'shipment not found' do
         before do
           notice.should_receive(:apply).and_return(false)
-          notice.should_receive(:error).and_return("failed")
+          notice.should_receive(:error).and_return('failed')
 
           post :shipnotify, order_number: 'S12345', use_route: :spree
         end
@@ -58,13 +73,13 @@ describe Spree::ShipstationController do
       end
     end
 
-    it "doesnt know unknown" do
+    it 'doesnt know unknown' do
       expect { post :unknown, use_route: :spree }.to raise_error(AbstractController::ActionNotFound)
     end
   end
 
-  context "not logged in" do
-    it "returns error" do
+  context 'not logged in' do
+    it 'returns error' do
       get :export, use_route: :spree
 
       response.code.should == '401'
@@ -72,10 +87,11 @@ describe Spree::ShipstationController do
   end
 
   def login
-    config(username: "mario", password: 'lemieux')
+    config(username: 'mario', password: 'lemieux')
 
-    user, pw = 'mario', 'lemieux'
-    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user,pw)
+    user = 'mario'
+    pw = 'lemieux'
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user, pw)
   end
 
   def config(options = {})
