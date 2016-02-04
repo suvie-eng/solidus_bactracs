@@ -2,7 +2,7 @@ require 'spec_helper'
 
 include Spree
 
-describe Spree::ShipmentNotice, :focus do
+describe Spree::ShipmentNotice do
   let(:notice) do
     ShipmentNotice.new(order_number:    'S12345',
                        tracking_number: '1Z1231234')
