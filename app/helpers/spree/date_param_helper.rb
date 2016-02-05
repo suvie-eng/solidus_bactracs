@@ -4,6 +4,7 @@ module Spree
 
   private
     def date_param(name)
+      return if params[name].nil?
       Time.strptime(params[name] + " UTC", DATE_FORMAT)
     end
   end
