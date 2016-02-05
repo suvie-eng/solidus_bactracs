@@ -16,30 +16,34 @@ describe Spree::ShipmentNotice do
 
       before do
         Spree::Config.shipstation_number = :shipm # if you prefer to send notifications via shipstationent
-        Shipment.should_receive(:find_by_number).with(order_number).and_return(shipment)
-        shipment.should_receive(:update_attribute).with(:tracking, tracking_number)
+        expect(Shipment).to receive(:find_by_number).with(order_number).and_return(shipment)
+        expect(shipment).to receive(:update_attribute).with(:tracking, tracking_number)
       end
 
       context 'transition succeeds' do
         before do
-          shipment.stub_chain(:reload, :update_attribute).with(:state, 'shipped')
-          shipment.stub_chain(:inventory_units, :each)
-          shipment.should_receive(:touch).with(:shipped_at)
+          expect(shipment).to receive_message_chain(:reload, :update_attribute).with(:state, 'shipped')
+          expect(shipment).to receive_message_chain(:inventory_units, :each)
+          expect(shipment).to receive(:touch).with(:shipped_at)
         end
 
-        specify { notice.apply.should eq(true) }
+        it 'returns true' do
+          expect(notice.apply).to eq(true)
+        end
       end
 
       context 'transition fails' do
         before do
-          shipment.stub_chain(:reload, :update_attribute)
+          expect(shipment).to receive_message_chain(:reload, :update_attribute)
                   .with(:state, 'shipped')
                   .and_raise('oopsie')
           @result = notice.apply
         end
 
-        specify { @result.should eq(false) }
-        specify { notice.error.should_not be_blank }
+        it "returns false and sets @error", :aggregate_failures do
+          expect(@result).to eq(false)
+          expect(notice.error).to be_present
+        end
       end
     end
 
@@ -60,7 +64,7 @@ describe Spree::ShipmentNotice do
     context 'shipment not found' do
       before do
         Spree::Config.shipstation_number = :shipment
-        Shipment.should_receive(:find_by_number).with('S12345').and_return(nil)
+        expect(Shipment).to receive(:find_by_number).with(order_number).and_return(nil)
       end
 
       it '#apply returns false and sets @error' do
@@ -70,15 +74,18 @@ describe Spree::ShipmentNotice do
     end
 
     context 'shipment already shipped' do
-      let(:shipment) { double(Shipment, shipped?: true) }
+      let!(:shipment) { create(:shipment, number: order_number, state: 'shipped') }
 
-      before do
-        Spree::Config.shipstation_number = :shipment
-        Shipment.should_receive(:find_by_number).with('S12345').and_return(shipment)
-        shipment.should_receive(:update_attribute).with(:tracking, '1Z1231234')
+      before { Spree::Config.shipstation_number = :shipment }
+
+      it 'updates #tracking and returns true' do
+        expect(notice.apply).to eq(true)
+        expect(shipment.reload.tracking).to eq(tracking_number)
       end
 
-      specify { notice.apply.should eq(true) }
+      it 'does not update #state' do
+        expect { notice.apply }.to_not change { shipment.state }
+      end
     end
   end
 end
