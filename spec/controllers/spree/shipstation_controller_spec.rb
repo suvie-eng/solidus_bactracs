@@ -4,6 +4,7 @@ describe Spree::ShipstationController, type: :controller do
   render_views
 
   before do
+    Spree::Config.shipstation_ssl_encrypted = false # disable SSL for testing
     described_class.stub(check_authorization: false, spree_current_user: FactoryGirl.create(:user))
     @request.env['HTTP_ACCEPT'] = 'application/xml'
   end
@@ -12,64 +13,69 @@ describe Spree::ShipstationController, type: :controller do
 
     before { login }
 
-    context 'export' do
-      let(:shipments) { create_list(:shipment, 5) }
+    describe '#export' do
+      let(:order) { create(:order, completed_at: Time.now.utc) }
+      let!(:shipments) { create(:shipment, order: order) }
       let(:params) do
         {
-          action: 'export',
           start_date: '01/01/2016 00:00',
           end_date: '12/31/2016 00:00',
           format: 'xml',
+          use_route: :spree,
         }
       end
 
-      before do
-        Spree::Shipment.stub_chain(:exportable, :between).with(Time.new(2013, 12, 31, 8, 0, 0, '+00:00'),
-                                                               Time.new(2014, 1, 13, 23, 0, 0, '+00:00'))
-                       .and_return(shipments)
-        shipments.stub_chain(:page, :per).and_return(shipments)
+      before { get :export, params }
 
-        # get "/shipstation", use_route: "spree", params: { action: :export, start_date: '12/31/2013 8:00', end_date: '1/13/2014 23:00' }
-        get :export, start_date: '12/31/2013 8:00', end_date: '1/13/2014 23:00', use_route: :spree
-      end
-
-      it 'is successful', :aggregate_failures do
+      # TODO: add XML validation spec
+      it 'successful render', :aggregate_failures do
         expect(response).to be_success
-        expect(resopnse).to render_template(:export)
-        expect(assigns(:shipments)).to == shipments
+        expect(response).to render_template(:export)
+        expect(assigns(:shipments)).to match_array([shipments])
       end
     end
 
-    context 'shipnotify' do
-      let(:notice) { double(:notice) }
+    describe '#shipnotify' do
+      # NOTE: Spree::Shipment factory creates new instances with tracking numbers,
+      #   which might not reflect reality in practice
+      let(:order_number) { 'ABC123' }
+      let(:tracking_number) { '123456' }
+      let!(:shipment) { create(:shipment, tracking: nil, order: create(:order, number: order_number)) }
 
       before do
-        Spree::ShipmentNotice.should_receive(:new)
-                             .with(hash_including(order_number: 'S12345'))
-                             .and_return(notice)
+        allow(Spree::Config).to receive(:shipstation_number).and_return(:order)
       end
 
       context 'shipment found' do
+        let(:params) do
+          { order_number: order_number, tracking_number: tracking_number, use_route: :spree }
+        end
         before do
-          notice.should_receive(:apply).and_return(true)
-
-          post :shipnotify, order_number: 'S12345', use_route: :spree
+          post :shipnotify, params
         end
 
-        specify { response.should be_success }
-        specify { response.body.should =~ /success/ }
+        it 'updates the shipment', :aggregate_failures do
+          expect(shipment.reload.tracking).to eq(tracking_number)
+          expect(shipment.state).to eq('shipped')
+          expect(shipment.shipped_at).to be_present
+        end
+
+        it 'responds with success' do
+          expect(response).to be_success
+          expect(response.body).to match(/success/)
+        end
       end
 
       context 'shipment not found' do
-        before do
-          notice.should_receive(:apply).and_return(false)
-          notice.should_receive(:error).and_return('failed')
-
-          post :shipnotify, order_number: 'S12345', use_route: :spree
+        let(:invalid_params) do
+          { order_number: 'JJ123456', use_route: :spree }
         end
+        before { post :shipnotify, invalid_params }
 
-        specify { response.code.should == '400' }
-        specify { response.body.should =~ /failed/ }
+        it 'responds with failure' do
+          expect(response.code).to eq('400')
+          expect(response.body).to match(I18n.t(:shipment_not_found, number: 'JJ123456'))
+        end
       end
     end
 
@@ -82,7 +88,7 @@ describe Spree::ShipstationController, type: :controller do
     it 'returns error' do
       get :export, use_route: :spree
 
-      response.code.should == '401'
+      expect(response.code).to eq('401')
     end
   end
 
