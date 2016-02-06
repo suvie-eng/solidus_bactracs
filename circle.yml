@@ -5,6 +5,7 @@ dependencies:
 
 test:
   override:
+    - bundle install
     - bundle exec rake test_app
     - bundle exec rspec --format RspecJunitFormatter --out $CIRCLE_TEST_REPORTS/rspec.xml:
         parallel: true
