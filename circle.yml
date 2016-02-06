@@ -1,7 +1,7 @@
 ---
 dependencies:
   override:
-    - rvm-exec 2.0 bundle install
+    - rvm-exec 2.1 bundle install
 
 test:
   override:
