@@ -19,5 +19,4 @@ private
   def send_shipped_email
     Spree::CartonMailer.shipped_email(self).deliver if Spree::Config.send_shipped_email
   end
-
 end

@@ -35,12 +35,12 @@ describe Spree::ShipmentNotice do
       context 'transition fails' do
         before do
           expect(shipment).to receive_message_chain(:reload, :update_attribute)
-                  .with(:state, 'shipped')
-                  .and_raise('oopsie')
+            .with(:state, 'shipped')
+            .and_raise('oopsie')
           @result = notice.apply
         end
 
-        it "returns false and sets @error", :aggregate_failures do
+        it 'returns false and sets @error', :aggregate_failures do
           expect(@result).to eq(false)
           expect(notice.error).to be_present
         end
