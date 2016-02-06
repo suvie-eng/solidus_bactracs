@@ -14,6 +14,7 @@ describe Spree::ShipstationController, type: :controller do
     before { login }
 
     describe '#export' do
+      let(:schema) { 'spec/fixtures/shipstation_xml_schema.xsd' }
       let(:order) { create(:order, completed_at: Time.now.utc) }
       let!(:shipments) { create(:shipment, order: order) }
       let(:params) do
@@ -27,11 +28,14 @@ describe Spree::ShipstationController, type: :controller do
 
       before { get :export, params }
 
-      # TODO: add XML validation spec
-      it 'successful render', :aggregate_failures do
+      it 'renders successfully', :aggregate_failures do
         expect(response).to be_success
         expect(response).to render_template(:export)
         expect(assigns(:shipments)).to match_array([shipments])
+      end
+
+      it 'generates valid ShipStation formatted xml' do
+        expect(response.body).to pass_validation(schema)
       end
     end
 
