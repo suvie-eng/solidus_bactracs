@@ -1,10 +1,10 @@
-include SpreeShipstation
+require 'spree/basic_ssl_authentication'
 
 module Spree
 
   class ShipstationController < Spree::BaseController
 
-    include BasicSslAuthentication
+    include Spree::BasicSslAuthentication
     include Spree::DateParamHelper
 
     # TODO: configure disabling CSRF protection in dev/test

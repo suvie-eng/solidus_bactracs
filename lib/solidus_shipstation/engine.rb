@@ -1,19 +1,15 @@
-module SpreeShipstation
+module SolidusShipstation
 
   class Engine < Rails::Engine
-
-    require 'spree/core'
-    isolate_namespace Spree
-    engine_name 'spree_shipstation'
-
-    config.autoload_paths += %W(#{config.root}/lib)
+    engine_name 'solidus_shipstation'
+    config.autoload_paths += %w(#{config.root}/lib)
 
     # use rspec for tests
     config.generators do |g|
       g.test_framework :rspec
     end
 
-    initializer 'spree.shipstation.preferences', before: :load_config_initializers do |_app|
+    initializer 'solidus.shipstation.preferences', before: :load_config_initializers do |_app|
       Spree::AppConfiguration.class_eval do
         preference :send_shipped_email,       :boolean, default: false
         preference :shipstation_username,     :string

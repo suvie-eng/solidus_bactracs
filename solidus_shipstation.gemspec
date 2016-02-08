@@ -1,15 +1,15 @@
 # encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_shipstation'
+  s.name        = 'solidus_shipstation'
   s.version     = '2.0.1'
-  s.summary     = 'Spree/ShipStation Integration'
-  s.description = 'Integrates ShipStation API with Spree. Supports exporting shipments and importing tracking numbers'
+  s.summary     = 'Solidus/ShipStation Integration'
+  s.description = 'Integrates ShipStation API with Solidus. Supports exporting shipments and importing tracking numbers'
   s.required_ruby_version = '>= 2.1.0'
 
-  s.author    = 'Joshua Nussbaum'
-  s.email     = 'josh@godynamo.com'
-  s.homepage  = 'http://www.godynamo.com'
+  s.author    = 'Stephen Puiszis'
+  s.email     = 'steve@tablexi.com'
+  s.homepage  = 'https://github.com/stephen-puiszis/solidus_shipstation'
 
   # s.files       = `git ls-files`.split("\n")
   # s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
