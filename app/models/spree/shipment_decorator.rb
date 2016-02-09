@@ -13,10 +13,4 @@ Spree::Shipment.class_eval do
     )
   end
 
-private
-
-  # TODO: determine if this is even still needed and how the new Spree::CartonMailer
-  def send_shipped_email
-    Spree::CartonMailer.shipped_email(self).deliver if Spree::Config.send_shipped_email
-  end
 end

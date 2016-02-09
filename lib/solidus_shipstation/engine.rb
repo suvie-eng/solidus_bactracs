@@ -11,7 +11,6 @@ module SolidusShipstation
 
     initializer 'solidus.shipstation.preferences', before: :load_config_initializers do |_app|
       Spree::AppConfiguration.class_eval do
-        preference :send_shipped_email,       :boolean, default: false
         preference :shipstation_username,     :string
         preference :shipstation_password,     :string
         preference :shipstation_weight_units, :string
