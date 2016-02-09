@@ -1,6 +1,7 @@
 module SolidusShipstation
 
   class Engine < Rails::Engine
+
     engine_name 'solidus_shipstation'
     config.autoload_paths += %w(#{config.root}/lib)
 
@@ -25,7 +26,7 @@ module SolidusShipstation
       end
     end
 
-    config.to_prepare &method(:activate).to_proc
+    config.to_prepare(&method(:activate).to_proc)
 
   end
 

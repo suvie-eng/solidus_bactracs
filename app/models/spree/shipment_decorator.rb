@@ -12,5 +12,4 @@ Spree::Shipment.class_eval do
       from, to, from, to
     )
   end
-
 end

@@ -14,7 +14,7 @@ describe Spree::Shipment do
       let!(:old_shipment_recent_order_update) { create_shipment(created_at: now - 1.week, order: order_3) }
       let!(:active_1) { create_shipment }
       let!(:active_2) { create_shipment }
-      let(:query) { Spree::Shipment.between(now - 1.hour, now + 1.hours) }
+      let(:query) { Spree::Shipment.between(now - 1.hour, now + 1.hour) }
 
       # Use Timecop set #updated_at at specific times rather than manually settting them
       #   as ActiveRecord will automatically set #updated_at timestamps even when attempting to

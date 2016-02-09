@@ -3,6 +3,7 @@
 # Rails already uses that for something else..
 # This rack app maps the "action" parameter to the actual controller action name
 module Spree
+
   class MapQueryStringApp
 
     def self.call(env)
@@ -15,4 +16,5 @@ module Spree
     end
 
   end
+
 end
