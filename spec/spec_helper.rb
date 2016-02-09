@@ -22,6 +22,7 @@ require 'spree/testing_support/authorization_helpers'
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include RSpec::XSD
+  config.include Spree::ShipmentHelper
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 
