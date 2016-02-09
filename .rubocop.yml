@@ -5,8 +5,8 @@ AllCops:
     - "vendor/**/*"  # We cannot solve the world's problems
     - "spec/dummy/**/*" # We cannot solve the world's problems
     - "node_modules/**/*"
-  Rails:
-    Enabled: true
+Rails:
+  Enabled: true
 
 Lint/HandleExceptions:
   Exclude:
@@ -40,11 +40,6 @@ Style/EmptyLinesAroundModuleBody:
 Style/SignalException:
   EnforcedStyle: only_raise
 
-Style/SingleSpaceBeforeFirstArg:
-  Exclude:
-    # We often add extra spaces for alignment in factories.
-    - "spec/factories/*"
-
 Style/StringLiterals:
   EnforcedStyle: single_quotes
 
@@ -53,3 +48,6 @@ Style/TrailingCommaInLiteral:
 
 Style/TrivialAccessors:
   ExactNameMatch: true
+
+Style/Documentation:
+  Enabled: false
