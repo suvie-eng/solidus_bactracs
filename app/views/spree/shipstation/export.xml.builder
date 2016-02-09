@@ -6,7 +6,7 @@ xml.Orders(pages: (@shipments.total_count/50.0).ceil) {
 
     xml.Order {
       xml.OrderID        shipment.id
-      xml.OrderNumber    Spree::Config.shipstation_number == :order ? order.number : shipment.number
+      xml.OrderNumber    shipment.number # do not use shipment.order.number as this presents lookup issues
       xml.OrderDate      order.completed_at.strftime(Spree::ExportHelper::DATE_FORMAT)
       xml.OrderStatus    shipment.state
       xml.LastModified   [order.completed_at, shipment.updated_at].max.strftime(Spree::ExportHelper::DATE_FORMAT)

@@ -44,11 +44,7 @@ describe Spree::ShipstationController, type: :controller do
       #   which might not reflect reality in practice
       let(:order_number) { 'ABC123' }
       let(:tracking_number) { '123456' }
-      let!(:shipment) { create(:shipment, tracking: nil, order: create(:order, number: order_number)) }
-
-      before do
-        allow(Spree::Config).to receive(:shipstation_number).and_return(:order)
-      end
+      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: create(:order)) }
 
       context 'shipment found' do
         let(:params) do
