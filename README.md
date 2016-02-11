@@ -108,9 +108,9 @@ On-Hold                  | on-hold            | pending (won't appear in API res
 
 ## Caveats
 
-1. Removed [https://github.com/DynamoMTL/spree_shipstation/blob/master/app/models/spree/shipment_decorator.rb#L9](#send_shipped_email), which was previously available in `spree_shipstation`
+1. Removed [#send_shipped_email](https://github.com/DynamoMTL/spree_shipstation/blob/master/app/models/spree/shipment_decorator.rb#L9), which was previously available in `spree_shipstation`
 2. If you change the shipping method of an order in ShipStation, the change will not be reflected in Spree and the tracking link might not work properly.
-3. Removed the ability to use `Spree::Order.number` as the ShipStation order number. We now use `Spree::Shipment.number`
+3. Removed the ability to use `Spree::Order.number` as the ShipStation order number. We now use `Spree::Shipment.number`. This was previously available in `spree_shipstation`
 
 ## Testing
 
