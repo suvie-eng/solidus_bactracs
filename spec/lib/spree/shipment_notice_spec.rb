@@ -22,7 +22,7 @@ describe Spree::ShipmentNotice do
 
       context 'transition succeeds' do
         before do
-          expect(shipment).to receive_message_chain(:reload, :ship!)
+          expect(shipment).to receive_megit statssage_chain(:reload, :ship!)
           expect(shipment).to receive(:touch).with(:shipped_at)
           expect(order).to receive(:update!)
         end
@@ -36,6 +36,7 @@ describe Spree::ShipmentNotice do
       context 'transition fails' do
         before do
           expect(shipment).to receive_message_chain(:reload, :ship!).and_raise('oopsie')
+          expect(Rails.logger).to receive(:error)
           @result = notice.apply
         end
 
@@ -49,9 +50,10 @@ describe Spree::ShipmentNotice do
     context 'shipment not found' do
       before do
         expect(Shipment).to receive(:find_by).with(number: order_number).and_return(nil)
+        expect(Rails.logger).to receive(:error)
       end
 
-      it '#apply returns false and sets @error' do
+      it '#apply returns false and sets @error', :aggregate_failures do
         expect(notice.apply).to eq(false)
         expect(notice.error).to be_present
       end

@@ -37,19 +37,17 @@ module Spree
       true
     end
 
-    # TODO: add documentation
-    # TODO: add logging
-    # => false
     def not_found
       @error = I18n.t(:shipment_not_found, number: number)
+      Rails.logger.error(@error)
+
       false
     end
 
-    # TODO: add documentation
-    # TODO: add logging
-    # => false
     def handle_error(error)
       @error = I18n.t(:import_tracking_error, error: error.to_s)
+      Rails.logger.error(@error)
+
       false
     end
 
