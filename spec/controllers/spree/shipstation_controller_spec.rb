@@ -44,13 +44,21 @@ describe Spree::ShipstationController, type: :controller do
       #   which might not reflect reality in practice
       let(:order_number) { 'ABC123' }
       let(:tracking_number) { '123456' }
-      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: create(:order)) }
+      let(:order) { create(:order) }
+      let(:address) { create(:address) }
+      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: order, address: address) }
+      let!(:inventory_unit) { create(:inventory_unit, order: order, shipment: shipment) }
 
       context 'shipment found' do
         let(:params) do
           { order_number: order_number, tracking_number: tracking_number, use_route: :spree }
         end
+
         before do
+          allow(order).to receive(:can_ship?) { true }
+          allow(order).to receive(:paid?) { true }
+          shipment.ready!
+
           post :shipnotify, params
         end
 

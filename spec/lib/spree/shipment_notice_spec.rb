@@ -12,7 +12,8 @@ describe Spree::ShipmentNotice do
 
   context '#apply' do
     context 'shipment found' do
-      let(:shipment) { double(Shipment, shipped?: false) }
+      let(:order) { double(Order) }
+      let(:shipment) { double(Shipment, order: order, shipped?: false) }
 
       before do
         expect(Shipment).to receive(:find_by).with(number: order_number).and_return(shipment)
@@ -21,21 +22,20 @@ describe Spree::ShipmentNotice do
 
       context 'transition succeeds' do
         before do
-          expect(shipment).to receive_message_chain(:reload, :update_attribute).with(:state, 'shipped')
-          expect(shipment).to receive_message_chain(:inventory_units, :each)
+          expect(shipment).to receive_message_chain(:reload, :ship!)
           expect(shipment).to receive(:touch).with(:shipped_at)
+          expect(order).to receive(:update!)
         end
 
         it 'returns true' do
           expect(notice.apply).to eq(true)
         end
+
       end
 
       context 'transition fails' do
         before do
-          expect(shipment).to receive_message_chain(:reload, :update_attribute)
-            .with(:state, 'shipped')
-            .and_raise('oopsie')
+          expect(shipment).to receive_message_chain(:reload, :ship!).and_raise('oopsie')
           @result = notice.apply
         end
 

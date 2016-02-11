@@ -2,7 +2,7 @@ module Spree
 
   class ShipmentNotice
 
-    attr_reader :error, :number, :tracking
+    attr_reader :error, :number, :tracking, :shipment
 
     def initialize(params)
       @number   = params[:order_number]
@@ -24,15 +24,14 @@ module Spree
     end
 
     # TODO: add documentation
-    # TODO: update via state_machine
     # => true
     def update
-      @shipment.update_attribute(:tracking, tracking)
+      shipment.update_attribute(:tracking, tracking)
 
-      unless @shipment.shipped?
-        @shipment.reload.update_attribute(:state, 'shipped')
-        @shipment.inventory_units.each(&:ship!)
-        @shipment.touch :shipped_at
+      unless shipment.shipped?
+        shipment.reload.ship!
+        shipment.touch :shipped_at
+        shipment.order.update!
       end
 
       true
