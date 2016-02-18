@@ -22,7 +22,7 @@ describe Spree::ShipmentNotice do
 
       context 'transition succeeds' do
         before do
-          expect(shipment).to receive_megit statssage_chain(:reload, :ship!)
+          expect(shipment).to receive_message_chain(:reload, :ship!)
           expect(shipment).to receive(:touch).with(:shipped_at)
           expect(order).to receive(:update!)
         end
