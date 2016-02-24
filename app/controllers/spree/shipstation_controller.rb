@@ -7,8 +7,7 @@ module Spree
     include Spree::BasicSslAuthentication
     include Spree::DateParamHelper
 
-    # TODO: configure disabling CSRF protection in dev/test
-    protect_from_forgery with: :null_session if Rails.env.development?
+    protect_from_forgery with: :null_session, only: [:shipnotify]
 
     def export
       @shipments = Spree::Shipment.between(date_param(:start_date), date_param(:end_date))

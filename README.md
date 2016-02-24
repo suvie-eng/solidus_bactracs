@@ -142,5 +142,4 @@ To run tests with guard:
 - Improve documentation
 - Fix the QueryString route hack
 - Update legacy development patterns (ex: `class_eval`)
-- Make CSRF disabling configurable for development and testing
 - Update XML generation and parsing
