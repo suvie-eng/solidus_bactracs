@@ -1,5 +1,6 @@
 Solidus/ShipStation Integration
 ==============================
+[![Circle CI](https://circleci.com/gh/boomerdigital/solidus_shipstation.svg?style=svg)](https://circleci.com/gh/boomerdigital/solidus_shipstation)
 
 This gem integrates [ShipStation](http://www.shipstation.com) with [Solidus](http://solidus.io), a fork of [Spree](http://spreecommerce.com). It enables ShipStation to pull shipments from the system and update tracking numbers. This integration is a fork of http://github.com/DynamoMTL/spree_shipstation to make compatible with Solidus and Rails 4.2+.
 
@@ -49,7 +50,7 @@ localhost:3000/shipstation?action=shipnotify&order_number=ABC123&carrier=USPS&se
 Add `solidus_shipstation` to your Gemfile:
 
 ```ruby
-gem "solidus_shipstation"
+gem "solidus_shipstation", github: 'boomerdigital/solidus_shipstation'
 ```
 
 Then, bundle install
