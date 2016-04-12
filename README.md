@@ -1,6 +1,6 @@
 Solidus/ShipStation Integration
 ==============================
-[![Circle CI](https://circleci.com/gh/boomerdigital/solidus_shipstation.svg?style=svg)](https://circleci.com/gh/boomerdigital/solidus_shipstation)
+[![Circle CI](https://circleci.com/gh/boomerdigital/solidus_shipstation.svg?style=svg)](https://circleci.com/gh/boomerdigital/solidus_shipstation) [![Code Climate](https://codeclimate.com/github/boomerdigital/solidus_shipstation/badges/gpa.svg)](https://codeclimate.com/github/boomerdigital/solidus_shipstation)
 
 This gem integrates [ShipStation](http://www.shipstation.com) with [Solidus](http://solidus.io), a fork of [Spree](http://spreecommerce.com). It enables ShipStation to pull shipments from the system and update tracking numbers. This integration is a fork of http://github.com/DynamoMTL/spree_shipstation to make compatible with Solidus and Rails 4.2+.
 
@@ -139,8 +139,6 @@ To run tests with guard:
 
 ## Future Work
 
-- Finish cleanup rspec depreciations
 - Improve documentation
-- Fix the QueryString route hack
 - Update legacy development patterns (ex: `class_eval`)
 - Update XML generation and parsing
