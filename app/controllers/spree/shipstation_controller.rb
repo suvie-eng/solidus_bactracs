@@ -10,7 +10,9 @@ module Spree
     protect_from_forgery with: :null_session, only: [:shipnotify]
 
     def export
-      @shipments = Spree::Shipment.between(date_param(:start_date), date_param(:end_date))
+      @shipments = Spree::Shipment.exportable
+                                  .between(date_param(:start_date),
+                                           date_param(:end_date))
                                   .page(params[:page])
                                   .per(50)
 

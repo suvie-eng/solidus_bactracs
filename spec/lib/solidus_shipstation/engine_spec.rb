@@ -8,6 +8,7 @@ RSpec.describe SolidusShipstation::Engine do
       expect(Spree::Config).to respond_to(:shipstation_password)
       expect(Spree::Config).to respond_to(:shipstation_weight_units)
       expect(Spree::Config).to respond_to(:shipstation_ssl_encrypted)
+      expect(Spree::Config).to respond_to(:shipstation_capture_at_notification)
     end
   end
 
