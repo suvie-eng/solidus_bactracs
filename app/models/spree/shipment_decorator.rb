@@ -1,5 +1,9 @@
 Spree::Shipment.class_eval do
-  scope :exportable, -> { joins(:order).where('spree_shipments.state != ?', 'pending') }
+  def self.exportable
+    query = joins(:order).where(spree_orders: { state: 'complete' })
+    query = query.where.not(spree_shipments: { state: 'pending' }) if Spree::Config.require_payment_to_ship
+    query
+  end
 
   def self.between(from, to)
     joins(:order).where(

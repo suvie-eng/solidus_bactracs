@@ -10,25 +10,57 @@ module Spree
     end
 
     def apply
-      locate ? update : not_found
+      find_shipment
+
+      unless shipment
+        log_not_found
+        return false
+      end
+
+      unless capture_payments!
+        log_not_paid
+        return false
+      end
+
+      ship_it!
     rescue => e
       handle_error(e)
     end
 
     private
 
+    def capture_payments!
+      order = shipment.order
+      return true if order.paid?
+
+      # We try to capture payments if flag is set
+      if Spree::Config.shipstation_capture_at_notification
+        process_payments!(order)
+      else
+        false
+      end
+    end
+
+    def process_payments!(order)
+      uncaptured_payments = order.payments.select(&:pending)
+      uncaptured_payments.each(&:capture!)
+    rescue Core::GatewayError => e
+      order.errors.add(:base, e.message) and return false
+    end
+
     # TODO: add documentation
     # => <Shipment>
-    def locate
+    def find_shipment
       @shipment = Spree::Shipment.find_by(number: number)
     end
 
     # TODO: add documentation
     # => true
-    def update
+    def ship_it!
       shipment.update_attribute(:tracking, tracking)
 
       unless shipment.shipped?
+        shipment.reload.ready! if shipment.pending?
         shipment.reload.ship!
         shipment.touch :shipped_at
         shipment.order.update!
@@ -37,11 +69,16 @@ module Spree
       true
     end
 
-    def not_found
+    def log_not_found
       @error = I18n.t(:shipment_not_found, number: number)
       Rails.logger.error(@error)
+    end
 
-      false
+    def log_not_paid
+      @error = I18n.t(:capture_payment_error,
+                      number: number,
+                      error: shipment.order.errors.full_messages.join(' '))
+      Rails.logger.error(@error)
     end
 
     def handle_error(error)

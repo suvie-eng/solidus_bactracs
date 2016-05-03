@@ -42,16 +42,39 @@ describe Spree::Shipment do
     end
 
     describe '.exportable' do
-      let!(:pending) { create_shipment(state: 'pending') }
-      let!(:ready)   { create_shipment(state: 'ready')   }
-      let!(:shipped) { create_shipment(state: 'shipped') }
+      def create_complete_order
+        FactoryGirl.create(:order, state: 'complete')
+      end
+
+      let!(:incomplete_order) { create(:order, state: 'confirm') }
+      let!(:incomplete) { create_shipment(state: 'pending',
+                                          order: incomplete_order) }
+      let!(:pending) { create_shipment(state: 'pending',
+                                       order: create_complete_order) }
+      let!(:ready)   { create_shipment(state: 'ready',
+                                       order: create_complete_order) }
+      let!(:shipped) { create_shipment(state: 'shipped',
+                                       order: create_complete_order) }
 
       let(:query) { Spree::Shipment.exportable }
 
-      it 'should have the expected shipment instances', :aggregate_failures do
-        expect(query.count).to eq(2)
-        expect(query).to eq([ready, shipped])
-        expect(query).to_not include(pending)
+      context 'given we require payment to ship' do
+        before { Spree::Config.require_payment_to_ship = true }
+        it 'should have the expected shipment instances', :aggregate_failures do
+          expect(query.count).to eq(2)
+          expect(query).to eq([ready, shipped])
+          expect(query).to_not include(pending)
+          expect(query).to_not include(incomplete)
+        end
+      end
+
+      context 'given we only require a complete order to ship' do
+        before { Spree::Config.require_payment_to_ship = false }
+        it 'should have the expected shipment instances', :aggregate_failures do
+          expect(query.count).to eq(3)
+          expect(query).to eq([pending, ready, shipped])
+          expect(query).to_not include(incomplete)
+        end
       end
     end
   end
