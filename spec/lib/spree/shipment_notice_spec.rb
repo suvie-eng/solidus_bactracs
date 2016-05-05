@@ -39,7 +39,7 @@ describe Spree::ShipmentNotice do
         expect_any_instance_of(Payment).to receive(:capture!).and_raise(Spree::Core::GatewayError)
       end
 
-      it 'shipment is not ship' do
+      it "doesn't ship the shipment" do
         expect(notice.apply).to eq(false)
         expect(shipment.reload).to_not be_shipped
         expect(payment.reload).to_not be_completed

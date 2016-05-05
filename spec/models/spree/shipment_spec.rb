@@ -60,7 +60,7 @@ describe Spree::Shipment do
 
       let(:query) { Spree::Shipment.exportable }
 
-      context 'given capture at notification is inactive' do
+      context 'given capture at notification is false' do
         before { Spree::Config.shipstation_capture_at_notification = false }
         it 'should have the expected shipment instances', :aggregate_failures do
           expect(query.count).to eq(1)
@@ -70,7 +70,7 @@ describe Spree::Shipment do
         end
       end
 
-      context 'given capture at notification is active' do
+      context 'given capture at notification is true' do
         before { Spree::Config.shipstation_capture_at_notification = true }
         it 'should have the expected shipment instances', :aggregate_failures do
           expect(query.count).to eq(3)
