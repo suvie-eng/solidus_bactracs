@@ -43,7 +43,7 @@ describe Spree::Shipment do
 
     describe '.exportable' do
       def create_complete_order
-        FactoryGirl.create(:order, state: 'complete')
+        FactoryGirl.create(:order, state: 'complete', completed_at: Time.now)
       end
 
       let!(:incomplete_order) { create(:order, state: 'confirm') }
@@ -58,8 +58,8 @@ describe Spree::Shipment do
 
       let(:query) { Spree::Shipment.exportable }
 
-      context 'given we require payment to ship' do
-        before { Spree::Config.require_payment_to_ship = true }
+      context 'given capture at notification is inactive' do
+        before { Spree::Config.shipstation_capture_at_notification = false }
         it 'should have the expected shipment instances', :aggregate_failures do
           expect(query.count).to eq(2)
           expect(query).to eq([ready, shipped])
@@ -68,8 +68,8 @@ describe Spree::Shipment do
         end
       end
 
-      context 'given we only require a complete order to ship' do
-        before { Spree::Config.require_payment_to_ship = false }
+      context 'given capture at notification is active' do
+        before { Spree::Config.shipstation_capture_at_notification = true }
         it 'should have the expected shipment instances', :aggregate_failures do
           expect(query.count).to eq(3)
           expect(query).to eq([pending, ready, shipped])
