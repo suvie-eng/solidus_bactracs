@@ -55,14 +55,16 @@ describe Spree::Shipment do
                                        order: create_complete_order) }
       let!(:shipped) { create_shipment(state: 'shipped',
                                        order: create_complete_order) }
+      let!(:canceled) { create_shipment(state: 'canceled',
+                                        order: create_complete_order) }
 
       let(:query) { Spree::Shipment.exportable }
 
       context 'given capture at notification is inactive' do
         before { Spree::Config.shipstation_capture_at_notification = false }
         it 'should have the expected shipment instances', :aggregate_failures do
-          expect(query.count).to eq(2)
-          expect(query).to eq([ready, shipped])
+          expect(query.count).to eq(1)
+          expect(query).to eq([ready])
           expect(query).to_not include(pending)
           expect(query).to_not include(incomplete)
         end

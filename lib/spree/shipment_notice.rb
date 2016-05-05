@@ -42,8 +42,7 @@ module Spree
     end
 
     def process_payments!(order)
-      uncaptured_payments = order.payments.pending
-      uncaptured_payments.each(&:capture!)
+      order.payments.pending.each(&:capture!)
     rescue Core::GatewayError => e
       order.errors.add(:base, e.message) and return false
     end

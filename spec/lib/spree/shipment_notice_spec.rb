@@ -26,7 +26,6 @@ describe Spree::ShipmentNotice do
     end
 
     context 'successful capture' do
-
       it 'payments are completed' do
         expect(notice.apply).to eq(true)
         expect(shipment.reload).to be_shipped
