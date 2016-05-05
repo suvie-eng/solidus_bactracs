@@ -10,6 +10,45 @@ describe Spree::ShipmentNotice do
                        tracking_number: tracking_number)
   end
 
+  context 'capture at notification is active' do
+    let(:order) { FactoryGirl.create(:completed_order_with_pending_payment) }
+    let(:payment) { order.payments.first }
+    let(:shipment) { order.shipments.first }
+    let(:notice) do
+      ShipmentNotice.new(order_number:    shipment.number,
+                         tracking_number: tracking_number)
+    end
+
+    before do
+      Spree::Config.shipstation_capture_at_notification = true
+      expect(payment).to be_pending
+      expect(shipment).to be_pending
+    end
+
+    context 'successful capture' do
+
+      it 'payments are completed' do
+        expect(notice.apply).to eq(true)
+        expect(shipment.reload).to be_shipped
+        expect(payment.reload).to be_completed
+        expect(order.reload).to be_paid
+      end
+    end
+
+    context 'capture fails' do
+      before do
+        expect_any_instance_of(Payment).to receive(:capture!).and_raise(Spree::Core::GatewayError)
+      end
+
+      it 'shipment is not ship' do
+        expect(notice.apply).to eq(false)
+        expect(shipment.reload).to_not be_shipped
+        expect(payment.reload).to_not be_completed
+        expect(order.reload).to_not be_paid
+      end
+    end
+  end
+
   context '#apply' do
     context 'shipment found' do
       let(:order) { instance_double(Order, paid?: true) }
@@ -64,27 +103,6 @@ describe Spree::ShipmentNotice do
             expect(notice.error).to be_present
           end
         end
-
-        context 'capture at notification is active' do
-          before do
-            Spree::Config.shipstation_capture_at_notification = true
-          end
-
-          it 'payments are captured' do
-            expect(notice).to receive(:ship_it!).and_return(true)
-            expect(notice).to receive(:process_payments!).and_return(true)
-            expect(notice.apply).to eq(true)
-          end
-
-          context 'capture fails' do
-            it '#apply returns false and sets @error' do
-              expect(order).to receive_message_chain(:errors, :full_messages).and_return(["woops"])
-              expect(notice).to receive(:process_payments!).and_return(false)
-              expect(notice.apply).to eq(false)
-              expect(notice.error).to be_present
-            end
-          end
-        end
       end
     end
 
@@ -101,7 +119,12 @@ describe Spree::ShipmentNotice do
     end
 
     context 'shipment already shipped' do
-      let!(:shipment) { create(:shipment, number: order_number, state: 'shipped') }
+      let(:order) { FactoryGirl.create(:order_ready_to_ship) }
+      let(:shipment) { order.shipments.first }
+
+      before do
+        shipment.update_attribute(:number, order_number)
+      end
 
       it 'updates #tracking and returns true' do
         expect(notice.apply).to eq(true)
