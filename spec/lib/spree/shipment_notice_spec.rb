@@ -16,7 +16,7 @@ describe Spree::ShipmentNotice do
 
     context 'successful capture' do
       it 'payments are completed' do
-        order = FactoryGirl.create(:completed_order_with_pending_payment)
+        order = create(:completed_order_with_pending_payment)
         notice = define_shipment_notice(order)
         expect(notice.apply).to eq(true)
 
@@ -32,7 +32,7 @@ describe Spree::ShipmentNotice do
 
     context 'capture fails' do
       it "doesn't ship the shipment" do
-        order = FactoryGirl.create(:completed_order_with_pending_payment)
+        order = create(:completed_order_with_pending_payment)
         notice = define_shipment_notice(order)
 
         expect_any_instance_of(Payment).to receive(:capture!).and_raise(Spree::Core::GatewayError)
@@ -56,7 +56,7 @@ describe Spree::ShipmentNotice do
 
     context 'order is not paid' do
       it "doesn't ship the shipment" do
-        order = FactoryGirl.create(:completed_order_with_pending_payment)
+        order = create(:completed_order_with_pending_payment)
         notice = define_shipment_notice(order)
 
         expect(notice.apply).to eq(false)
@@ -133,7 +133,7 @@ describe Spree::ShipmentNotice do
   context 'shipment already shipped' do
     it 'updates #tracking and returns true' do
       tracking_number = 'ZN10110'
-      order = FactoryGirl.create(:shipped_order)
+      order = create(:shipped_order)
       notice = define_shipment_notice(order, tracking_number)
 
       expect(notice.apply).to eq(true)
@@ -141,7 +141,7 @@ describe Spree::ShipmentNotice do
     end
 
     it 'does not update #state' do
-      order = FactoryGirl.create(:shipped_order)
+      order = create(:shipped_order)
       notice = define_shipment_notice(order)
       expect { notice.apply }.to_not change { order.shipments.first.state }
     end
