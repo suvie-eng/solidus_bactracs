@@ -42,8 +42,7 @@ module Spree
     end
 
     def process_payments!(order)
-      uncaptured_payments = order.payments.select(&:pending)
-      uncaptured_payments.each(&:capture!)
+      order.payments.pending.each(&:capture!)
     rescue Core::GatewayError => e
       order.errors.add(:base, e.message) and return false
     end
@@ -60,7 +59,6 @@ module Spree
       shipment.update_attribute(:tracking, tracking)
 
       unless shipment.shipped?
-        shipment.reload.ready! if shipment.pending?
         shipment.reload.ship!
         shipment.touch :shipped_at
         shipment.order.update!
