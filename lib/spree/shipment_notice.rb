@@ -37,6 +37,7 @@ module Spree
       if Spree::Config.shipstation_capture_at_notification
         process_payments!(order)
       else
+        order.errors.add(:base, 'Capture is not enabled and order is not paid')
         false
       end
     end
