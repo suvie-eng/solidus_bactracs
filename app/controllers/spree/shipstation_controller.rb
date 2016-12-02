@@ -1,4 +1,4 @@
-require 'spree/basic_ssl_authentication'
+require_dependency 'spree/basic_ssl_authentication'
 
 module Spree
 
