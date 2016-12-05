@@ -46,8 +46,7 @@ describe Spree::ShipstationController, type: :controller do
       let(:order_number) { 'ABC123' }
       let(:tracking_number) { '123456' }
       let(:order) { create(:order, payment_state: 'paid') }
-      let(:address) { create(:address) }
-      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: order, address: address) }
+      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: order) }
       let!(:inventory_unit) { create(:inventory_unit, order: order, shipment: shipment) }
 
       context 'shipment found' do
