@@ -90,7 +90,7 @@ describe Spree::ShipstationController, type: :controller do
 
   context 'not logged in' do
     it 'returns error' do
-      get :export, format: 'xml'
+      get :export, params: { format: 'xml' }
 
       expect(response.code).to eq('401')
     end
