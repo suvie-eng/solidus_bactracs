@@ -27,7 +27,7 @@ describe Spree::ShipstationController, type: :controller do
         }
       end
 
-      before { get :export, params }
+      before { get :export, params: params }
 
       it 'renders successfully', :aggregate_failures do
         expect(response).to be_success
@@ -59,7 +59,7 @@ describe Spree::ShipstationController, type: :controller do
           allow(order).to receive(:paid?) { true }
           shipment.ready!
 
-          post :shipnotify, params
+          post :shipnotify, params: params
         end
 
         it 'updates the shipment', :aggregate_failures do
@@ -78,7 +78,7 @@ describe Spree::ShipstationController, type: :controller do
         let(:invalid_params) do
           { order_number: 'JJ123456' }
         end
-        before { post :shipnotify, invalid_params }
+        before { post :shipnotify, params: invalid_params }
 
         it 'responds with failure' do
           expect(response.code).to eq('400')
@@ -90,7 +90,7 @@ describe Spree::ShipstationController, type: :controller do
 
   context 'not logged in' do
     it 'returns error' do
-      get :export, format: 'xml'
+      get :export, params: { format: 'xml' }
 
       expect(response.code).to eq('401')
     end
