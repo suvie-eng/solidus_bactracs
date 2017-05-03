@@ -9,14 +9,14 @@ Gem::Specification.new do |s|
 
   s.author    = 'Stephen Puiszis'
   s.email     = 'steve@tablexi.com'
-  s.homepage  = 'https://github.com/stephen-puiszis/solidus_shipstation'
+  s.homepage  = 'https://github.com/boomerdigital/solidus_shipstation'
 
   # s.files       = `git ls-files`.split("\n")
   # s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'solidus_core', ' >= 1.1', '< 2.0'
+  s.add_dependency 'solidus_core', ' >= 1.1', '< 2.3'
 
   s.add_development_dependency 'solidus_auth_devise'
   s.add_development_dependency 'capybara', '~> 2.2'
