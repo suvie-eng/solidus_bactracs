@@ -18,7 +18,7 @@ describe Spree::ShipstationController, type: :controller do
     describe '#export' do
       let(:schema) { 'spec/fixtures/shipstation_xml_schema.xsd' }
       let(:order) { create(:order, state: 'complete', completed_at: Time.now.utc) }
-      let!(:shipments) { create(:shipment, state: 'ready', order: order) }
+      let!(:shipments) { create(:shipment, state: 'ready', order: order, updated_at: '01/01/2016 01:00') }
       let(:params) do
         {
           start_date: '01/01/2016 00:00',
