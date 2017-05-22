@@ -18,11 +18,11 @@ describe Spree::ShipstationController, type: :controller do
     describe '#export' do
       let(:schema) { 'spec/fixtures/shipstation_xml_schema.xsd' }
       let(:order) { create(:order, state: 'complete', completed_at: Time.now.utc) }
-      let!(:shipments) { create(:shipment, state: 'ready', order: order, updated_at: '01/01/2016 01:00') }
+      let!(:shipments) { create(:shipment, state: 'ready', order: order) }
       let(:params) do
         {
-          start_date: '01/01/2016 00:00',
-          end_date: '12/31/2016 00:00',
+          start_date: 1.day.ago.strftime('%m/%d/%Y %H:%M'),
+          end_date: 1.day.from_now.strftime('%m/%d/%Y %H:%M'),
           format: 'xml'
         }
       end
@@ -46,7 +46,14 @@ describe Spree::ShipstationController, type: :controller do
       let(:order_number) { 'ABC123' }
       let(:tracking_number) { '123456' }
       let(:order) { create(:order, payment_state: 'paid') }
-      let!(:shipment) { create(:shipment, tracking: nil, number: order_number, order: order) }
+      let!(:shipment) do
+        shipment = create(:shipment, tracking: nil, number: order_number, order: order)
+        if shipment.has_attribute?(:address_id)
+          shipment.address_id = order.ship_address.id
+        end
+        shipment.save
+        shipment
+      end
       let!(:inventory_unit) { create(:inventory_unit, order: order, shipment: shipment) }
 
       context 'shipment found' do
