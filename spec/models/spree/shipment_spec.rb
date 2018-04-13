@@ -74,7 +74,7 @@ describe Spree::Shipment do
         before { Spree::Config.shipstation_capture_at_notification = true }
         it 'should have the expected shipment instances', :aggregate_failures do
           expect(query.count).to eq(3)
-          expect(query).to eq([pending, ready, shipped])
+          expect(query).to match_array([pending, ready, shipped])
           expect(query).to_not include(incomplete)
         end
       end

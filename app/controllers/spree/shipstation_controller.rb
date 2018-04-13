@@ -1,5 +1,3 @@
-require_dependency 'spree/basic_ssl_authentication'
-
 module Spree
 
   class ShipstationController < Spree::BaseController
@@ -26,9 +24,9 @@ module Spree
       notice = Spree::ShipmentNotice.new(params)
 
       if notice.apply
-        render(text: 'success')
+        head :ok
       else
-        render(text: notice.error, status: :bad_request)
+        head :bad_request
       end
     end
 

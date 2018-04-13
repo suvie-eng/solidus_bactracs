@@ -18,11 +18,10 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'solidus_core', ' >= 1.1', '< 3'
 
-  s.add_development_dependency 'solidus_auth_devise'
   s.add_development_dependency 'capybara', '~> 2.2'
-  s.add_development_dependency 'coffee-rails', '~> 4.1.1'
-  s.add_development_dependency 'factory_girl'
-  s.add_development_dependency 'factory_girl_rails'
+  s.add_development_dependency 'coffee-rails', '>= 4.1'
+  s.add_development_dependency 'factory_bot'
+  s.add_development_dependency 'factory_bot_rails'
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'ffaker'
