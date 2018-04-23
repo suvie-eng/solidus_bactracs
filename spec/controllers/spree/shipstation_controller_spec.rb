@@ -77,7 +77,6 @@ describe Spree::ShipstationController, type: :controller do
 
         it 'responds with success' do
           expect(response).to be_success
-          expect(response.body).to match(/success/)
         end
       end
 
@@ -89,7 +88,6 @@ describe Spree::ShipstationController, type: :controller do
 
         it 'responds with failure' do
           expect(response.code).to eq('400')
-          expect(response.body).to match(I18n.t(:shipment_not_found, number: 'JJ123456'))
         end
       end
     end
