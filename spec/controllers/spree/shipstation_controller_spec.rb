@@ -7,7 +7,7 @@ describe Spree::ShipstationController, type: :controller do
   before do
     Spree::Config.shipstation_ssl_encrypted = false # disable SSL for testing
     allow(described_class).to receive(:check_authorization).and_return(false)
-    allow(described_class).to receive(:spree_current_user).and_return(FactoryGirl.create(:user))
+    allow(described_class).to receive(:spree_current_user).and_return(FactoryBot.create(:user))
     @request.env['HTTP_ACCEPT'] = 'application/xml'
   end
 

@@ -43,7 +43,7 @@ describe Spree::Shipment do
 
     describe '.exportable' do
       def create_complete_order
-        FactoryGirl.create(:order, state: 'complete', completed_at: Time.now)
+        FactoryBot.create(:order, state: 'complete', completed_at: Time.now)
       end
 
       let!(:incomplete_order) { create(:order, state: 'confirm') }
