@@ -12,7 +12,6 @@ describe Spree::ShipstationController, type: :controller do
   end
 
   context 'logged in' do
-
     before { login }
 
     describe '#export' do
@@ -62,8 +61,8 @@ describe Spree::ShipstationController, type: :controller do
         end
 
         before do
-          allow(order).to receive(:can_ship?) { true }
-          allow(order).to receive(:paid?) { true }
+          allow(order).to receive(:can_ship?).and_return(true)
+          allow(order).to receive(:paid?).and_return(true)
           shipment.ready!
 
           post :shipnotify, params: params
@@ -84,6 +83,7 @@ describe Spree::ShipstationController, type: :controller do
         let(:invalid_params) do
           { order_number: 'JJ123456' }
         end
+
         before { post :shipnotify, params: invalid_params }
 
         it 'responds with failure' do

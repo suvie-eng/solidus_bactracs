@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 module Spree
-
   class ShipstationController < Spree::BaseController
-
     include Spree::BasicSslAuthentication
     include Spree::DateParamHelper
 
@@ -10,7 +10,7 @@ module Spree
     def export
       @shipments = Spree::Shipment.exportable
                                   .between(date_param(:start_date),
-                                           date_param(:end_date))
+                                    date_param(:end_date))
                                   .page(params[:page])
                                   .per(50)
 
@@ -29,7 +29,5 @@ module Spree
         head :bad_request
       end
     end
-
   end
-
 end

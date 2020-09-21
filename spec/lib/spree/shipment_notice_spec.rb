@@ -3,7 +3,6 @@ require 'spec_helper'
 include Spree
 
 describe Spree::ShipmentNotice do
-
   def define_shipment_notice(order, tracking_number = '1Z1231234')
     ShipmentNotice.new(order_number: order.shipments.first.number,
                        tracking_number: tracking_number)
@@ -39,12 +38,12 @@ describe Spree::ShipmentNotice do
         expect(notice.apply).to eq(false)
 
         order.reload.shipments.each do |shipment|
-          expect(shipment).to_not be_shipped
+          expect(shipment).not_to be_shipped
         end
         order.payments.each do |payment|
-          expect(payment.reload).to_not be_completed
+          expect(payment.reload).not_to be_completed
         end
-        expect(order).to_not be_paid
+        expect(order).not_to be_paid
       end
     end
   end
@@ -62,24 +61,24 @@ describe Spree::ShipmentNotice do
         expect(notice.apply).to eq(false)
 
         order.reload.shipments.each do |shipment|
-          expect(shipment).to_not be_shipped
+          expect(shipment).not_to be_shipped
         end
         order.payments.each do |payment|
-          expect(payment.reload).to_not be_completed
+          expect(payment.reload).not_to be_completed
         end
-        expect(order).to_not be_paid
+        expect(order).not_to be_paid
         expect(notice.error).to be_present
       end
     end
   end
 
-  context '#apply' do
+  describe '#apply' do
     let(:order_number) { 'S12345' }
     let(:tracking_number) { '1Z1231234' }
     let(:order) { instance_double(Order, paid?: true) }
     let(:shipment) { instance_double(Shipment, order: order, shipped?: false, pending?: false) }
     let(:notice) do
-      ShipmentNotice.new(order_number:    order_number,
+      ShipmentNotice.new(order_number: order_number,
                          tracking_number: tracking_number)
     end
 
@@ -99,7 +98,6 @@ describe Spree::ShipmentNotice do
         it 'returns true' do
           expect(notice.apply).to eq(true)
         end
-
       end
 
       context 'transition fails' do
@@ -143,7 +141,7 @@ describe Spree::ShipmentNotice do
     it 'does not update #state' do
       order = create(:shipped_order)
       notice = define_shipment_notice(order)
-      expect { notice.apply }.to_not change { order.shipments.first.state }
+      expect { notice.apply }.not_to change { order.shipments.first.state }
     end
   end
 end

@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 module Spree
-
   module BasicSslAuthentication
-
     extend ActiveSupport::Concern
 
     included do
@@ -22,7 +22,5 @@ module Spree
     def ssl_configured?
       Spree::Config.shipstation_ssl_encrypted
     end
-
   end
-
 end

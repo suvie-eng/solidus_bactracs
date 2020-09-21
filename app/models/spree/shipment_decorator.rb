@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Spree::Shipment.class_eval do
   def self.exportable
     query = order(:updated_at).joins(:order).merge(Spree::Order.complete).where.not(spree_shipments: { state: 'canceled' })

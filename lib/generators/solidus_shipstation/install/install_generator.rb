@@ -11,8 +11,8 @@ module SolidusShipstation
       end
 
       def add_stylesheets
-        inject_into_file 'vendor/assets/stylesheets/spree/frontend/all.css', " *= require spree/frontend/solidus_shipstation\n", before: %r{\*/}, verbose: true # rubocop:disable Layout/LineLength
-        inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require spree/backend/solidus_shipstation\n", before: %r{\*/}, verbose: true # rubocop:disable Layout/LineLength
+        inject_into_file 'vendor/assets/stylesheets/spree/frontend/all.css', " *= require spree/frontend/solidus_shipstation\n", before: %r{\*/}, verbose: true
+        inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require spree/backend/solidus_shipstation\n", before: %r{\*/}, verbose: true
       end
 
       def add_migrations
@@ -20,7 +20,7 @@ module SolidusShipstation
       end
 
       def run_migrations
-        run_migrations = options[:auto_run_migrations] || ['', 'y', 'Y'].include?(ask('Would you like to run the migrations now? [Y/n]')) # rubocop:disable Layout/LineLength
+        run_migrations = options[:auto_run_migrations] || ['', 'y', 'Y'].include?(ask('Would you like to run the migrations now? [Y/n]'))
         if run_migrations
           run 'bin/rails db:migrate'
         else

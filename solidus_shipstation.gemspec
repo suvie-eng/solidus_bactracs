@@ -10,12 +10,11 @@ Gem::Specification.new do |spec|
 
   spec.summary = 'Solidus/ShipStation Integration'
   spec.description = 'Integrates ShipStation API with Solidus. Supports exporting shipments and importing tracking numbers'
-  spec.homepage = 'https://github.com/boomerdigital/solidus_shipstation'
+  spec.homepage = 'https://github.com/solidusio-contrib/solidus_shipstation'
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/boomerdigital/solidus_shipstation'
-  spec.metadata['changelog_uri'] = ''
+  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_shipstation'
 
   spec.required_ruby_version = Gem::Requirement.new('~> 2.5')
 

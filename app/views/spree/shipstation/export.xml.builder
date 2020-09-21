@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 xml = Builder::XmlMarkup.new
 xml.instruct!
-xml.Orders(pages: (@shipments.total_count/50.0).ceil) {
+xml.Orders(pages: (@shipments.total_count / 50.0).ceil) {
   @shipments.each do |shipment|
     order = shipment.order
 
@@ -16,12 +18,10 @@ xml.Orders(pages: (@shipments.total_count/50.0).ceil) {
       xml.ShippingAmount order.ship_total
       xml.CustomField1   order.number
 
-=begin
-      if order.gift?
-        xml.Gift
-        xml.GiftMessage
-      end
-=end
+      #       if order.gift?
+      #         xml.Gift
+      #         xml.GiftMessage
+      #       end
 
       xml.Customer {
         xml.CustomerCode order.email.slice(0, 50)

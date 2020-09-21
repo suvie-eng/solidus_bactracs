@@ -1,7 +1,7 @@
 # solidus_shipstation
 
-[![TravisCI](https://travis-ci.org/boomerdigital/solidus_shipstation.svg?branch=master)](https://travis-ci.org/boomerdigital/solidus_shipstation)
-[![Code Climate](https://codeclimate.com/github/boomerdigital/solidus_shipstation/badges/gpa.svg)](https://codeclimate.com/github/boomerdigital/solidus_shipstation)
+[![TravisCI](https://travis-ci.org/solidusio-contrib/solidus_shipstation.svg?branch=master)](https://travis-ci.org/solidusio-contrib/solidus_shipstation)
+[![Code Climate](https://codeclimate.com/github/solidusio-contrib/solidus_shipstation/badges/gpa.svg)](https://codeclimate.com/github/solidusio-contrib/solidus_shipstation)
 
 This gem integrates [ShipStation](http://www.shipstation.com) with [Solidus](http://solidus.io). It
 enables ShipStation to pull shipments from the system and update tracking numbers.

@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 module Spree
-
   class ShipmentNotice
-
     attr_reader :error, :number, :tracking, :shipment
 
     def initialize(params)
@@ -23,7 +23,7 @@ module Spree
       end
 
       ship_it!
-    rescue => e
+    rescue StandardError => e
       handle_error(e)
     end
 
@@ -75,8 +75,8 @@ module Spree
 
     def log_not_paid
       @error = I18n.t(:capture_payment_error,
-                      number: number,
-                      error: shipment.order.errors.full_messages.join(' '))
+        number: number,
+        error: shipment.order.errors.full_messages.join(' '))
       Rails.logger.error(@error)
     end
 
@@ -86,7 +86,5 @@ module Spree
 
       false
     end
-
   end
-
 end

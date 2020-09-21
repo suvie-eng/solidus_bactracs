@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 require 'builder'
 
 module Spree
-
   module ExportHelper
-
-    DATE_FORMAT = '%m/%d/%Y %H:%M'.freeze
+    DATE_FORMAT = '%m/%d/%Y %H:%M'
 
     # rubocop:disable all
     def self.address(xml, order, type)
@@ -28,7 +28,5 @@ module Spree
       }
     end
     # rubocop:enable all
-
   end
-
 end
