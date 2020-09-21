@@ -1,10 +1,19 @@
+# frozen_string_literal: true
+
 require 'solidus_core'
 require 'solidus_support'
+
+require 'solidus_shipstation/version'
 require 'solidus_shipstation/engine'
-require 'spree/shipment_notice'
 
 module SolidusShipstation
+  class << self
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-  VERSION = '1.0.0'.freeze
-
+    def configure
+      yield configuration
+    end
+  end
 end

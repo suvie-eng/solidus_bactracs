@@ -1,3 +1,4 @@
+*.gem
 \#*
 *~
 .#*
@@ -12,7 +13,8 @@ nbproject
 pkg
 *.swp
 spec/dummy
-.bundle
+spec/examples.txt
+/sandbox
+.rvmrc
 .ruby-version
 .ruby-gemset
-.rvmrc
