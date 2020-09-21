@@ -6,13 +6,13 @@ module SolidusShipstation
       class_option :auto_run_migrations, type: :boolean, default: false
 
       def add_javascripts
-        append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/solidus_shipstation\n"
-        append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/solidus_shipstation\n"
+        append_file 'vendor/assets/javascripts/solidus_shipstation/frontend/all.js', "//= require solidus_shipstation/frontend/solidus_shipstation\n"
+        append_file 'vendor/assets/javascripts/solidus_shipstation/backend/all.js', "//= require solidus_shipstation/backend/solidus_shipstation\n"
       end
 
       def add_stylesheets
-        inject_into_file 'vendor/assets/stylesheets/spree/frontend/all.css', " *= require spree/frontend/solidus_shipstation\n", before: %r{\*/}, verbose: true
-        inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require spree/backend/solidus_shipstation\n", before: %r{\*/}, verbose: true
+        inject_into_file 'vendor/assets/stylesheets/solidus_shipstation/frontend/all.css', " *= require solidus_shipstation/frontend/solidus_shipstation\n", before: %r{\*/}, verbose: true
+        inject_into_file 'vendor/assets/stylesheets/solidus_shipstation/backend/all.css', " *= require solidus_shipstation/backend/solidus_shipstation\n", before: %r{\*/}, verbose: true
       end
 
       def add_migrations

@@ -2,9 +2,6 @@
 
 module SolidusShipstation
   class Configuration
-    attr_accessor(
-      :shipstation_username, :shipstation_password, :shipstation_weight_units,
-      :shipstation_ssl_encrypted, :shipstation_capture_at_notification,
-    )
+    attr_accessor :username, :password, :weight_units, :ssl_encrypted, :capture_at_notification
   end
 end

@@ -53,7 +53,7 @@ end
 You may also need to configure some options of your Solidus store:
 
 ```ruby
-# config/initializers/spree.rb
+# config/initializers/solidus_shipstation.rb
 Spree.config do |config|
   # Set to false if you're not using auto_capture (defaults to true).
   config.require_payment_to_ship = true

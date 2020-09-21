@@ -2,31 +2,41 @@
 
 module Spree
   class ShipstationController < Spree::BaseController
-    include Spree::BasicSslAuthentication
-    include Spree::DateParamHelper
+    protect_from_forgery with: :null_session, only: :shipnotify
 
-    protect_from_forgery with: :null_session, only: [:shipnotify]
+    before_action :authenticate_shipstation
 
     def export
-      @shipments = Spree::Shipment.exportable
-                                  .between(date_param(:start_date),
-                                    date_param(:end_date))
-                                  .page(params[:page])
-                                  .per(50)
+      @shipments = Spree::Shipment
+                   .exportable
+                   .between(date_param(:start_date), date_param(:end_date))
+                   .page(params[:page])
+                   .per(50)
 
       respond_to do |format|
-        format.xml { render 'spree/shipstation/export', layout: false }
+        format.xml { render layout: false }
       end
     end
 
-    # TODO: log when request are succeeding and failing
     def shipnotify
-      notice = Spree::ShipmentNotice.new(params)
+      SolidusShipstation::ShipmentNotice.from_payload(params.to_unsafe_h).apply
+      head :ok
+    rescue SolidusShipstation::Error => e
+      head :bad_request
+    end
 
-      if notice.apply
-        head :ok
-      else
-        head :bad_request
+    private
+
+    def date_param(name)
+      return if params[name].blank?
+
+      Time.strptime("#{params[name]} UTC", '%m/%d/%Y %H:%M %Z')
+    end
+
+    def authenticate_shipstation
+      authenticate_or_request_with_http_basic do |username, password|
+        username == SolidusShipstation.configuration.username &&
+          password == SolidusShipstation.configuration.password
       end
     end
   end

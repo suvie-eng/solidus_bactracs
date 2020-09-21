@@ -2,7 +2,7 @@
 
 require 'builder'
 
-module Spree
+module SolidusShipstation
   module ExportHelper
     DATE_FORMAT = '%m/%d/%Y %H:%M'
 
@@ -12,7 +12,7 @@ module Spree
       address = order.send("#{type}_address")
 
       xml.__send__(name) {
-        xml.Name         address.full_name
+        xml.Name         address.respond_to?(:name) ? address.name : address.full_name
         xml.Company      address.company
 
         if type == :ship
