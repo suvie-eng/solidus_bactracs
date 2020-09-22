@@ -1,82 +1,54 @@
-require 'spec_helper'
-require 'timecop'
+# frozen_string_literal: true
 
-describe Spree::Shipment do
-  context 'shipment_decorator methods' do
-    describe '.between' do
-      let(:now) { Time.now.utc }
+RSpec.describe Spree::Shipment do
+  describe '.between' do
+    it 'returns shipments whose updated_at falls within the given time range' do
+      shipment = create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }
 
-      let!(:order_1) { create(:order) }
-      let!(:order_2) { create(:order) }
-      let!(:order_3) { create(:order) }
-      let!(:yesterday) { create_shipment(order: order_2) }
-      let!(:tomorrow) { create_shipment(order: order_2) }
-      let!(:old_shipment_recent_order_update) { create_shipment(created_at: now - 1.week, order: order_3) }
-      let!(:active_1) { create_shipment }
-      let!(:active_2) { create_shipment }
-      let(:query) { Spree::Shipment.between(now - 1.hour, now + 1.hour) }
+      expect(described_class.between(Time.zone.yesterday, Time.zone.tomorrow)).to eq([shipment])
+    end
 
-      # Use Timecop set #updated_at at specific times rather than manually settting them
-      #   as ActiveRecord will automatically set #updated_at timestamps even when attempting to
-      #   override them for Spree::Order instances
-      before do
-        Timecop.freeze(now - 1.day) do
-          order_1.touch
-          yesterday.touch
-        end
+    it "returns shipments whose order's updated_at falls within the given time range" do
+      order = create(:order) { |o| o.update_column(:updated_at, Time.zone.now) }
+      shipment = create(:shipment, order: order)
 
-        Timecop.freeze(now + 1.day) do
-          order_2.touch
-          tomorrow.touch
-        end
+      expect(described_class.between(Time.zone.yesterday, Time.zone.tomorrow)).to eq([shipment])
+    end
 
-        Timecop.freeze(now - 1.week) do
-          order_3.touch
-        end
-      end
+    it 'does not return shipments whose updated_at does not fall within the given time range' do
+      create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }
 
-      it 'returns shipments based on shipments/orders updated_at within the given time range', :aggregate_failures do
-        expect(query.count).to eq(3)
-        expect(query).to match_array([old_shipment_recent_order_update, active_1, active_2])
+      expect(described_class.between(Time.zone.tomorrow, Time.zone.tomorrow + 1.day)).to eq([])
+    end
+
+    it "does not return shipments whose order's updated_at falls within the given time range" do
+      order = create(:order) { |o| o.update_column(:updated_at, Time.zone.now) }
+      create(:shipment, order: order)
+
+      expect(described_class.between(Time.zone.tomorrow, Time.zone.tomorrow + 1.day)).to eq([])
+    end
+  end
+
+  describe '.exportable' do
+    context 'when capture_at_notification is false' do
+      it 'returns ready shipments from complete orders' do
+        stub_configuration(capture_at_notification: false)
+
+        ready_shipment = create(:order_ready_to_ship).shipments.first
+        create(:shipped_order).shipments.first
+
+        expect(described_class.exportable).to eq([ready_shipment])
       end
     end
 
-    describe '.exportable' do
-      def create_complete_order
-        FactoryBot.create(:order, state: 'complete', completed_at: Time.now)
-      end
+    context 'when capture_at_notification is true' do
+      it 'returns non-canceled shipments from complete orders' do
+        stub_configuration(capture_at_notification: false)
 
-      let!(:incomplete_order) { create(:order, state: 'confirm') }
-      let!(:incomplete) { create_shipment(state: 'pending',
-                                          order: incomplete_order) }
-      let!(:pending) { create_shipment(state: 'pending',
-                                       order: create_complete_order) }
-      let!(:ready)   { create_shipment(state: 'ready',
-                                       order: create_complete_order) }
-      let!(:shipped) { create_shipment(state: 'shipped',
-                                       order: create_complete_order) }
-      let!(:canceled) { create_shipment(state: 'canceled',
-                                        order: create_complete_order) }
+        pending_shipment = create(:order_ready_to_ship).shipments.first
+        create(:order_ready_to_ship) { |o| o.shipments.first.cancel! }
 
-      let(:query) { Spree::Shipment.exportable }
-
-      context 'given capture at notification is false' do
-        before { Spree::Config.shipstation_capture_at_notification = false }
-        it 'should have the expected shipment instances', :aggregate_failures do
-          expect(query.count).to eq(1)
-          expect(query).to eq([ready])
-          expect(query).to_not include(pending)
-          expect(query).to_not include(incomplete)
-        end
-      end
-
-      context 'given capture at notification is true' do
-        before { Spree::Config.shipstation_capture_at_notification = true }
-        it 'should have the expected shipment instances', :aggregate_failures do
-          expect(query.count).to eq(3)
-          expect(query).to match_array([pending, ready, shipped])
-          expect(query).to_not include(incomplete)
-        end
+        expect(described_class.exportable).to eq([pending_shipment])
       end
     end
   end

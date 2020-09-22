@@ -1,117 +1,103 @@
-require 'spec_helper'
+# frozen_string_literal: true
 
-describe Spree::ShipstationController, type: :controller do
+RSpec.describe Spree::ShipstationController do
   render_views
-  routes { Spree::Core::Engine.routes }
 
-  before do
-    Spree::Config.shipstation_ssl_encrypted = false # disable SSL for testing
-    allow(described_class).to receive(:check_authorization).and_return(false)
-    allow(described_class).to receive(:spree_current_user).and_return(FactoryBot.create(:user))
-    @request.env['HTTP_ACCEPT'] = 'application/xml'
-  end
+  describe '#export' do
+    context 'when the authentication is invalid' do
+      it 'returns an error error' do
+        get :export, params: { format: 'xml' }
 
-  context 'logged in' do
+        expect(response.status).to eq(401)
+      end
+    end
 
-    before { login }
+    context 'when the authentication is valid' do
+      it 'responds with 200 OK' do
+        stub_shipstation_auth
+        create(:order_ready_to_ship)
 
-    describe '#export' do
-      let(:schema) { 'spec/fixtures/shipstation_xml_schema.xsd' }
-      let(:order) { create(:order, state: 'complete', completed_at: Time.now.utc) }
-      let!(:shipments) { create(:shipment, state: 'ready', order: order) }
-      let(:params) do
-        {
+        get :export,
+          params: {
+            start_date: 1.day.ago.strftime('%m/%d/%Y %H:%M'),
+            end_date: 1.day.from_now.strftime('%m/%d/%Y %H:%M'),
+            format: 'xml'
+          }
+
+        expect(response.status).to eq(200)
+      end
+
+      it 'generates ShipStation-compliant XML' do
+        stub_shipstation_auth
+        create(:order_ready_to_ship)
+
+        get :export, params: {
           start_date: 1.day.ago.strftime('%m/%d/%Y %H:%M'),
           end_date: 1.day.from_now.strftime('%m/%d/%Y %H:%M'),
           format: 'xml'
         }
-      end
 
-      before { get :export, params: params }
-
-      it 'renders successfully', :aggregate_failures do
-        expect(response).to be_success
-        expect(response).to render_template(:export)
-        expect(assigns(:shipments)).to match_array([shipments])
-      end
-
-      it 'generates valid ShipStation formatted xml' do
-        expect(response.body).to pass_validation(schema)
+        expect(response.body).to pass_validation('spec/fixtures/shipstation_xml_schema.xsd')
       end
     end
+  end
 
-    describe '#shipnotify' do
-      # NOTE: Spree::Shipment factory creates new instances with tracking numbers,
-      #   which might not reflect reality in practice
-      let(:order_number) { 'ABC123' }
-      let(:tracking_number) { '123456' }
-      let(:order) { create(:order, payment_state: 'paid') }
-      let!(:shipment) do
-        shipment = create(:shipment, tracking: nil, number: order_number, order: order)
-        if shipment.has_attribute?(:address_id)
-          shipment.address_id = order.ship_address.id
-        end
-        shipment.save
-        shipment
-      end
-      let!(:inventory_unit) { create(:inventory_unit, order: order, shipment: shipment) }
+  describe '#shipnotify' do
+    context 'when the authentication is valid' do
+      context 'when the shipment can be found' do
+        it 'responds with 200 OK' do
+          stub_shipstation_auth
+          shipment = create(:order_ready_to_ship).shipments.first
 
-      context 'shipment found' do
-        let(:params) do
-          { order_number: order_number, tracking_number: tracking_number }
+          post :shipnotify, params: {
+            order_number: shipment.number,
+            tracking_number: '123456',
+            format: 'xml',
+          }
+          shipment.reload
+
+          expect(response.status).to eq(200)
         end
 
-        before do
-          allow(order).to receive(:can_ship?) { true }
-          allow(order).to receive(:paid?) { true }
-          shipment.ready!
+        it 'updates the shipment' do
+          stub_shipstation_auth
+          shipment = create(:order_ready_to_ship).shipments.first
 
-          post :shipnotify, params: params
-        end
+          post :shipnotify, params: {
+            order_number: shipment.number,
+            tracking_number: '123456',
+            format: 'xml',
+          }
+          shipment.reload
 
-        it 'updates the shipment', :aggregate_failures do
-          expect(shipment.reload.tracking).to eq(tracking_number)
-          expect(shipment.state).to eq('shipped')
-          expect(shipment.shipped_at).to be_present
-        end
-
-        it 'responds with success' do
-          expect(response).to be_success
+          expect(shipment).to have_attributes(
+            tracking: '123456',
+            state: 'shipped',
+            shipped_at: an_instance_of(ActiveSupport::TimeWithZone),
+          )
         end
       end
 
-      context 'shipment not found' do
-        let(:invalid_params) do
-          { order_number: 'JJ123456' }
-        end
-        before { post :shipnotify, params: invalid_params }
+      context 'when the shipment cannot be found' do
+        it 'responds with 400 Bad Request' do
+          stub_shipstation_auth
+          shipment = create(:order_ready_to_ship).shipments.first
 
-        it 'responds with failure' do
-          expect(response.code).to eq('400')
+          post :shipnotify, params: {
+            order_number: 'ABC123',
+            tracking_number: '123456',
+            format: 'xml',
+          }
+          shipment.reload
+
+          expect(response.status).to eq(400)
         end
       end
     end
   end
 
-  context 'not logged in' do
-    it 'returns error' do
-      get :export, params: { format: 'xml' }
-
-      expect(response.code).to eq('401')
-    end
-  end
-
-  def login
-    config(username: 'mario', password: 'lemieux')
-
-    user = 'mario'
-    pw = 'lemieux'
-    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user, pw)
-  end
-
-  def config(options = {})
-    options.each do |k, v|
-      Spree::Config.send("shipstation_#{k}=", v)
-    end
+  def stub_shipstation_auth(username = 'mario', password = 'lemieux')
+    stub_configuration(username: username, password: password)
+    request.headers['Authorization'] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
   end
 end
