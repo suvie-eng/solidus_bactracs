@@ -14,7 +14,7 @@ that adds Solidus and Rails 4.2+ compatibility.
 Add solidus_shipstation to your Gemfile:
 
 ```ruby
-gem 'solidus_shipstation'
+gem 'solidus_shipstation', github: 'solidusio-contrib/solidus_shipstation'
 ```
 
 Bundle your dependencies and run the installation generator:
