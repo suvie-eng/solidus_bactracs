@@ -14,7 +14,7 @@ that adds Solidus and Rails 4.2+ compatibility.
 Add solidus_shipstation to your Gemfile:
 
 ```ruby
-gem 'solidus_shipstation'
+gem 'solidus_shipstation', github: 'solidusio-contrib/solidus_shipstation'
 ```
 
 Bundle your dependencies and run the installation generator:
@@ -31,22 +31,20 @@ Configure your ShipStation integration:
 
 ```ruby
 # config/initializers/solidus_shipstation.rb
+
 SolidusShipstation.configure do |config|
   # Choose between Grams, Ounces or Pounds.
-  config.shipstation_weight_units = "Grams"
+  config.weight_units = "Grams"
 
   # ShipStation expects the endpoint to be protected by HTTP Basic Auth.
   # Set the username and password you desire for ShipStation to use.
-  config.shipstation_username = "smoking_jay_cutler"
-  config.shipstation_password = "my-awesome-password"
-
-  # Turn SSL on/off for testing and development purposes.
-  config.shipstation_ssl_encrypted = !Rails.env.development?
+  config.username = "smoking_jay_cutler"
+  config.password = "my-awesome-password"
 
   # Capture payment when ShipStation notifies a shipping label creation.
-  # Set this to `true` and `require_payment_to_ship` to `false` if you
+  # Set this to `true` and `Spree::Configrequire_payment_to_ship` to `false` if you
   # want to charge your customers at the time of shipment.
-  config.shipstation_capture_at_notification = false
+  config.capture_at_notification = false
 end
 ```
 
@@ -59,7 +57,7 @@ Spree.config do |config|
   config.require_payment_to_ship = true
 
   # Set to false if you're not using inventory tracking features (defaults to true).
-  config.track_inventory_levels = true 
+  config.track_inventory_levels = true
 end
 ```
 
@@ -74,7 +72,7 @@ Enter the following details:
 - **Password**: the password defined in your config.
 - **URL to custom page**: `https://yourdomain.com/shipstation.xml`.
 
-There are five shipment states for an order (= shipment) in ShipStation. These states do not 
+There are five shipment states for an order (= shipment) in ShipStation. These states do not
 necessarily align with Solidus, but you can configure ShipStation to create a mapping for your
 specific needs. Here's the default mapping:
 
