@@ -11,9 +11,7 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
           shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
           shipment_notice.apply
 
-          order.reload
-          expect(order.shipments.first).to be_shipped
-          expect(order.shipments.first.tracking).to eq('1Z1231234')
+          expect_order_to_be_shipped(order)
         end
       end
 
@@ -38,9 +36,7 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
             shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
             shipment_notice.apply
 
-            order.reload
-            expect(order.shipments.first).to be_shipped
-            expect(order.shipments.first.tracking).to eq('1Z1231234')
+            expect_order_to_be_shipped(order)
           end
         end
 
@@ -69,9 +65,7 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
           shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
           shipment_notice.apply
 
-          order.reload
-          expect(order.shipments.first).to be_shipped
-          expect(order.shipments.first.tracking).to eq('1Z1231234')
+          expect_order_to_be_shipped(order)
         end
       end
 
@@ -106,5 +100,13 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
       shipment_number: shipment.number,
       shipment_tracking: shipment_tracking,
     )
+  end
+
+  def expect_order_to_be_shipped(order)
+    order.reload
+    expect(order.shipments.first).to be_shipped
+    expect(order.shipments.first.shipped_at).not_to be_nil
+    expect(order.shipments.first.tracking).to eq('1Z1231234')
+    expect(order.cartons.first.tracking).to eq('1Z1231234')
   end
 end
