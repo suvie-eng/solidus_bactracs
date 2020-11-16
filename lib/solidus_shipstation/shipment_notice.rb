@@ -52,7 +52,6 @@ module SolidusShipstation
     def ship_shipment
       shipment.update!(tracking: shipment_tracking)
       shipment.ship!
-      shipment.update!(shipped_at: Time.zone.now)
       shipment.order.recalculate
     end
   end
