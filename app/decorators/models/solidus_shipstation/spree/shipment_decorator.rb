@@ -12,10 +12,13 @@ module SolidusShipstation
           query = order(:updated_at)
                   .joins(:order)
                   .merge(::Spree::Order.complete)
-                  .where.not(spree_shipments: { state: 'canceled' })
 
           unless SolidusShipstation.configuration.capture_at_notification
-            query = query.ready
+            query = query.where(spree_shipments: { state: ['ready', 'canceled'] })
+          end
+
+          unless SolidusShipstation.configuration.export_canceled_shipments
+            query = query.where.not(spree_shipments: { state: 'canceled' })
           end
 
           query
