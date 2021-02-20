@@ -119,13 +119,6 @@ To run [Rubocop](https://github.com/bbatsov/rubocop) static code analysis run
 bundle exec rubocop
 ```
 
-When testing your application's integration with this extension you may use its factories.
-Simply add this require statement to your spec_helper:
-
-```ruby
-require 'solidus_shipstation/factories'
-```
-
 ### Running the sandbox
 
 To run this extension in a sandboxed Solidus application, you can run `bin/sandbox`. The path for
@@ -155,15 +148,7 @@ git commit -m "Update the changelog"
 
 ### Releasing new versions
 
-Your new extension version can be released using `gem-release` like this:
-
-```shell
-bundle exec gem bump -v 1.6.0
-bin/rake changelog
-git commit -a --amend
-git push
-bundle exec gem release
-```
+Please refer to the dedicated [page](https://github.com/solidusio/solidus/wiki/How-to-release-extensions) on Solidus wiki.
 
 ## License
 
