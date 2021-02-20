@@ -18,12 +18,12 @@ module SolidusShipstation
         end
 
         def between(from, to)
-          condition = <<~SQL.squish
-            (spree_shipments.updated_at > :from AND spree_shipments.updated_at < :to) OR
-            (spree_orders.updated_at > :from AND spree_orders.updated_at < :to)
-          SQL
+          ::Spree::Deprecation.warn <<~DEPRECATION
+            `Spree::Shipment.between` is deprecated and will be removed in a future version
+            of solidus_shipstation. Please use `SolidusShipstation::Shipment::BetweenQuery.apply`.
+          DEPRECATION
 
-          joins(:order).where(condition, from: from, to: to)
+          SolidusShipstation::Shipment::BetweenQuery.apply(self, from: from, to: to)
         end
       end
 
