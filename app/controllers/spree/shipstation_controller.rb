@@ -7,11 +7,13 @@ module Spree
     before_action :authenticate_shipstation
 
     def export
-      @shipments = Spree::Shipment
-                   .exportable
-                   .between(date_param(:start_date), date_param(:end_date))
-                   .page(params[:page])
-                   .per(50)
+      @shipments = SolidusShipstation::Shipment::ExportableQuery.apply(Spree::Shipment.all)
+      @shipments = SolidusShipstation::Shipment::BetweenQuery.apply(
+        @shipments,
+        from: date_param(:start_date),
+        to: date_param(:end_date),
+      )
+      @shipments = @shipments.page(params[:page]).per(50)
 
       respond_to do |format|
         format.xml { render layout: false }
