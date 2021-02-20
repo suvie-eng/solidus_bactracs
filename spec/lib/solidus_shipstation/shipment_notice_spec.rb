@@ -4,39 +4,82 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
   describe '#apply' do
     context 'when capture_at_notification is true' do
       context 'when the order is paid' do
-        it 'ships the order successfully' do
-          stub_configuration(capture_at_notification: true)
-          order = create_order_ready_to_ship(paid: true)
-
-          shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
-          shipment_notice.apply
-
-          expect_order_to_be_shipped(order)
-        end
-      end
-
-      context 'when the order is not paid' do
-        context 'when the payments can be captured successfully' do
-          it 'pays the order successfully' do
-            stub_configuration(capture_at_notification: true)
-            order = create_order_ready_to_ship(paid: false)
-
-            shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
-            shipment_notice.apply
-
-            order.reload
-            expect(order.payments).to all(be_completed)
-            expect(order.reload).to be_paid
-          end
-
+        context 'when the order was not shipped yet' do
           it 'ships the order successfully' do
             stub_configuration(capture_at_notification: true)
-            order = create_order_ready_to_ship(paid: false)
+            order = create_order_ready_to_ship(paid: true)
 
             shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
             shipment_notice.apply
 
             expect_order_to_be_shipped(order)
+          end
+        end
+
+        context 'when the order was already shipped' do
+          it 'updates the tracking number on the shipment' do
+            stub_configuration(capture_at_notification: true)
+            order = create_order_ready_to_ship(paid: true)
+            order.shipments.first.ship!
+
+            shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+            shipment_notice.apply
+
+            expect(order.reload.shipments.first.tracking).to eq('1Z1231234')
+          end
+        end
+      end
+
+      context 'when the order is not paid' do
+        context 'when the payments can be captured successfully' do
+          context 'when the order was not shipped yet' do
+            it 'pays the order successfully' do
+              stub_configuration(capture_at_notification: true)
+              order = create_order_ready_to_ship(paid: false)
+
+              shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+              shipment_notice.apply
+
+              order.reload
+              expect(order.payments).to all(be_completed)
+              expect(order.reload).to be_paid
+            end
+
+            it 'ships the order successfully' do
+              stub_configuration(capture_at_notification: true)
+              order = create_order_ready_to_ship(paid: false)
+
+              shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+              shipment_notice.apply
+
+              expect_order_to_be_shipped(order)
+            end
+          end
+
+          context 'when the order was already shipped' do
+            it 'pays the order successfully' do
+              stub_configuration(capture_at_notification: true)
+              order = create_order_ready_to_ship(paid: false)
+              order.shipments.first.ship!
+
+              shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+              shipment_notice.apply
+
+              order.reload
+              expect(order.payments).to all(be_completed)
+              expect(order.reload).to be_paid
+            end
+
+            it 'updates the tracking number on the shipment' do
+              stub_configuration(capture_at_notification: true)
+              order = create_order_ready_to_ship(paid: false)
+              order.shipments.first.ship!
+
+              shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+              shipment_notice.apply
+
+              expect(order.reload.shipments.first.tracking).to eq('1Z1231234')
+            end
           end
         end
 
@@ -58,14 +101,29 @@ RSpec.describe SolidusShipstation::ShipmentNotice do
 
     context 'when capture_at_notification is false' do
       context 'when the order is paid' do
-        it 'ships the order successfully' do
-          stub_configuration(capture_at_notification: true)
-          order = create_order_ready_to_ship(paid: false)
+        context 'when the order was already shipped' do
+          it 'updates the tracking number on the shipment' do
+            stub_configuration(capture_at_notification: false)
+            order = create_order_ready_to_ship(paid: true)
+            order.shipments.first.ship!
 
-          shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
-          shipment_notice.apply
+            shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+            shipment_notice.apply
 
-          expect_order_to_be_shipped(order)
+            expect(order.reload.shipments.first.tracking).to eq('1Z1231234')
+          end
+        end
+
+        context 'when the order was not shipped yet' do
+          it 'ships the order successfully' do
+            stub_configuration(capture_at_notification: false)
+            order = create_order_ready_to_ship(paid: true)
+
+            shipment_notice = build_shipment_notice(order.shipments.first, shipment_tracking: '1Z1231234')
+            shipment_notice.apply
+
+            expect_order_to_be_shipped(order)
+          end
         end
       end
 

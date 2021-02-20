@@ -51,7 +51,7 @@ module SolidusShipstation
 
     def ship_shipment
       shipment.update!(tracking: shipment_tracking)
-      shipment.ship!
+      shipment.ship! if shipment.can_ship?
       shipment.order.recalculate
     end
   end
