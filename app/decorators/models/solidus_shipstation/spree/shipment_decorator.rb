@@ -9,19 +9,12 @@ module SolidusShipstation
 
       module ClassMethods
         def exportable
-          query = order(:updated_at)
-                  .joins(:order)
-                  .merge(::Spree::Order.complete)
+          ::Spree::Deprecation.warn <<~DEPRECATION
+            `Spree::Shipment.exportable` is deprecated and will be removed in a future version
+            of solidus_shipstation. Please use `SolidusShipstation::Shipment::ExportableQuery.apply`.
+          DEPRECATION
 
-          unless SolidusShipstation.configuration.capture_at_notification
-            query = query.where(spree_shipments: { state: ['ready', 'canceled'] })
-          end
-
-          unless SolidusShipstation.configuration.export_canceled_shipments
-            query = query.where.not(spree_shipments: { state: 'canceled' })
-          end
-
-          query
+          SolidusShipstation::Shipment::ExportableQuery.apply(self)
         end
 
         def between(from, to)
