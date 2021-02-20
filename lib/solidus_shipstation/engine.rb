@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'solidus_core'
-require 'solidus_shipstation'
+require 'solidus_support'
 
 module SolidusShipstation
   class Engine < Rails::Engine
