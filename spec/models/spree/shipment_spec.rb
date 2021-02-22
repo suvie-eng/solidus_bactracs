@@ -2,82 +2,48 @@
 
 RSpec.describe Spree::Shipment do
   describe '.between' do
-    it 'returns shipments whose updated_at falls within the given time range' do
-      shipment = create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }
+    it 'delegates to BetweenQuery' do
+      shipment = build_stubbed(:shipment)
+      allow(SolidusShipstation::Shipment::BetweenQuery).to receive(:apply).with(
+        any_args,
+        from: Time.zone.yesterday,
+        to: Time.zone.today,
+      ).and_return([shipment])
 
-      expect(described_class.between(Time.zone.yesterday, Time.zone.tomorrow)).to eq([shipment])
+      result = Spree::Deprecation.silence do
+        described_class.between(Time.zone.yesterday, Time.zone.today)
+      end
+
+      expect(result).to eq([shipment])
     end
 
-    it "returns shipments whose order's updated_at falls within the given time range" do
-      order = create(:order) { |o| o.update_column(:updated_at, Time.zone.now) }
-      shipment = create(:shipment, order: order)
+    it 'prints a deprecation warning' do
+      allow(Spree::Deprecation).to receive(:warn)
 
-      expect(described_class.between(Time.zone.yesterday, Time.zone.tomorrow)).to eq([shipment])
-    end
+      described_class.between(Time.zone.yesterday, Time.zone.today)
 
-    it 'does not return shipments whose updated_at does not fall within the given time range' do
-      create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }
-
-      expect(described_class.between(Time.zone.tomorrow, Time.zone.tomorrow + 1.day)).to eq([])
-    end
-
-    it "does not return shipments whose order's updated_at falls within the given time range" do
-      order = create(:order) { |o| o.update_column(:updated_at, Time.zone.now) }
-      create(:shipment, order: order)
-
-      expect(described_class.between(Time.zone.tomorrow, Time.zone.tomorrow + 1.day)).to eq([])
+      expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Shipment\.between/)
     end
   end
 
   describe '.exportable' do
-    context 'when capture_at_notification is false and export_canceled_shipments is false' do
-      it 'returns ready shipments from complete orders' do
-        stub_configuration(capture_at_notification: false, export_canceled_shipments: false)
+    it 'delegates to ExportableQuery' do
+      shipment = build_stubbed(:shipment)
+      allow(SolidusShipstation::Shipment::ExportableQuery).to receive(:apply).and_return([shipment])
 
-        ready_shipment = create(:order_ready_to_ship).shipments.first
-        create(:order_ready_to_ship) { |o| o.shipments.first.cancel! }
-        create(:shipped_order)
-
-        expect(described_class.exportable).to eq([ready_shipment])
+      result = Spree::Deprecation.silence do
+        described_class.exportable
       end
+
+      expect(result).to eq([shipment])
     end
 
-    context 'when capture_at_notification is true and export_canceled_shipments is false' do
-      it 'returns non-canceled shipments from complete orders' do
-        stub_configuration(capture_at_notification: true, export_canceled_shipments: false)
+    it 'prints a deprecation warning' do
+      allow(Spree::Deprecation).to receive(:warn)
 
-        ready_shipment = create(:order_ready_to_ship).shipments.first
-        shipped_shipment = create(:shipped_order).shipments.first
-        create(:order_ready_to_ship) { |o| o.shipments.first.cancel! }
+      described_class.exportable
 
-        expect(described_class.exportable).to eq([ready_shipment, shipped_shipment])
-      end
-    end
-
-    context 'when capture_at_notification is false and export_canceled_shipments is true' do
-      it 'returns ready and canceled shipments from complete orders' do
-        stub_configuration(capture_at_notification: false, export_canceled_shipments: true)
-
-        ready_shipment = create(:order_ready_to_ship).shipments.first
-        canceled_shipment = create(:order_ready_to_ship).shipments.first
-        canceled_shipment.cancel!
-        create(:shipped_order)
-
-        expect(described_class.exportable).to eq([ready_shipment, canceled_shipment])
-      end
-    end
-
-    context 'when capture_at_notification is true and export_canceled_shipments is true' do
-      it 'returns all shipments from complete orders' do
-        stub_configuration(capture_at_notification: true, export_canceled_shipments: true)
-
-        ready_shipment = create(:order_ready_to_ship).shipments.first
-        canceled_shipment = create(:order_ready_to_ship).shipments.first
-        canceled_shipment.cancel!
-        shipped_shipment = create(:shipped_order).shipments.first
-
-        expect(described_class.exportable).to eq([ready_shipment, canceled_shipment, shipped_shipment])
-      end
+      expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Shipment\.exportable/)
     end
   end
 end

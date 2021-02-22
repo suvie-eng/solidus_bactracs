@@ -9,28 +9,21 @@ module SolidusShipstation
 
       module ClassMethods
         def exportable
-          query = order(:updated_at)
-                  .joins(:order)
-                  .merge(::Spree::Order.complete)
+          ::Spree::Deprecation.warn <<~DEPRECATION
+            `Spree::Shipment.exportable` is deprecated and will be removed in a future version
+            of solidus_shipstation. Please use `SolidusShipstation::Shipment::ExportableQuery.apply`.
+          DEPRECATION
 
-          unless SolidusShipstation.configuration.capture_at_notification
-            query = query.where(spree_shipments: { state: ['ready', 'canceled'] })
-          end
-
-          unless SolidusShipstation.configuration.export_canceled_shipments
-            query = query.where.not(spree_shipments: { state: 'canceled' })
-          end
-
-          query
+          SolidusShipstation::Shipment::ExportableQuery.apply(self)
         end
 
         def between(from, to)
-          condition = <<~SQL.squish
-            (spree_shipments.updated_at > :from AND spree_shipments.updated_at < :to) OR
-            (spree_orders.updated_at > :from AND spree_orders.updated_at < :to)
-          SQL
+          ::Spree::Deprecation.warn <<~DEPRECATION
+            `Spree::Shipment.between` is deprecated and will be removed in a future version
+            of solidus_shipstation. Please use `SolidusShipstation::Shipment::BetweenQuery.apply`.
+          DEPRECATION
 
-          joins(:order).where(condition, from: from, to: to)
+          SolidusShipstation::Shipment::BetweenQuery.apply(self, from: from, to: to)
         end
       end
 
