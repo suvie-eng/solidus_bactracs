@@ -1,5 +1,4 @@
 RSpec.describe SolidusShipstation::Shipment::BetweenQuery do
-  # rubocop:disable Rails/SkipsModelValidations
   describe '.apply' do
     it 'returns shipments whose updated_at falls within the given time range' do
       shipment = create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }
@@ -51,5 +50,4 @@ RSpec.describe SolidusShipstation::Shipment::BetweenQuery do
       expect(result).to eq([])
     end
   end
-  # rubocop:enable Rails/SkipsModelValidations
 end
