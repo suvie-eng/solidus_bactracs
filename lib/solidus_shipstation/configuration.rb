@@ -9,6 +9,8 @@ module SolidusShipstation
       :ssl_encrypted,
       :capture_at_notification,
       :export_canceled_shipments,
+      :api_batch_size,
+      :api_sync_threshold,
       :api_store_id,
       :custom_api_params,
       :api_username,
@@ -16,6 +18,8 @@ module SolidusShipstation
     )
 
     def initialize
+      @api_batch_size = 100
+      @api_sync_threshold = 7.days
       @custom_api_params = ->(_shipment) { {} }
     end
   end
