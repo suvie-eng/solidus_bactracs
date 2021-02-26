@@ -2,6 +2,7 @@
 
 require 'httparty'
 
+require 'solidus_shipstation/api/batch_syncer'
 require 'solidus_shipstation/api/request_runner'
 require 'solidus_shipstation/api/client'
 require 'solidus_shipstation/api/request_error'
