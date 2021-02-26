@@ -29,7 +29,8 @@ SolidusShipstation.configure do |config|
   # config.api_password = "api-pass"
 
   # ID of the store where you want to import your shipments.
-  # config.api_store_id = "123456"
+  # This can be a literal value or an object that responds to `#call`.
+  # config.api_store_id = -> (shipment) { "123456" }
 
   # Number of shipments to import into ShipStation at once.
   # If unsure, leave this set to 100, which is the maximum

@@ -22,6 +22,12 @@ module SolidusShipstation
                     'cancelled'
                   end
 
+          store_id = if SolidusShipstation.config.api_store_id.respond_to?(:call)
+                       SolidusShipstation.config.api_store_id.call(shipment)
+                     else
+                       SolidusShipstation.config.api_store_id
+                     end
+
           {
             orderNumber: shipment.number,
             orderKey: shipment.number,
@@ -37,7 +43,7 @@ module SolidusShipstation
             shippingAmount: shipment.cost,
             paymentMethod: 'Credit Card',
             advancedOptions: {
-              storeId: SolidusShipstation.config.api_store_id,
+              storeId: store_id,
             },
           }.deep_merge(SolidusShipstation.config.custom_api_params.call(shipment))
         end
