@@ -8,3 +8,6 @@ AllCops:
 
 Layout/LineLength:
   Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false

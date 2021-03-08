@@ -23,62 +23,37 @@ Bundle your dependencies and run the installation generator:
 bin/rails generate solidus_shipstation:install
 ```
 
-## Configuration
+The installer will create a configuration initializer that you'll need to customize.
 
-### Configuring solidus_shipstation
+The installer will also create a migration, which is required by the API integration. If you are
+going to use the XML integration, feel free to delete the migration file, as those columns won't be
+used by the extension.
 
-Configure your ShipStation integration:
+## Usage
 
-```ruby
-# config/initializers/solidus_shipstation.rb
+This extension can integrate with ShipStation in two ways.
 
-SolidusShipstation.configure do |config|
-  # Choose between Grams, Ounces or Pounds.
-  config.weight_units = "Grams"
+### XML integration
 
-  # ShipStation expects the endpoint to be protected by HTTP Basic Auth.
-  # Set the username and password you desire for ShipStation to use.
-  config.username = "smoking_jay_cutler"
-  config.password = "my-awesome-password"
+The [XML integration](https://help.shipstation.com/hc/en-us/articles/360025856192-Custom-Store-Development-Guide)
+works by exposing a route in your Solidus application that generates an XML feed of all recently
+created and updated shipments in your Solidus store.
 
-  # Capture payment when ShipStation notifies a shipping label creation.
-  # Set this to `true` and `Spree::Configrequire_payment_to_ship` to `false` if you
-  # want to charge your customers at the time of shipment.
-  config.capture_at_notification = false
+#### XML integration: Configuration
 
-  # Export canceled shipments to ShipStation
-  # Set this to `true` if you want canceled shipments included in the endpoint.
-  config.export_canceled_shipments = false
-end
-```
+In order to enable the XML integration, make sure to configure the relevant section of the
+configuration initializer, and configure your ShipStation store accordingly:
 
-You may also need to configure some options of your Solidus store:
-
-```ruby
-# config/initializers/solidus_shipstation.rb
-Spree.config do |config|
-  # Set to false if you're not using auto_capture (defaults to true).
-  config.require_payment_to_ship = true
-
-  # Set to false if you're not using inventory tracking features (defaults to true).
-  config.track_inventory_levels = true
-end
-```
-
-### Configuring ShipStation
-
-To configure or create a ShipStation store, go to **Settings** -> **Stores** -> **Add Store**, then
-scroll down and choose the **Custom Store** option.
-
-Enter the following details:
-
-- **Username**: the username defined in your config.
-- **Password**: the password defined in your config.
+- **Username**: the username defined in your configuration.
+- **Password**: the password defined in your configuration.
 - **URL to custom page**: `https://yourdomain.com/shipstation.xml`.
+
+You can also configure your ShipStation store to pull the XML feed automatically on a recurring
+basis, or manually by clicking the "Refresh stores" button.
 
 There are five shipment states for an order (= shipment) in ShipStation. These states do not
 necessarily align with Solidus, but you can configure ShipStation to create a mapping for your
-specific needs. Here's the default mapping:
+specific needs. Here's the recommended mapping:
 
 ShipStation description | ShipStation status | Solidus status
 ------------------------|--------------------|---------------
@@ -88,11 +63,14 @@ Shipped                 | `shipped`          | `shipped`
 Cancelled               | `cancelled`        | `cancelled`
 On-Hold                 | `on-hold`          | `pending`
 
-## Usage
+Once you've configured the XML integration in your app and ShipStation, there's nothing else you
+need to do. ShipStation will 
+
+#### XML integration: Usage
 
 There's nothing you need to do. Once properly configured, the integration just works!
 
-## Gotchas
+#### XML integration: Gotchas
 
 There are a few gotchas you need to be aware of:
 
@@ -100,6 +78,67 @@ There are a few gotchas you need to be aware of:
   Solidus and the tracking link might not work properly.
 - When `shipstation_capture_at_notification` is enabled, any errors during payment capture will
   prevent the update of the shipment's tracking number.
+
+### API integration
+
+The [API integration](https://www.shipstation.com/docs/api/) works by calling the ShipStation API
+to sync all of your shipments continuously.
+
+Because ShipStation has very low rate limits (i.e., 40 reqs/minute at the time of writing), the
+API integration does not send an API request for every single shipment update, as you would expect
+from a traditional API integration.
+
+Instead, a background job runs on a recurring basis and batches together all the shipments that need
+to be created or updated in ShipStation. These shipments are then sent in groups of 100 (by default)
+to ShipStation's [bulk order upsert endpoint](https://www.shipstation.com/docs/api/orders/create-update-multiple-orders/).
+
+This allows us to work around ShipStation's rate limit and sync up to 4000 shipments/minute.
+
+As you may imagine, this technique also comes at the expense of some additional complexity in the
+implementation, but the extension abstracts it all away for you.
+
+#### API integration: Configuration
+
+In order to enable the API integration, make sure to configure the relevant section of the
+configuration initializer. At the very least, the integration needs to know your API credentials
+and store ID, but there are additional options you can configure — just look at the initializer!
+
+#### API integration: Usage
+
+Once you've configured the integration, you will also need to enqueue the `ScheduleShipmentSyncsJob`
+on a recurring basis, to kick off the synchronization process. Because every app uses a different
+background processing library, this is left up to the user.
+
+Here's what an example with [sidekiq-scheduler](https://github.com/moove-it/sidekiq-scheduler) might
+look like:
+
+```yaml
+# config/sidekiq.yml
+:schedule:
+  schedule_shipment_syncs:
+    every: ['1m', first_in: '0s']
+    class: 'SolidusShipstation::Api::ScheduleShipmentSyncsJob'
+```
+
+This will schedule the job to run every minute. This is generally a good starting point, but feel
+free to adjust it as needed.
+
+#### API integration: Gotchas
+
+There's one possible problem you need to be aware of, when integrating via the API.
+
+You should make sure the interval between your syncs is, on average, larger than your latency in
+processing background jobs, or you are going to experience sync overlaps.
+
+As an example, if it takes your Sidekiq process 10 seconds to execute a job from the time it's
+scheduled, but you schedule a shipment sync every 5 seconds, your sync jobs will start overlapping,
+making your latency even worse.
+
+This is a problem that is faced by all recurring jobs. The solution is two-fold:
+
+1. Monitor the latency of your background processing queues. Seriously, do it.
+2. Make sure your sync interval is not too aggressive: unless you really need to, there's no point
+   in syncing your shipments more often than once a minute.
 
 ## Development
 
