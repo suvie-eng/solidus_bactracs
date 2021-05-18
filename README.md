@@ -1,4 +1,4 @@
-# solidus_shipstation
+# Solidus ShipStation
 
 [![CircleCI](https://circleci.com/gh/solidusio-contrib/solidus_shipstation.svg?style=shield)](https://circleci.com/gh/solidusio-contrib/solidus_shipstation)
 [![codecov](https://codecov.io/gh/solidusio-contrib/solidus_shipstation/branch/master/graph/badge.svg)](https://codecov.io/gh/solidusio-contrib/solidus_shipstation)
@@ -156,6 +156,20 @@ To run [Rubocop](https://github.com/bbatsov/rubocop) static code analysis run
 
 ```shell
 bundle exec rubocop
+```
+
+When testing your application's integration with this extension you may use its factories.
+Simply add this require statement to your `spec/spec_helper.rb`:
+
+```ruby
+require 'solidus_shipstation/testing_support/factories'
+```
+
+Or, if you are using `FactoryBot.definition_file_paths`, you can load Solidus core
+factories along with this extension's factories using this statement:
+
+```ruby
+SolidusDevSupport::TestingSupport::Factories.load_for(SolidusShipstation::Engine)
 ```
 
 ### Running the sandbox
