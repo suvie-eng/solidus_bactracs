@@ -27,6 +27,8 @@ module SolidusShipstation
           nil
         end.compact
 
+        return if params.empty?
+
         request_runner.call(:post, '/orders/createorders', params)
       end
     end

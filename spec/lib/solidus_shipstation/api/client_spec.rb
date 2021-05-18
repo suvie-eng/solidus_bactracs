@@ -62,6 +62,17 @@ RSpec.describe SolidusShipstation::Api::Client do
 
       expect(error_handler).to have_received(:call).with(error, shipment: shipment)
     end
+
+    it 'skips the API call if all shipments failed serialization' do
+      request_runner = instance_spy('SolidusShipstation::Api::RequestRunner')
+      client = build_client(request_runner: request_runner)
+      failing_shipment = build_stubbed(:shipment)
+      stub_serializer(failing_shipment, RuntimeError.new('Failed to serialize shipment!'))
+
+      client.bulk_create_orders([failing_shipment])
+
+      expect(request_runner).not_to have_received(:call)
+    end
   end
 
   private
