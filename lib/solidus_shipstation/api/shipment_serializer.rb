@@ -3,6 +3,12 @@
 module SolidusShipstation
   module Api
     class ShipmentSerializer
+      attr_reader :store_id
+
+      def initialize(store_id:)
+        @store_id = store_id
+      end
+
       def call(shipment)
         order = shipment.order
 
@@ -20,12 +26,6 @@ module SolidusShipstation
                 when 'canceled'
                   'cancelled'
                 end
-
-        store_id = if SolidusShipstation.config.api_store_id.respond_to?(:call)
-                     SolidusShipstation.config.api_store_id.call(shipment)
-                   else
-                     SolidusShipstation.config.api_store_id
-                   end
 
         {
           orderNumber: shipment.number,

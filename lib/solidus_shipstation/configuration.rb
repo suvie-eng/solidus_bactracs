@@ -11,7 +11,6 @@ module SolidusShipstation
       :export_canceled_shipments,
       :api_batch_size,
       :api_sync_threshold,
-      :api_store_id,
       :api_shipment_serializer,
       :api_username,
       :api_password,
@@ -24,9 +23,6 @@ module SolidusShipstation
       @error_handler = ->(_error, _extra = {}) {
         Rails.logger.error "#{error.inspect} (#{extra.inspect})"
       }
-      @api_shipment_serializer = proc do |shipment|
-        SolidusShipstation::Api::ShipmentSerializer.new.call(shipment)
-      end
     end
   end
 
