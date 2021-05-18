@@ -14,13 +14,17 @@ module SolidusShipstation
       :api_store_id,
       :custom_api_params,
       :api_username,
-      :api_password
+      :api_password,
+      :error_handler,
     )
 
     def initialize
       @api_batch_size = 100
       @api_sync_threshold = 7.days
       @custom_api_params = ->(_shipment) { {} }
+      @error_handler = ->(_error, _extra = {}) {
+        Rails.logger.error "#{error.inspect} (#{extra.inspect})"
+      }
     end
   end
 

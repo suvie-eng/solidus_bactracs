@@ -50,4 +50,12 @@ SolidusShipstation.configure do |config|
   #     giftMessage: shipment.order.gift_note,
   #   }
   # }
+
+  # Error handler used by the API integration for certain non-critical errors (e.g.
+  # a failure when serializing a shipment from a batch). This should be a proc that
+  # accepts an exception and a context hash. Popular options for error handling are
+  # logging or sending the error to an error tracking tool such as Sentry.
+  # config.error_handler = -> (error, context = {}) {
+  #   Sentry.capture_exception(error, extra: context)
+  # }
 end
