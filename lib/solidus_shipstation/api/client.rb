@@ -3,20 +3,29 @@
 module SolidusShipstation
   module Api
     class Client
-      def self.from_config
-        new(request_runner: RequestRunner.from_config)
+      class << self
+        def from_config
+          new(
+            request_runner: RequestRunner.from_config,
+            error_handler: SolidusShipstation.config.error_handler,
+          )
+        end
       end
 
-      attr_reader :request_runner
+      attr_reader :request_runner, :error_handler
 
-      def initialize(request_runner:)
+      def initialize(request_runner:, error_handler:)
         @request_runner = request_runner
+        @error_handler = error_handler
       end
 
       def bulk_create_orders(shipments)
         params = shipments.map do |shipment|
           Serializer.serialize_shipment(shipment)
-        end
+        rescue StandardError => e
+          error_handler.call(e, shipment: shipment)
+          nil
+        end.compact
 
         request_runner.call(:post, '/orders/createorders', params)
       end
