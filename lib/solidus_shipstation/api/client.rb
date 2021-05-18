@@ -8,20 +8,22 @@ module SolidusShipstation
           new(
             request_runner: RequestRunner.from_config,
             error_handler: SolidusShipstation.config.error_handler,
+            shipment_serializer: SolidusShipstation.config.api_shipment_serializer,
           )
         end
       end
 
-      attr_reader :request_runner, :error_handler
+      attr_reader :request_runner, :error_handler, :shipment_serializer
 
-      def initialize(request_runner:, error_handler:)
+      def initialize(request_runner:, error_handler:, shipment_serializer:)
         @request_runner = request_runner
         @error_handler = error_handler
+        @shipment_serializer = shipment_serializer
       end
 
       def bulk_create_orders(shipments)
         params = shipments.map do |shipment|
-          Serializer.serialize_shipment(shipment)
+          shipment_serializer.call(shipment)
         rescue StandardError => e
           error_handler.call(e, shipment: shipment)
           nil

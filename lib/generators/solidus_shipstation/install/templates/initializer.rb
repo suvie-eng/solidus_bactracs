@@ -42,14 +42,11 @@ SolidusShipstation.configure do |config|
   # in case an error prevents some shipments from being created/updated.
   # config.api_sync_threshold = 7.days
 
-  # Custom parameters that you want to include in the API payload, when
-  # creating or updating a shipment in ShipStation.
-  # config.custom_api_params = -> (shipment) {
-  #   {
-  #     gift: shipment.order.gift?,
-  #     giftMessage: shipment.order.gift_note,
-  #   }
-  # }
+  # Override the shipment serializer used for API sync. Can be any object that
+  # responds to `#call`.
+  # config.api_shipment_serializer = proc do |shipment|
+  #   SolidusShipstation::Api::ShipmentSerializer.new.call(shipment)
+  # end
 
   # Error handler used by the API integration for certain non-critical errors (e.g.
   # a failure when serializing a shipment from a batch). This should be a proc that
