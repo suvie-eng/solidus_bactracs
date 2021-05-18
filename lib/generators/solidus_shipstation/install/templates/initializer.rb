@@ -24,13 +24,16 @@ SolidusShipstation.configure do |config|
   ####### API integration
   # Only uncomment these lines if you're going to use the API integration.
 
+  # Override the shipment serializer used for API sync. This can be any object
+  # that responds to `#call`. At the very least, you'll need to uncomment the
+  # following lines and customize your store ID.
+  # config.api_shipment_serializer = proc do |shipment|
+  #   SolidusShipstation::Api::ShipmentSerializer.new(store_id: '12345678').call(shipment)
+  # end
+
   # Username and password for accessing the ShipStation API.
   # config.api_username = "api-user"
   # config.api_password = "api-pass"
-
-  # ID of the store where you want to import your shipments.
-  # This can be a literal value or an object that responds to `#call`.
-  # config.api_store_id = -> (shipment) { "123456" }
 
   # Number of shipments to import into ShipStation at once.
   # If unsure, leave this set to 100, which is the maximum
@@ -42,12 +45,11 @@ SolidusShipstation.configure do |config|
   # in case an error prevents some shipments from being created/updated.
   # config.api_sync_threshold = 7.days
 
-  # Custom parameters that you want to include in the API payload, when
-  # creating or updating a shipment in ShipStation.
-  # config.custom_api_params = -> (shipment) {
-  #   {
-  #     gift: shipment.order.gift?,
-  #     giftMessage: shipment.order.gift_note,
-  #   }
+  # Error handler used by the API integration for certain non-critical errors (e.g.
+  # a failure when serializing a shipment from a batch). This should be a proc that
+  # accepts an exception and a context hash. Popular options for error handling are
+  # logging or sending the error to an error tracking tool such as Sentry.
+  # config.error_handler = -> (error, context = {}) {
+  #   Sentry.capture_exception(error, extra: context)
   # }
 end
