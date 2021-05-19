@@ -18,4 +18,15 @@ RSpec.describe SolidusShipstation::Api::ScheduleShipmentSyncsJob do
     expect(SolidusShipstation::Api::SyncShipmentsJob).to have_been_enqueued.with(shipments[0..1])
     expect(SolidusShipstation::Api::SyncShipmentsJob).to have_been_enqueued.with([shipments.last])
   end
+
+  it 'reports any errors to the handler' do
+    error_handler = instance_spy('Proc')
+    stub_configuration(error_handler: error_handler)
+    error = RuntimeError.new('Something went wrong')
+    allow(SolidusShipstation::Shipment::PendingApiSyncQuery).to receive(:apply).and_raise(error)
+
+    described_class.perform_now
+
+    expect(error_handler).to have_received(:call).with(error, {})
+  end
 end
