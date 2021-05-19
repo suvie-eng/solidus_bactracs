@@ -5,14 +5,18 @@ module SolidusShipstation
     class BatchSyncer
       class << self
         def from_config
-          new(client: SolidusShipstation::Api::Client.from_config)
+          new(
+            client: SolidusShipstation::Api::Client.from_config,
+            shipment_matcher: SolidusShipstation.config.api_shipment_matcher,
+          )
         end
       end
 
-      attr_reader :client
+      attr_reader :client, :shipment_matcher
 
-      def initialize(client:)
+      def initialize(client:, shipment_matcher:)
         @client = client
+        @shipment_matcher = shipment_matcher
       end
 
       def call(shipments)
@@ -37,7 +41,7 @@ module SolidusShipstation
         end
 
         response['results'].each do |shipstation_order|
-          shipment = shipments.find { |s| s.number == shipstation_order['orderNumber'] }
+          shipment = shipment_matcher.call(shipstation_order, shipments)
 
           unless shipstation_order['success']
             ::Spree::Event.fire(
