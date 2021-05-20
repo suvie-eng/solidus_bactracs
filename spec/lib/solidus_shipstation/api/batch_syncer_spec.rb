@@ -5,10 +5,15 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
     it 'creates a syncer with the configured API client' do
       client = instance_double(SolidusShipstation::Api::Client)
       allow(SolidusShipstation::Api::Client).to receive(:from_config).and_return(client)
+      shipment_matcher = -> {}
+      stub_configuration(api_shipment_matcher: shipment_matcher)
 
       batch_syncer = described_class.from_config
 
-      expect(batch_syncer).to have_attributes(client: client)
+      expect(batch_syncer).to have_attributes(
+        client: client,
+        shipment_matcher: shipment_matcher,
+      )
     end
   end
 
@@ -32,7 +37,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
               )
             end
 
-            described_class.new(client: api_client).call([shipment])
+            build_batch_syncer(client: api_client).call([shipment])
 
             expect(shipment).to have_received(:update_columns).with(
               shipstation_order_id: '123456',
@@ -58,7 +63,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
             )
           end
 
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
 
           expect(Spree::Event).to have_received(:fire).with(
             'solidus_shipstation.api.sync_completed',
@@ -89,7 +94,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
             )
           end
 
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
 
           expect(shipment).not_to have_received(:update_columns)
         end
@@ -111,7 +116,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
             )
           end
 
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
 
           expect(Spree::Event).to have_received(:fire).with(
             'solidus_shipstation.api.sync_failed',
@@ -141,7 +146,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
         end
 
         begin
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
         rescue SolidusShipstation::Api::RateLimitedError
           # We want to ignore the error here, since we're testing for the event.
         end
@@ -166,7 +171,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
         end
 
         expect {
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
         }.to raise_error(error)
       end
     end
@@ -185,7 +190,7 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
         end
 
         begin
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
         rescue SolidusShipstation::Api::RequestError
           # We want to ignore the error here, since we're testing for the event.
         end
@@ -210,9 +215,15 @@ RSpec.describe SolidusShipstation::Api::BatchSyncer do
         end
 
         expect {
-          described_class.new(client: api_client).call([shipment])
+          build_batch_syncer(client: api_client).call([shipment])
         }.to raise_error(error)
       end
     end
+  end
+
+  private
+
+  def build_batch_syncer(client:, shipment_matcher: ->(_, shipments) { shipments.first })
+    described_class.new(client: client, shipment_matcher: shipment_matcher)
   end
 end

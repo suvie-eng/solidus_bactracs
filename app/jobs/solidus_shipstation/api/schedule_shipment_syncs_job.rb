@@ -11,6 +11,8 @@ module SolidusShipstation
         shipments.find_in_batches(batch_size: SolidusShipstation.config.api_batch_size) do |batch|
           SyncShipmentsJob.perform_later(batch.to_a)
         end
+      rescue StandardError => e
+        SolidusShipstation.config.error_handler.call(e, {})
       end
     end
   end

@@ -31,6 +31,13 @@ SolidusShipstation.configure do |config|
   #   SolidusShipstation::Api::ShipmentSerializer.new(store_id: '12345678').call(shipment)
   # end
 
+  # Override the logic used to match a ShipStation order to a shipment from a
+  # given collection. This can be useful when you override the default serializer
+  # and change the logic used to generate the order number.
+  # config.api_shipment_matcher = proc do |shipstation_order, shipments|
+  #   shipments.find { |shipment| shipment.number == shipstation_order['orderNumber'] }
+  # end
+
   # Username and password for accessing the ShipStation API.
   # config.api_username = "api-user"
   # config.api_password = "api-pass"

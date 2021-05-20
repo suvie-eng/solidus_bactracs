@@ -14,6 +14,7 @@ module SolidusShipstation
       :api_shipment_serializer,
       :api_username,
       :api_password,
+      :api_shipment_matcher,
       :error_handler,
     )
 
@@ -23,6 +24,9 @@ module SolidusShipstation
       @error_handler = ->(_error, _extra = {}) {
         Rails.logger.error "#{error.inspect} (#{extra.inspect})"
       }
+      @api_shipment_matcher = proc do |shipstation_order, shipments|
+        shipments.find { |shipment| shipment.number == shipstation_order['orderNumber'] }
+      end
     end
   end
 
