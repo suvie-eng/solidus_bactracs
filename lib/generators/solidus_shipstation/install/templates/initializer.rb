@@ -38,9 +38,9 @@ SolidusShipstation.configure do |config|
   #   shipments.find { |shipment| shipment.number == shipstation_order['orderNumber'] }
   # end
 
-  # Username and password for accessing the ShipStation API.
-  # config.api_username = "api-user"
-  # config.api_password = "api-pass"
+  # API key and secret for accessing the ShipStation API.
+  # config.api_key = "api-key"
+  # config.api_secret = "api-secret"
 
   # Number of shipments to import into ShipStation at once.
   # If unsure, leave this set to 100, which is the maximum
