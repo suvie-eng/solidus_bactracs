@@ -12,6 +12,8 @@ module SolidusShipstation
         sync_shipments(shipments)
       rescue RateLimitedError => e
         self.class.set(wait: e.retry_in).perform_later
+      rescue StandardError => e
+        SolidusShipstation.config.error_handler.call(e, {})
       end
 
       private
