@@ -1,7 +1,7 @@
 RSpec.describe SolidusShipstation::Api::RequestRunner do
   describe '.from_config' do
     it 'builds a runner using credentials from the configuration' do
-      stub_configuration(api_username: 'user', api_password: 'pass')
+      stub_configuration(api_key: 'user', api_secret: 'pass')
 
       request_runner = described_class.from_config
 

@@ -10,8 +10,8 @@ module SolidusShipstation
       class << self
         def from_config
           new(
-            username: SolidusShipstation.config.api_username,
-            password: SolidusShipstation.config.api_password,
+            username: SolidusShipstation.config.api_key,
+            password: SolidusShipstation.config.api_secret,
           )
         end
       end

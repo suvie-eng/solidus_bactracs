@@ -9,13 +9,13 @@ SolidusShipstation.configure do |config|
   # want to charge your customers at the time of shipment.
   config.capture_at_notification = false
 
-  ####### XML integration
-  # Only uncomment these lines if you're going to use the XML integration.
-
   # ShipStation expects the endpoint to be protected by HTTP Basic Auth.
   # Set the username and password you desire for ShipStation to use.
-  # config.username = "smoking_jay_cutler"
-  # config.password = "my-awesome-password"
+  config.username = "smoking_jay_cutler"
+  config.password = "my-awesome-password"
+
+  ####### XML integration
+  # Only uncomment these lines if you're going to use the XML integration.
 
   # Export canceled shipments to ShipStation
   # Set this to `true` if you want canceled shipments included in the endpoint.
@@ -38,9 +38,9 @@ SolidusShipstation.configure do |config|
   #   shipments.find { |shipment| shipment.number == shipstation_order['orderNumber'] }
   # end
 
-  # Username and password for accessing the ShipStation API.
-  # config.api_username = "api-user"
-  # config.api_password = "api-pass"
+  # API key and secret for accessing the ShipStation API.
+  # config.api_key = "api-key"
+  # config.api_secret = "api-secret"
 
   # Number of shipments to import into ShipStation at once.
   # If unsure, leave this set to 100, which is the maximum

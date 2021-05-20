@@ -35,7 +35,9 @@ RSpec.describe SolidusShipstation::Api::SyncShipmentsJob do
       end
 
       context 'when the error is a server error' do
-        it 'bubbles up server errors' do
+        it 'calls the error handler' do
+          error_handler = instance_spy('Proc')
+          stub_configuration(error_handler: error_handler)
           shipment = build_stubbed(:shipment) { |s| stub_syncability(s, true) }
           error = SolidusShipstation::Api::RequestError.new(
             response_code: 500,
@@ -44,9 +46,9 @@ RSpec.describe SolidusShipstation::Api::SyncShipmentsJob do
           )
           stub_failing_batch_syncer(error)
 
-          expect {
-            described_class.perform_now([shipment])
-          }.to raise_error(error)
+          described_class.perform_now([shipment])
+
+          expect(error_handler).to have_received(:call).with(error, {})
         end
       end
     end
