@@ -14,13 +14,13 @@ module SolidusShipstation
 
         def shipment_requires_creation?(shipment)
           shipment.shipstation_synced_at.nil? &&
-            Time.zone.now - shipment.created_at < SolidusShipstation.config.api_sync_threshold
+            Time.zone.now - shipment.order.updated_at < SolidusShipstation.config.api_sync_threshold
         end
 
         def shipment_requires_update?(shipment)
           shipment.shipstation_synced_at &&
-            shipment.shipstation_synced_at < shipment.updated_at &&
-            shipment.updated_at - shipment.shipstation_synced_at < SolidusShipstation.config.api_sync_threshold
+            shipment.shipstation_synced_at < shipment.order.updated_at &&
+            Time.zone.now - shipment.order.updated_at < SolidusShipstation.config.api_sync_threshold
         end
       end
     end
