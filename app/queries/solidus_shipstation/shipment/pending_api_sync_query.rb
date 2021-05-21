@@ -6,34 +6,31 @@ module SolidusShipstation
       SQLITE_CONDITION = <<~SQL.squish
         (
           spree_shipments.shipstation_synced_at IS NULL
-            AND ((JULIANDAY(CURRENT_TIMESTAMP) - JULIANDAY(spree_orders.updated_at)) * 86400.0) < :threshold
-        ) OR (
-          spree_shipments.shipstation_synced_at IS NOT NULL
-            AND spree_shipments.shipstation_synced_at < spree_orders.updated_at 
-            AND ((JULIANDAY(spree_orders.updated_at) - JULIANDAY(spree_shipments.shipstation_synced_at)) * 86400.0) < :threshold
-        )
+          OR (
+            spree_shipments.shipstation_synced_at IS NOT NULL
+              AND spree_shipments.shipstation_synced_at < spree_orders.updated_at
+          )
+        ) AND ((JULIANDAY(CURRENT_TIMESTAMP) - JULIANDAY(spree_orders.updated_at)) * 86400.0) < :threshold
       SQL
 
       POSTGRES_CONDITION = <<~SQL.squish
         (
           spree_shipments.shipstation_synced_at IS NULL
-            AND (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - spree_orders.updated_at))) < :threshold
-        ) OR (
-          spree_shipments.shipstation_synced_at IS NOT NULL
-            AND spree_shipments.shipstation_synced_at < spree_orders.updated_at 
-            AND (EXTRACT (EPOCH FROM (spree_orders.updated_at - spree_shipments.shipstation_synced_at))) < :threshold
-        )
+          OR (
+            spree_shipments.shipstation_synced_at IS NOT NULL
+              AND spree_shipments.shipstation_synced_at < spree_orders.updated_at
+          )
+        ) AND (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - spree_orders.updated_at))) < :threshold
       SQL
 
       MYSQL2_CONDITION = <<~SQL.squish
         (
           spree_shipments.shipstation_synced_at IS NULL
-            AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(spree_orders.updated_at)) < :threshold
-        ) OR (
-          spree_shipments.shipstation_synced_at IS NOT NULL
-            AND spree_shipments.shipstation_synced_at < spree_orders.updated_at 
-            AND (UNIX_TIMESTAMP(spree_orders.updated_at) - UNIX_TIMESTAMP(spree_shipments.shipstation_synced_at)) < :threshold
-        )
+            OR (
+              spree_shipments.shipstation_synced_at IS NOT NULL
+                AND spree_shipments.shipstation_synced_at < spree_orders.updated_at
+          )
+        ) AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(spree_orders.updated_at)) < :threshold
       SQL
 
       class << self
