@@ -8,8 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['Stephen Puiszis']
   spec.email = 'steve@tablexi.com'
 
-  spec.summary = 'Solidus/ShipStation Integration'
-  spec.description = 'Integrates ShipStation API with Solidus. Supports exporting shipments and importing tracking numbers'
+  spec.summary = 'A Solidus extension for integrating the ShipStation API.'
   spec.homepage = 'https://github.com/solidusio-contrib/solidus_shipstation'
   spec.license = 'BSD-3-Clause'
 
