@@ -1,12 +1,8 @@
 # Changelog
 
-## [v1.0.0](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.0.0) (2021-05-26)
+## [v1.0.0](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.0.0) (2021-06-03)
 
-[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/v2.0.1...v1.0.0)
-
-**Closed issues:**
-
-- Prepare Solidus Shipstation for Solidus 3.0 [\#6](https://github.com/solidusio-contrib/solidus_shipstation/issues/6)
+[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/v1.0.0...v1.0.0)
 
 **Merged pull requests:**
 
@@ -23,13 +19,13 @@
 - Fix installer [\#2](https://github.com/solidusio-contrib/solidus_shipstation/pull/2) ([kennyadsl](https://github.com/kennyadsl))
 - Make extension compatible with latest Solidus [\#1](https://github.com/solidusio-contrib/solidus_shipstation/pull/1) ([aldesantis](https://github.com/aldesantis))
 
-## [v2.0.1](https://github.com/solidusio-contrib/solidus_shipstation/tree/v2.0.1) (2014-05-01)
+## [v1.0.0](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.0.0) (2021-05-26)
 
-[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/v1.3.2...v2.0.1)
+[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/077ee0bcdf9faf66121faa4387ec645122892c98...v1.0.0)
 
-## [v1.3.2](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.3.2) (2013-11-22)
+**Closed issues:**
 
-[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/077ee0bcdf9faf66121faa4387ec645122892c98...v1.3.2)
+- Prepare Solidus Shipstation for Solidus 3.0 [\#6](https://github.com/solidusio-contrib/solidus_shipstation/issues/6)
 
 
 
