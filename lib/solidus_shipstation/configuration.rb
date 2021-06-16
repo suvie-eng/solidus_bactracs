@@ -16,6 +16,7 @@ module SolidusShipstation
       :api_secret,
       :api_shipment_matcher,
       :error_handler,
+      :shipment_notice_class
     )
 
     def initialize
@@ -27,6 +28,8 @@ module SolidusShipstation
       @api_shipment_matcher = proc do |shipstation_order, shipments|
         shipments.find { |shipment| shipment.number == shipstation_order['orderNumber'] }
       end
+
+      @shipment_notice_class = 'SolidusShipstation::ShipmentNotice'
     end
   end
 

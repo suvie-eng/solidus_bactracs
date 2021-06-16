@@ -21,7 +21,8 @@ module Spree
     end
 
     def shipnotify
-      SolidusShipstation::ShipmentNotice.from_payload(params.to_unsafe_h).apply
+      shipment_notice_class = SolidusShipstation.configuration.shipment_notice_class.constantize
+      shipment_notice_class.from_payload(params.to_unsafe_h).apply
       head :ok
     rescue SolidusShipstation::Error => e
       head :bad_request
