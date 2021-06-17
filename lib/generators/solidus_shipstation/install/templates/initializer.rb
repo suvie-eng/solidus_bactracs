@@ -21,6 +21,11 @@ SolidusShipstation.configure do |config|
   # Set this to `true` if you want canceled shipments included in the endpoint.
   # config.export_canceled_shipments = false
 
+  # You can customize the class used to receive notifications from the POST request
+  # Make sure it has a class method `from_payload` which receives the notification hash
+  # and an instance method `apply`
+  # config.shipment_notice_class = 'SolidusShipstation::ShipmentNotice'
+
   ####### API integration
   # Only uncomment these lines if you're going to use the API integration.
 
