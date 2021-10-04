@@ -40,6 +40,8 @@ module SolidusShipstation
           raise e
         end
 
+        return unless response
+
         response['results'].each do |shipstation_order|
           shipment = shipment_matcher.call(shipstation_order, shipments)
 

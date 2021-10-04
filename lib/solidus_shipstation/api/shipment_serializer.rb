@@ -51,15 +51,15 @@ module SolidusShipstation
 
       def serialize_address(address)
         {
-          name: SolidusSupport.combined_first_and_last_name_in_address? ? address.name : address.full_name,
-          company: address.company,
-          street1: address.address1,
-          street2: address.address2,
-          city: address.city,
-          state: address.state&.abbr,
-          postalCode: address.zipcode,
-          country: address.country&.iso,
-          phone: address.phone,
+          name: (SolidusSupport.combined_first_and_last_name_in_address? ? address&.name : address&.full_name).to_s,
+          company: address&.company.to_s,
+          street1: address&.address1.to_s,
+          street2: address&.address2.to_s,
+          city: address&.city.to_s,
+          state: address&.state&.abbr.to_s,
+          postalCode: address&.zipcode.to_s,
+          country: address&.country&.iso.to_s,
+          phone: address&.phone.to_s,
         }
       end
 
