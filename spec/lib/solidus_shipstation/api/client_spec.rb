@@ -95,7 +95,7 @@ RSpec.describe SolidusShipstation::Api::Client do
   private
 
   def build_client(options = {})
-    described_class.new({
+    described_class.new(**{
       request_runner: instance_spy('SolidusShipstation::Api::RequestRunner'),
       error_handler: instance_spy('Proc'),
       shipment_serializer: stub_shipment_serializer,
