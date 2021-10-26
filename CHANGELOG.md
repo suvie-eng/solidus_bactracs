@@ -1,11 +1,22 @@
 # Changelog
 
-## [v1.0.0](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.0.0) (2021-06-03)
+## [v1.1.0](https://github.com/solidusio-contrib/solidus_shipstation/tree/v1.1.0) (2021-10-26)
 
-[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/v1.0.0...v1.0.0)
+[Full Changelog](https://github.com/solidusio-contrib/solidus_shipstation/compare/v1.0.0...v1.1.0)
+
+**Implemented enhancements:**
+
+- Add support to ruby 3 [\#21](https://github.com/solidusio-contrib/solidus_shipstation/pull/21) ([stefano-sarioli](https://github.com/stefano-sarioli))
+
+**Fixed bugs:**
+
+- Handle orders without a billing address [\#20](https://github.com/solidusio-contrib/solidus_shipstation/pull/20) ([aldesantis](https://github.com/aldesantis))
 
 **Merged pull requests:**
 
+- Fix Ruby version requirement [\#22](https://github.com/solidusio-contrib/solidus_shipstation/pull/22) ([stefano-sarioli](https://github.com/stefano-sarioli))
+- Allow ShipmentNotice class to be customized [\#17](https://github.com/solidusio-contrib/solidus_shipstation/pull/17) ([cesartalves](https://github.com/cesartalves))
+- Address: infer residential attribute from company [\#16](https://github.com/solidusio-contrib/solidus_shipstation/pull/16) ([nerfologist](https://github.com/nerfologist))
 - Fix pending API sync query returning synced shipments [\#15](https://github.com/solidusio-contrib/solidus_shipstation/pull/15) ([aldesantis](https://github.com/aldesantis))
 - Swallow errors in `Api::SyncShipmentsJob` [\#14](https://github.com/solidusio-contrib/solidus_shipstation/pull/14) ([aldesantis](https://github.com/aldesantis))
 - API sync improvements [\#13](https://github.com/solidusio-contrib/solidus_shipstation/pull/13) ([aldesantis](https://github.com/aldesantis))
