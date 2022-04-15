@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require_relative 'lib/solidus_shipstation/version'
+require_relative 'lib/solidus_backtracs/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'solidus_shipstation'
-  spec.version = SolidusShipstation::VERSION
+  spec.name = 'solidus_backtracs'
+  spec.version = Solidusbacktracs::VERSION
   spec.authors = ['Stephen Puiszis']
   spec.email = 'steve@tablexi.com'
 
-  spec.summary = 'A Solidus extension for integrating the ShipStation API.'
-  spec.homepage = 'https://github.com/solidusio-contrib/solidus_shipstation'
+  spec.summary = 'A Solidus extension for integrating the Backtracs API.'
+  spec.homepage = 'https://github.com/solidusio-contrib/solidus_backtracs'
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_shipstation'
-  spec.metadata['changelog_uri'] = 'https://github.com/solidusio-contrib/solidus_shipstation/blob/master/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_backtracs'
+  spec.metadata['changelog_uri'] = 'https://github.com/solidusio-contrib/solidus_backtracs/blob/master/CHANGELOG.md'
 
   spec.required_ruby_version = Gem::Requirement.new('>= 2.5')
 
