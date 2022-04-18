@@ -1,4 +1,4 @@
-# Solidus ShipStation
+# Solidus ShipStation — Suvie fork
 
 [![CircleCI](https://circleci.com/gh/solidusio-contrib/solidus_shipstation.svg?style=shield)](https://circleci.com/gh/solidusio-contrib/solidus_shipstation)
 [![codecov](https://codecov.io/gh/solidusio-contrib/solidus_shipstation/branch/master/graph/badge.svg)](https://codecov.io/gh/solidusio-contrib/solidus_shipstation)
