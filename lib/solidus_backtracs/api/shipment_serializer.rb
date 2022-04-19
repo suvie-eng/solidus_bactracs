@@ -4,21 +4,22 @@ module SolidusBacktracs
   module Api
     class ShipmentSerializer
 
-      def initialize(shipment:)
+      def initialize(shipment: nil)
         @shipment = shipment
         @order = shipment.order
         @user = shipment.user
         @shipment_notice = shipment.shipment_notice
       end
 
-      def call
+      def call(sguid: sguid)
+
         xml = Builder::XmlMarkup.new 
         xml.instruct!(:xml, :encoding => "UTF-8")
 
         xml.soap(:Envelope, {"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance", "xmlns:xsd" => "http://www.w3.org/2001/XMLSchema", "xmlns:soap" => "http://schemas.xmlsoap.org/soap/envelope/"}) do
           xml.soap :Body do
             xml.CreateNew({"xmlns:xsi" => "http://bactracs.andlor.com/rmaservice"}) do
-              xml.sGuid
+              xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
                 xml.RMATypeName               "W"

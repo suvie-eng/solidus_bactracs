@@ -10,16 +10,40 @@ module SolidusBacktracs
         @username = ENV['BACTRACS_USERNAME']
         @password = ENV['BACTRACS_PASSWORD']
         @api_base = ENV['BACTRACS_API_BASE']
+        @authenticaiton_path = 'https://bactracstest.andlor.com/webservices/user/Authentication.asmx'
       end
 
-      def call
-        url = URI("#{@api_base}/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+      def authenticated_call(method: nil, path: nil, serializer: nil)
+        Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
+          response = self.call(method: :get, path: "/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+        end
 
-        https = Net::HTTP.new(url.host, url.port)
-        https.use_ssl = true
+        sguid = # parse sguid here
 
-        request = Net::HTTP::Get.new(url)
-        response = https.request(request)
+        params = serializer.call(sguid: sguid)
+
+        call(method: :post, path: path, params: params)
+      end
+
+      def call(method: nil, path: nil, params: {}, proxy: nil)
+
+        # HTTP Proxy docs
+        # https://github.com/jnunemaker/httparty/blob/master/lib/httparty.rb
+        response = HTTParty.send(
+          method,
+          URI.join(@api_base, path),
+          body: params.to_json,
+          http_proxy_addr: # Fill out details,
+          basic_auth: {
+            username: @username,
+            password: @password,
+          },
+          headers: {
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+          },
+        )
+
 
         case response.code.to_s
         when /2\d{2}/

@@ -22,16 +22,9 @@ module SolidusBacktracs
       end
 
       def bulk_create_orders(shipments)
-        params = shipments.map do |shipment|
-          shipment_serializer.call(shipment)
-        rescue StandardError => e
-          error_handler.call(e, shipment: shipment)
-          nil
+        shipments.each do |shipment|
+          SolidusBacktracs::Api::SyncShipmentJob.perform_async(shipment.id)
         end.compact
-
-        return if params.empty?
-
-        request_runner.call(:post, '/orders/createorders', params)
       end
     end
   end
