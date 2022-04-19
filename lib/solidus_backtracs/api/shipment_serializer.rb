@@ -20,7 +20,7 @@ module SolidusBacktracs
             xml.CreateNew({"xmlns:xsi" => "http://bactracs.andlor.com/rmaservice"}) do
               xml.sGuid
               xml.NewRMA {
-                xml.RMANumber                 @order.number
+                xml.RMANumber                 @shipment.number
                 xml.RMATypeName               "W"
                 xml.RMASubTypeName            
                 xml.CustomerRef               
@@ -30,7 +30,7 @@ module SolidusBacktracs
                 xml.Ship {
                   xml.Carrier                 @shipment_notice&.carrier
                   xml.ShipMethod              @shipment.shipping_method&.name
-                  xml.ShipDate                @shipment.shipped_at&.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                  xml.ShipDate                
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
                   xml.Ud1                     
@@ -49,18 +49,18 @@ module SolidusBacktracs
                   @shipment.line_items.each do |line|
                     variant = line.variant
                     xml.RMALine {
-                      xml.DFItem                  "S020m"
-                      xml.DFModelNum              "S020M"
-                      xml.DFCategory              variant.product.name
-                      xml.DFCategoryDescription   variant.product.description
+                      xml.DFItem                  variant.name
+                      xml.DFModelNum              variant.sku
+                      xml.DFCategory              
+                      xml.DFCategoryDescription   
                       xml.DFQuantity              line.quantity
                       xml.DFUnitPrice             line.price
-                      xml.DFSerialNumbers         @shipment.number
+                      xml.DFSerialNumbers         
                       xml.Ud1s                    
                       xml.CurrentWarranties       
                       xml.DFComments              
                       xml.DFStatus                @shipment.state
-                      xml.PurchaseDate            line.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                      xml.PurchaseDate            @order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                       xml.ServiceProvider         @shipment_notice&.service
                       xml.WarrantyRepair          
                       xml.RMALineTest             

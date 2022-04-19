@@ -1,50 +1,39 @@
 # frozen_string_literal: true
+require "uri"
+require "net/http"
 
 module SolidusBacktracs
   module Api
     class RequestRunner
-      #TODO
-      API_BASE = 'https://bactracstest.andlor.com'
 
-      attr_reader :username, :password
-
-      class << self
-        def from_config
-          new(
-            username: SolidusBacktracs.config.api_key,
-            password: SolidusBacktracs.config.api_secret,
-          )
-        end
+      def initialize
+        @username = ENV['BACTRACS_USERNAME']
+        @password = ENV['BACTRACS_PASSWORD']
+        @api_base = ENV['BACTRACS_API_BASE']
       end
 
-      def initialize(username:, password:)
-        @username = username
-        @password = password
-      end
+      def call
+        url = URI("#{@api_base}/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
 
-      def call(method, path, params = {})
-        response = HTTParty.send(
-          method,
-          URI.join(API_BASE, path),
-          body: params.to_json,
-          basic_auth: {
-            username: @username,
-            password: @password,
-          },
-          headers: {
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-          },
-        )
+        https = Net::HTTP.new(url.host, url.port)
+        https.use_ssl = true
+
+        request = Net::HTTP::Get.new(url)
+        response = https.request(request)
 
         case response.code.to_s
         when /2\d{2}/
-          response.parsed_response
+          parse_respone(response)
         when '429'
           raise RateLimitedError.from_response(response)
         else
           raise RequestError.from_response(response)
         end
+      end
+
+      def parse_respone(response)
+        doc = Nokogiri::XML(response.body.squish)
+        doc.xpath('//xmlns:AuthenticationResponse//xmlns:Message').inner_text
       end
     end
   end
