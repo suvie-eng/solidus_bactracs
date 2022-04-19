@@ -29,6 +29,8 @@ module SolidusBacktracs
 
         # HTTP Proxy docs
         # https://github.com/jnunemaker/httparty/blob/master/lib/httparty.rb
+        # TODO: Format correctly and fill in HTTP proxy details.
+        # TODO: Allow configuring HTTP proxy in configuration
         response = HTTParty.send(
           method,
           URI.join(@api_base, path),
