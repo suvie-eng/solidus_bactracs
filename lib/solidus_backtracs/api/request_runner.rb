@@ -10,7 +10,6 @@ module SolidusBacktracs
         @username = ENV['BACTRACS_USERNAME']
         @password = ENV['BACTRACS_PASSWORD']
         @api_base = ENV['BACTRACS_API_BASE']
-        @authenticaiton_path = 'https://bactracstest.andlor.com/webservices/user/Authentication.asmx'
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil)
