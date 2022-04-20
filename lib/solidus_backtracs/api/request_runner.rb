@@ -14,14 +14,20 @@ module SolidusBacktracs
 
       def authenticated_call(method: nil, path: nil, serializer: nil)
         Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
-          response = self.call(method: :get, path: "/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+          @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
         end
 
-        sguid = # parse sguid here
+        authenticted = parse_respone(@response, "Result")
 
-        params = serializer.call(sguid: sguid)
+        case authenticted
+        when 'false'
+          raise RequestError.from_response(@response)
+        else
+          sguid = parse_respone(@response, "Message")
+          params = serializer.call(sguid: sguid)
 
-        call(method: :post, path: path, params: params)
+          call(method: :post, path: path, params: params)
+        end
       end
 
       def call(method: nil, path: nil, params: {}, proxy: nil)
@@ -48,7 +54,7 @@ module SolidusBacktracs
 
         case response.code.to_s
         when /2\d{2}/
-          parse_respone(response)
+          response
         when '429'
           raise RateLimitedError.from_response(response)
         else
@@ -56,9 +62,9 @@ module SolidusBacktracs
         end
       end
 
-      def parse_respone(response)
+      def parse_respone(response, type)
         doc = Nokogiri::XML(response.body.squish)
-        doc.xpath('//xmlns:AuthenticationResponse//xmlns:Message').inner_text
+        doc.xpath("//xmlns:AuthenticationResponse//xmlns:#{type}").inner_text
       end
     end
   end

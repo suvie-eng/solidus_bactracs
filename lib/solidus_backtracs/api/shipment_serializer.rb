@@ -18,7 +18,7 @@ module SolidusBacktracs
 
         xml.soap(:Envelope, {"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance", "xmlns:xsd" => "http://www.w3.org/2001/XMLSchema", "xmlns:soap" => "http://schemas.xmlsoap.org/soap/envelope/"}) do
           xml.soap :Body do
-            xml.CreateNew({"xmlns:xsi" => "http://bactracs.andlor.com/rmaservice"}) do
+            xml.CreateNew({"xmlns" => "http://bactracs.andlor.com/rmaservice"}) do
               xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
@@ -31,7 +31,7 @@ module SolidusBacktracs
                 xml.Ship {
                   xml.Carrier                 @shipment_notice&.carrier
                   xml.ShipMethod              @shipment.shipping_method&.name
-                  xml.ShipDate                
+                  xml.ShipDate                @shipment.trackings.last&.est_delivery_date&.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
                   xml.Ud1                     

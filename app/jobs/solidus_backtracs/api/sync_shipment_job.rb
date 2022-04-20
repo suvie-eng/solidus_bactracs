@@ -5,10 +5,9 @@ module SolidusBacktracs
     class SyncShipmentJob < ApplicationJob
       queue_as :default
 
-      def perform(shipment_id)
-        shipment = Spree::Shipment.find(shipment_id)
+      def perform(shipment: nil, error_handler: nil, shipment_serializer: nil)
         serializer = shipment_serializer.new(shipment: shipment)
-        request_runner.authenticated_call(method: :post, path: '/orders/createorders', params: params, serializer: serializer)
+        request_runner.new.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer)
       rescue StandardError => e
         error_handler.call(e, shipment: shipment)
         nil
