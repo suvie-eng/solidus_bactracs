@@ -13,6 +13,10 @@ module SolidusBacktracs
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil)
+        unless @username.present? || @password.present? || @api_base.present?
+          raise "Credentials not defined for Authentication"
+        end 
+
         Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
           @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
         end
@@ -40,7 +44,10 @@ module SolidusBacktracs
           method,
           URI.join(@api_base, path),
           body: params.to_json,
-          http_proxy_addr: # Fill out details,
+          http_proxyaddr: ENV['PROXY_ADDR'],
+          http_proxyport: ENV['PROXY_PORT'],
+          http_proxyuser: ENV['PROXY_USER'],
+          http_proxypass: ENV['PROXY_PASS'],       
           basic_auth: {
             username: @username,
             password: @password,
