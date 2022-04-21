@@ -9,10 +9,23 @@ SolidusBacktracs.configure do |config|
   # want to charge your customers at the time of shipment.
   config.capture_at_notification = false
 
+  ## API Configuration
+  config.api_base = ENV['BACKTRACS_API_BASE'] || 'https://bactracstest.andlor.com'
+
   # Backtracs expects the endpoint to be protected by HTTP Basic Auth.
   # Set the username and password you desire for Backtracs to use.
-  config.username = "smoking_jay_cutler"
-  config.password = "my-awesome-password"
+  config.webhook_username = "smoking_jay_cutler"
+  config.webhook_password = "my-awesome-password"
+
+  ## Proxy
+  config.proxy_address = ENV['PROXY_ADDRESS']
+  config.proxy_port = ENV['PROXY_PORT']
+  config.proxy_username = ENV['PROXY_USER']
+  config.proxy_password = ENV['PROXY_PASS']
+
+  ## Authentication Service Credentials
+  config.authentication_username = "red_blue_jay"
+  config.authentication_password = "my-secret-other-password"
 
   ####### XML integration
   # Only uncomment these lines if you're going to use the XML integration.

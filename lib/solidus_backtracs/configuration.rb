@@ -3,8 +3,8 @@
 module SolidusBacktracs
   class Configuration
     attr_accessor(
-      :username,
-      :password,
+      :webhook_username,
+      :webhook_password,
       :weight_units,
       :ssl_encrypted,
       :capture_at_notification,
@@ -16,7 +16,14 @@ module SolidusBacktracs
       :api_secret,
       :api_shipment_matcher,
       :error_handler,
-      :shipment_notice_class
+      :shipment_notice_class,
+      :authentication_username,
+      :authentication_password,
+      :api_base, 
+      :proxy_address,
+      :proxy_port,
+      :proxy_username,
+      :proxy_password
     )
 
     def initialize

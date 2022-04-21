@@ -4,7 +4,7 @@ require_relative 'lib/solidus_backtracs/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'solidus_backtracs'
-  spec.version = Solidusbacktracs::VERSION
+  spec.version = SolidusBacktracs::VERSION
   spec.authors = ['Stephen Puiszis']
   spec.email = 'steve@tablexi.com'
 

@@ -11,7 +11,7 @@ module SolidusBacktracs
         @shipment_notice = shipment.shipment_notice
       end
 
-      def call(sguid: sguid)
+      def call(sguid: nil)
 
         xml = Builder::XmlMarkup.new 
         xml.instruct!(:xml, :encoding => "UTF-8")

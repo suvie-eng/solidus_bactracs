@@ -7,9 +7,9 @@ module SolidusBacktracs
     class RequestRunner
 
       def initialize
-        @username = ENV['BACTRACS_USERNAME']
-        @password = ENV['BACTRACS_PASSWORD']
-        @api_base = ENV['BACTRACS_API_BASE']
+        @username = SolidusBacktracs.configuration.authentication_username
+        @password = SolidusBacktracs.configuration.authentication_password
+        @api_base = SolidusBacktracs.configuration.api_base
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil)
@@ -27,7 +27,7 @@ module SolidusBacktracs
         when 'false'
           raise RequestError.from_response(@response)
         else
-          sguid = parse_respone(@response, "Message")
+          sguid = parse_response(@response, "Message")
           params = serializer.call(sguid: sguid)
 
           call(method: :post, path: path, params: params)
@@ -35,29 +35,19 @@ module SolidusBacktracs
       end
 
       def call(method: nil, path: nil, params: {}, proxy: nil)
-
-        # HTTP Proxy docs
-        # https://github.com/jnunemaker/httparty/blob/master/lib/httparty.rb
-        # TODO: Format correctly and fill in HTTP proxy details.
-        # TODO: Allow configuring HTTP proxy in configuration
         response = HTTParty.send(
           method,
           URI.join(@api_base, path),
           body: params.to_json,
-          http_proxyaddr: ENV['PROXY_ADDR'],
-          http_proxyport: ENV['PROXY_PORT'],
-          http_proxyuser: ENV['PROXY_USER'],
-          http_proxypass: ENV['PROXY_PASS'],       
-          basic_auth: {
-            username: @username,
-            password: @password,
-          },
+          http_proxyaddr: SolidusBacktracs.configuration.proxy_address,
+          http_proxyport: SolidusBacktracs.configuration.proxy_port,
+          http_proxyuser: SolidusBacktracs.configuration.proxy_username,
+          http_proxypass: SolidusBacktracs.configuration.proxy_password,       
           headers: {
             'Content-Type' => 'application/xml',
             'Accept' => 'application/xml',
           },
         )
-
 
         case response.code.to_s
         when /2\d{2}/
