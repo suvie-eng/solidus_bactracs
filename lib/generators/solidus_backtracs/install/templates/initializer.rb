@@ -63,18 +63,18 @@ SolidusBacktracs.configure do |config|
   # Number of shipments to import into Backtracs at once.
   # If unsure, leave this set to 100, which is the maximum
   # number of shipments that can be imported at once.
-  # config.api_batch_size = 100
+  config.api_batch_size = 100
 
   # Period of time after which the integration will "drop" shipments and stop
   # trying to create/update them. This prevents the API from retrying indefinitely
   # in case an error prevents some shipments from being created/updated.
-  # config.api_sync_threshold = 7.days
+  config.api_sync_threshold = 7.days
 
   # Error handler used by the API integration for certain non-critical errors (e.g.
   # a failure when serializing a shipment from a batch). This should be a proc that
   # accepts an exception and a context hash. Popular options for error handling are
   # logging or sending the error to an error tracking tool such as Sentry.
-  # config.error_handler = -> (error, context = {}) {
-  #   Sentry.capture_exception(error, extra: context)
-  # }
+  config.error_handler = -> (error, context = {}) {
+    Sentry.capture_exception(error, extra: context)
+  }
 end

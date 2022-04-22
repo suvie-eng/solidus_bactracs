@@ -6,7 +6,7 @@ module SolidusBacktracs
       class << self
         def from_config
           new(
-            request_runner: RequestRunner.from_config,
+            request_runner: RequestRunner.new,
             error_handler: SolidusBacktracs.config.error_handler,
             shipment_serializer: SolidusBacktracs.config.api_shipment_serializer,
           )
@@ -24,7 +24,7 @@ module SolidusBacktracs
       def bulk_create_orders(shipments)
         shipments.each do |shipment|
           SolidusBacktracs::Api::SyncShipmentJob.perform_async(
-            shipment: shipment,
+            shipment: shipment.id,
             error_handler: @error_handler,
             shipment_serializer: @shipment_serializer
           )
