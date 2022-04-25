@@ -33,17 +33,20 @@ module SolidusBacktracs
       end
 
       def call(method: nil, path: nil, params: {}, proxy: nil)
+        doc = {}
+        if params.present?
+          doc = Nokogiri::XML(params.to_s)
+        end
         response = HTTParty.send(
           method,
           URI.join(@api_base, path),
-          body: params.to_json,
+          body: doc.to_xml,
           http_proxyaddr: SolidusBacktracs.configuration.proxy_address,
           http_proxyport: SolidusBacktracs.configuration.proxy_port,
           http_proxyuser: SolidusBacktracs.configuration.proxy_username,
           http_proxypass: SolidusBacktracs.configuration.proxy_password,
           headers: {
-            'Content-Type' => 'application/xml',
-            'Accept' => 'application/xml',
+            'Content-Type' => 'text/xml',
           },
         )
 
