@@ -4,14 +4,14 @@ module SolidusBacktracs
   module Api
     class ShipmentSerializer
 
-      def initialize(shipment: nil)
+      def initialize(shipment:)
         @shipment = shipment
-        @order = shipment.order
-        @user = shipment.user
-        @shipment_notice = shipment.shipment_notice
       end
 
       def call(sguid: nil)
+        order = @shipment.order
+        user = @shipment.user
+        shipment_notice = @shipment.shipment_notice
 
         xml = Builder::XmlMarkup.new 
         xml.instruct!(:xml, :encoding => "UTF-8")
@@ -29,7 +29,7 @@ module SolidusBacktracs
                 xml.InboundTrackingNumber     @shipment.tracking
 
                 xml.Ship {
-                  xml.Carrier                 @shipment_notice&.carrier
+                  xml.Carrier                 shipment_notice&.carrier
                   xml.ShipMethod              @shipment.shipping_method&.name
                   xml.ShipDate                @shipment.trackings.last&.est_delivery_date&.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
@@ -37,13 +37,13 @@ module SolidusBacktracs
                   xml.Ud1                     
                 }
                 xml.Customer {
-                  SolidusBacktracs::ExportHelper.backtracs_address(xml, @order, :ship)
-                  SolidusBacktracs::ExportHelper.backtracs_address(xml, @order, :bill)
+                  SolidusBacktracs::ExportHelper.backtracs_address(xml, order, :ship)
+                  SolidusBacktracs::ExportHelper.backtracs_address(xml, order, :bill)
                 }
                 xml.Rep {
                   xml.Code                    
-                  xml.Name                    @user.full_name
-                  xml.Email                   @user.email
+                  xml.Name                    user.full_name
+                  xml.Email                   user.email
                 }        
 
                 xml.RMALines {
@@ -61,8 +61,8 @@ module SolidusBacktracs
                       xml.CurrentWarranties       
                       xml.DFComments              
                       xml.DFStatus                @shipment.state
-                      xml.PurchaseDate            @order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
-                      xml.ServiceProvider         @shipment_notice&.service
+                      xml.PurchaseDate            order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                      xml.ServiceProvider         shipment_notice&.service
                       xml.WarrantyRepair          
                       xml.RMALineTest             
                       xml.InboundShipWeight       variant.weight.to_f
@@ -71,7 +71,7 @@ module SolidusBacktracs
                   end
                 }
 
-                xml.OrderDate     @order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                xml.OrderDate     order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                 xml.CreateDate    @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                 xml.Status        "OPEN"
                 xml.RMAId         @shipment.id

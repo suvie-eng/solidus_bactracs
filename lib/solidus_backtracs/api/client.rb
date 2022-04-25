@@ -23,10 +23,11 @@ module SolidusBacktracs
 
       def bulk_create_orders(shipments)
         shipments.each do |shipment|
-          SolidusBacktracs::Api::SyncShipmentJob.perform_async(
-            shipment: shipment.id,
+          SolidusBacktracs::Api::SyncShipmentJob.perform_now(
+            shipment_id: shipment.id,
             error_handler: @error_handler,
-            shipment_serializer: @shipment_serializer
+            shipment_serializer: @shipment_serializer,
+            request_runner: @request_runner
           )
         end.compact
       end

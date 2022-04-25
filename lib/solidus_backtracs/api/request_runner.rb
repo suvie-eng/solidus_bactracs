@@ -12,7 +12,7 @@ module SolidusBacktracs
         @api_base = SolidusBacktracs.configuration.api_base
       end
 
-      def authenticated_call(method: nil, path: nil, serializer: nil)
+      def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil)
         unless @username.present? || @password.present? || @api_base.present?
           raise "Credentials not defined for Authentication"
         end 
@@ -28,7 +28,7 @@ module SolidusBacktracs
           raise RequestError.from_response(@response)
         else
           sguid = parse_response(@response, "Message")
-          params = serializer.call(sguid: sguid)
+          params = serializer.call(shipment, sguid)
 
           call(method: :post, path: path, params: params)
         end
