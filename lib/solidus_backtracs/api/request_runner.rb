@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "uri"
-require "net/http"
 
 module SolidusBacktracs
   module Api
@@ -21,7 +19,7 @@ module SolidusBacktracs
           @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
         end
 
-        authenticted = parse_respone(@response, "Result")
+        authenticted = parse_response(@response, "Result")
 
         case authenticted
         when 'false'
@@ -42,7 +40,7 @@ module SolidusBacktracs
           http_proxyaddr: SolidusBacktracs.configuration.proxy_address,
           http_proxyport: SolidusBacktracs.configuration.proxy_port,
           http_proxyuser: SolidusBacktracs.configuration.proxy_username,
-          http_proxypass: SolidusBacktracs.configuration.proxy_password,       
+          http_proxypass: SolidusBacktracs.configuration.proxy_password,
           headers: {
             'Content-Type' => 'application/xml',
             'Accept' => 'application/xml',
@@ -59,7 +57,7 @@ module SolidusBacktracs
         end
       end
 
-      def parse_respone(response, type)
+      def parse_response(response, type)
         doc = Nokogiri::XML(response.body.squish)
         doc.xpath("//xmlns:AuthenticationResponse//xmlns:#{type}").inner_text
       end
