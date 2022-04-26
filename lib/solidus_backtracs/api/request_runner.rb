@@ -28,7 +28,8 @@ module SolidusBacktracs
           sguid = parse_response(@response, "Message")
           params = serializer.call(shipment, sguid)
 
-          call(method: :post, path: path, params: params)
+          rma_response = call(method: :post, path: path, params: params)
+          sync_shipment(shipment, rma_response)
         end
       end
 
@@ -63,6 +64,23 @@ module SolidusBacktracs
       def parse_response(response, type)
         doc = Nokogiri::XML(response.body.squish)
         doc.xpath("//xmlns:AuthenticationResponse//xmlns:#{type}").inner_text
+      end
+
+      def sync_shipment(shipment, response)
+        result = response.dig("Envelope", "Body", "CreateNewResponse", "CreateNewResult", "Result")
+        if result == 'true'
+          shipment.update_column(:backtracs_synced_at, Time.zone.now)
+
+          ::Spree::Event.fire(
+            'solidus_backtracs.api.sync_completed',
+            shipment: shipment
+          )
+        else
+          ::Spree::Event.fire(
+            'solidus_backtracs.api.sync_failed',
+            shipment: shipment
+          )
+        end
       end
     end
   end

@@ -39,33 +39,6 @@ module SolidusBacktracs
 
           raise e
         end
-
-        return unless response
-
-        response['results'].each do |backtracs_order|
-          shipment = shipment_matcher.call(backtracs_order, shipments)
-
-          unless backtracs_order['success']
-            ::Spree::Event.fire(
-              'solidus_backtracs.api.sync_failed',
-              shipment: shipment,
-              payload: backtracs_order,
-            )
-
-            next
-          end
-
-          shipment.update_columns(
-            backtracs_synced_at: Time.zone.now,
-            backtracs_order_id: backtracs_order['orderId'],
-          )
-
-          ::Spree::Event.fire(
-            'solidus_backtracs.api.sync_completed',
-            shipment: shipment,
-            payload: backtracs_order,
-          )
-        end
       end
     end
   end

@@ -40,7 +40,6 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
             build_batch_syncer(client: api_client).call([shipment])
 
             expect(shipment).to have_received(:update_columns).with(
-              backtracs_order_id: '123456',
               backtracs_synced_at: Time.zone.now,
             )
           end
