@@ -31,7 +31,7 @@ module SolidusBacktracs
                 xml.Ship {
                   xml.Carrier                 shipment_notice&.carrier
                   xml.ShipMethod              @shipment.shipping_method&.name
-                  xml.ShipDate                @shipment.trackings.last&.est_delivery_date&.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                  xml.ShipDate                @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
                   xml.Ud1                     
@@ -50,8 +50,8 @@ module SolidusBacktracs
                   @shipment.line_items.each do |line|
                     variant = line.variant
                     xml.RMALine {
-                      xml.DFItem                  variant.name
-                      xml.DFModelNum              variant.sku
+                      xml.DFItem                  Rails.env.production? ? variant.name : "S020M"
+                      xml.DFModelNum              Rails.env.production? ? variant.sku : "S020M"
                       xml.DFCategory              
                       xml.DFCategoryDescription   
                       xml.DFQuantity              line.quantity
@@ -66,7 +66,7 @@ module SolidusBacktracs
                       xml.WarrantyRepair          
                       xml.RMALineTest             
                       xml.InboundShipWeight       variant.weight.to_f
-                      xml.RPLocation              
+                      xml.RPLocation              "FG-NEW"
                     }
                   end
                 }
