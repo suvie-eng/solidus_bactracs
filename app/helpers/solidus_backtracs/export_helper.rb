@@ -42,8 +42,8 @@ module SolidusBacktracs
         xml.City          address.city
         xml.State         address.state ? address.state.abbr : address.state_name
         xml.Zip           address.zipcode
-        xml.Phone         address.phone.present ? address.phone : "000-000-0000"
-        xml.PhoneAlt      address.phone.present ? address.phone : "000-000-0000"
+        xml.Phone         address.phone.present? ? address.phone : "000-000-0000"
+        xml.PhoneAlt      address.phone.present? ? address.phone : "000-000-0000"
         xml.Country       address.country.iso
       }
     end    

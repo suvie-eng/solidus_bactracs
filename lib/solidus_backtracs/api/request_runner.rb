@@ -21,8 +21,7 @@ module SolidusBacktracs
 
         authenticted = parse_response(@response, "Result")
 
-        case authenticted
-        when 'false'
+        if authenticted == 'false'
           raise RequestError.from_response(@response)
         else
           sguid = parse_response(@response, "Message")
