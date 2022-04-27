@@ -19,12 +19,12 @@ module SolidusBacktracs
           @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
         end
 
-        authenticted = parse_response(@response, "Result")
+        authenticted = parse_authentication_response(@response, "Result")
 
         if authenticted == 'false'
           raise RequestError.from_response(@response)
         else
-          sguid = parse_response(@response, "Message")
+          sguid = parse_authentication_response(@response, "Message")
           params = serializer.call(shipment, sguid)
 
           rma_response = call(method: :post, path: path, params: params)
@@ -60,9 +60,8 @@ module SolidusBacktracs
         end
       end
 
-      def parse_response(response, type)
-        doc = Nokogiri::XML(response.body.squish)
-        doc.xpath("//xmlns:AuthenticationResponse//xmlns:#{type}").inner_text
+      def parse_authentication_response(response, type)
+        response.dig("AuthenticationResponse", type)
       end
 
       def sync_shipment(shipment, response)

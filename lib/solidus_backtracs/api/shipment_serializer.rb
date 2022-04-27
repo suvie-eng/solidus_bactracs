@@ -29,8 +29,8 @@ module SolidusBacktracs
                 xml.InboundTrackingNumber     @shipment.tracking
 
                 xml.Ship {
-                  xml.Carrier                 shipment_notice&.carrier
-                  xml.ShipMethod              @shipment.shipping_method&.name
+                  xml.Carrier                 "FedExGrnd"
+                  xml.ShipMethod              "GROUND"
                   xml.ShipDate                @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
@@ -50,8 +50,8 @@ module SolidusBacktracs
                   @shipment.line_items.each do |line|
                     variant = line.variant
                     xml.RMALine {
-                      xml.DFItem                  Rails.env.production? ? variant.name : "S020M"
-                      xml.DFModelNum              Rails.env.production? ? variant.sku : "S020M"
+                      xml.DFItem                  Rails.env.production? ? "SUVIE201" : "S020M"
+                      xml.DFModelNum              Rails.env.production? ? "SUVIE201" : "S020M"
                       xml.DFCategory              
                       xml.DFCategoryDescription   
                       xml.DFQuantity              line.quantity
