@@ -29,15 +29,13 @@ SolidusBacktracs.configure do |config|
 
 
   ## Shipment Serializer Configuration
-  config.sku_map = {
-                  "SUVIE201R" => "SUVIE201",
-                  "SUVIE201RB" => "SUVIE201"
-                  }
+  config.sku_map = {}
   config.default_rma_type = "W"
   config.default_carrier = "FedExGrnd"
   config.default_ship_method = "GROUND"  
   config.default_status = "OPEN"
   config.default_rp_location = "FG-NEW"
+  config.shippable_skus = []
 
   ####### XML integration
   # Only uncomment these lines if you're going to use the XML integration.
