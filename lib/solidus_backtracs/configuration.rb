@@ -29,7 +29,8 @@ module SolidusBacktracs
       :default_rp_location,
       :default_status,
       :sku_map,
-      :default_rma_type
+      :default_rma_type,
+      :shippable_skus
     )
 
     def initialize
