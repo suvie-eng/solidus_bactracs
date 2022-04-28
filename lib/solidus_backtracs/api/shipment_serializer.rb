@@ -6,6 +6,7 @@ module SolidusBacktracs
 
       def initialize(shipment:)
         @shipment = shipment
+        @config = @config
       end
 
       def call(sguid: nil)
@@ -22,15 +23,15 @@ module SolidusBacktracs
               xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
-                xml.RMATypeName               SolidusBacktracs.config.default_rma_type
+                xml.RMATypeName               @config.default_rma_type
                 xml.RMASubTypeName            
                 xml.CustomerRef               
                 xml.InboundShippingPriority   
                 xml.InboundTrackingNumber     @shipment.tracking
 
                 xml.Ship {
-                  xml.Carrier                 SolidusBacktracs.config.default_carrier
-                  xml.ShipMethod              SolidusBacktracs.config.default_ship_method
+                  xml.Carrier                 @config.default_carrier
+                  xml.ShipMethod              @config.default_ship_method
                   xml.ShipDate                @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
@@ -66,14 +67,14 @@ module SolidusBacktracs
                       xml.WarrantyRepair          
                       xml.RMALineTest             
                       xml.InboundShipWeight       variant.weight.to_f
-                      xml.RPLocation              SolidusBacktracs.config.default_rp_location
+                      xml.RPLocation              @config.default_rp_location
                     }
                   end
                 }
 
                 xml.OrderDate     order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
                 xml.CreateDate    @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
-                xml.Status        SolidusBacktracs.config.default_status
+                xml.Status        @config.default_status
                 xml.RMAId         @shipment.id
                 xml.ClientGuid
               }
@@ -84,7 +85,7 @@ module SolidusBacktracs
       end
 
       def find_sku_variant(variant)
-        SolidusBacktracs.config.sku_map[variant.sku].present? ? SolidusBacktracs.config.sku_map[variant.sku] : variant.sku
+        @config.sku_map[variant.sku].present? ? @config.sku_map[variant.sku] : variant.sku
       end
     end
   end
