@@ -6,13 +6,7 @@ module SolidusBacktracs
       queue_as :default
 
       def perform
-        shipments = SolidusBacktracs::Shipment::PendingApiSyncQuery.apply(
-          ::Spree::Shipment
-            .joins(inventory_units: [:variant])
-            .where("spree_variants.sku" => shippable_skus)
-            .where.not(shipstation_order_id: nil)
-            .distinct
-          )
+        shipments = query_shipments
 
         shipments.find_in_batches(batch_size: SolidusBacktracs.config.api_batch_size) do |batch|
           SyncShipmentsJob.perform_later(batch.to_a)
@@ -24,6 +18,11 @@ module SolidusBacktracs
       def shippable_skus
         SolidusBacktracs.config.shippable_skus.present? ? SolidusBacktracs.config.shippable_skus : Spree::Variant.pluck(:sku)
       end
+
+      def query_shipments
+        shipments = SolidusBacktracs::Shipment::PendingApiSyncQuery.apply(::Spree::Shipment.joins(inventory_units: [:variant]).where("spree_variants.sku" => SolidusBacktracs.config.shippable_skus).where("spree_shipments.state" => :ready).where.not(shipstation_order_id: nil).distinct)
+      end
     end
   end
 end
+
