@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "uri"
+require "net/http"
 
 module SolidusBacktracs
   module Api
@@ -32,7 +34,7 @@ module SolidusBacktracs
         end
       end
 
-      def call(method: nil, path: nil, params: {}, proxy: nil)
+      def call(method: nil, path: nil, params: {})
         doc = {}
         if params.present?
           doc = Nokogiri::XML(params.to_s)
