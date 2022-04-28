@@ -6,7 +6,7 @@ module SolidusBacktracs
 
       def initialize(shipment:)
         @shipment = shipment
-        @config = @config
+        @config = SolidusBacktracs.config
       end
 
       def call(sguid: nil)

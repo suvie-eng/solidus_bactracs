@@ -9,7 +9,7 @@ module SolidusBacktracs
         shipments = SolidusBacktracs::Shipment::PendingApiSyncQuery.apply(
           ::Spree::Shipment
             .joins(inventory_units: [:variant])
-            .where("spree_variants.sku" => ["SUVIE201R", "SUVIE201RB"])
+            .where("spree_variants.sku" => shippable_skus)
             .where.not(shipstation_order_id: nil)
             .distinct
           )
@@ -19,6 +19,10 @@ module SolidusBacktracs
         end
       rescue StandardError => e
         SolidusBacktracs.config.error_handler.call(e, {})
+      end
+
+      def shippable_skus
+        SolidusBacktracs.config.shippable_skus.present? ? SolidusBacktracs.config.shippable_skus : Spree::Variant.pluck(:sku)
       end
     end
   end
