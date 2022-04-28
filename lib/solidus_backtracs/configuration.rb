@@ -23,7 +23,13 @@ module SolidusBacktracs
       :proxy_address,
       :proxy_port,
       :proxy_username,
-      :proxy_password
+      :proxy_password,
+      :default_carrier,
+      :default_ship_method,
+      :default_rp_location,
+      :default_status,
+      :sku_map,
+      :default_rma_type
     )
 
     def initialize
