@@ -12,25 +12,35 @@ module SolidusBacktracs
         @api_base = SolidusBacktracs.configuration.api_base
       end
 
-      def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil)
-        unless @username.present? || @password.present? || @api_base.present?
-          raise "Credentials not defined for Authentication"
-        end 
+      def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
+        if count <= 3
+          unless @username.present? || @password.present? || @api_base.present?
+            raise "Credentials not defined for Authentication"
+          end 
 
-        Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
-          @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
-        end
+          Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
+            @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+          end
 
-        authenticted = parse_authentication_response(@response, "Result")
+          authenticted = parse_authentication_response(@response, "Result")
 
-        if authenticted == 'false'
-          raise RequestError.from_response(@response)
+          if authenticted == 'false'
+            clear_cache
+            raise "User Not Authenticated"
+          else
+            sguid = parse_authentication_response(@response, "Message")
+            params = serializer.call(shipment, sguid)
+
+            rma_response = call(method: :post, path: path, params: params)
+            unless parse_rma_creation_response(rma_response) == 'true'
+              clear_cache
+              count += 1
+              self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
+            end
+            shipment_synced(shipment)
+          end
         else
-          sguid = parse_authentication_response(@response, "Message")
-          params = serializer.call(shipment, sguid)
-
-          rma_response = call(method: :post, path: path, params: params)
-          sync_shipment(shipment, rma_response)
+          shipment_sync_failed(shipment)
         end
       end
 
@@ -62,26 +72,34 @@ module SolidusBacktracs
         end
       end
 
+      def clear_cache
+        Rails.cache.delete('backtracks_cache_key')
+        @response = nil
+      end
+
       def parse_authentication_response(response, type)
         response.dig("AuthenticationResponse", type)
       end
 
-      def sync_shipment(shipment, response)
-        result = response.dig("Envelope", "Body", "CreateNewResponse", "CreateNewResult", "Result")
-        if result == 'true'
-          shipment.update_column(:backtracs_synced_at, Time.zone.now)
-
-          ::Spree::Event.fire(
-            'solidus_backtracs.api.sync_completed',
-            shipment: shipment
-          )
-        else
-          ::Spree::Event.fire(
-            'solidus_backtracs.api.sync_failed',
-            shipment: shipment
-          )
-        end
+      def parse_rma_creation_response(response)
+        response.dig("Envelope", "Body", "CreateNewResponse", "CreateNewResult", "Result")
       end
+
+      def shipment_synced(shipment)
+        shipment.update_column(:backtracs_synced_at, Time.zone.now)
+
+        ::Spree::Event.fire(
+          'solidus_backtracs.api.sync_completed',
+          shipment: shipment
+        )
+      end
+
+      def shipment_sync_failed(shipment)
+        ::Spree::Event.fire(
+          'solidus_backtracs.api.sync_failed',
+          shipment: shipment
+        )
+      end      
     end
   end
 end
