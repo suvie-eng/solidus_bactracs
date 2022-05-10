@@ -28,6 +28,7 @@ module SolidusBacktracs
       :default_ship_method,
       :default_rp_location,
       :default_status,
+      :default_property_name,
       :sku_map,
       :default_rma_type,
       :shippable_skus
