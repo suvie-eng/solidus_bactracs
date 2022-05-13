@@ -36,6 +36,7 @@ SolidusBacktracs.configure do |config|
   config.default_status = "OPEN"
   config.default_rp_location = "FG-NEW"
   config.shippable_skus = []
+  config.default_property_name = "XYZ"
 
   ####### XML integration
   # Only uncomment these lines if you're going to use the XML integration.
