@@ -5,8 +5,8 @@ require_relative 'lib/solidus_backtracs/version'
 Gem::Specification.new do |spec|
   spec.name = 'solidus_backtracs'
   spec.version = SolidusBacktracs::VERSION
-  spec.authors = ['Stephen Puiszis']
-  spec.email = 'steve@tablexi.com'
+  spec.authors = ['Zeryab Ali']
+  spec.email = 'zkhan@suvie.com'
 
   spec.summary = 'A Solidus extension for integrating the Backtracs API.'
   spec.homepage = 'https://github.com/solidusio-contrib/solidus_backtracs'
