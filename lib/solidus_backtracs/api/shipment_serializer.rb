@@ -50,7 +50,7 @@ module SolidusBacktracs
                 xml.RMALines {
                   @shipment.line_items.each do |line|
                     product = line.product
-                    if product.assembly?
+                    if product.respond_to?(:assembly?) && product.assembly?
                       product.parts.each do |part|
                         next unless part.product.product_properties.where(property_id: @property_id).present?
                         line_items_xml(xml: xml, line_item: line, variant: part, order: order)
