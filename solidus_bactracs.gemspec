@@ -9,12 +9,12 @@ Gem::Specification.new do |spec|
   spec.email = 'zkhan@suvie.com'
 
   spec.summary = 'A Solidus extension for integrating the Backtracs API.'
-  spec.homepage = 'https://github.com/solidusio-contrib/solidus_backtracs'
+  spec.homepage = 'https://github.com/suvie-eng/solidus_backtracs'
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/solidusio-contrib/solidus_backtracs'
-  spec.metadata['changelog_uri'] = 'https://github.com/solidusio-contrib/solidus_backtracs/blob/master/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/suvie-eng/solidus_backtracs/'
+  spec.metadata['changelog_uri'] = 'https://github.com/suvie-eng/solidus_backtracs/blob/master/CHANGELOG.md'
 
   spec.required_ruby_version = Gem::Requirement.new('>= 2.5')
 
