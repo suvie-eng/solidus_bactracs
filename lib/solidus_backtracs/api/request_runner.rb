@@ -10,19 +10,23 @@ module SolidusBacktracs
         @username = SolidusBacktracs.configuration.authentication_username
         @password = SolidusBacktracs.configuration.authentication_password
         @api_base = SolidusBacktracs.configuration.api_base
+        @retries  = SolidusBacktracs.configuration.api_retries || 3
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
-        if count <= 3
+        if count <= @retries
           unless @username.present? || @password.present? || @api_base.present?
             raise "Credentials not defined for Authentication"
-          end 
-
-          Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour) do
-            @response = self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
           end
 
+          @response = Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour, skip_nil: true) do
+            self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+          end
+
+          raise RequestError.from_response(@response) unless @response # just try again for @retries?
           authenticted = parse_authentication_response(@response, "Result")
+          raise RequestError.from_response(@response) if authenticted == "false"
+          sguid = parse_authentication_response(@response, "Message")
 
           if authenticted == 'false'
             clear_cache
@@ -99,7 +103,7 @@ module SolidusBacktracs
           'solidus_backtracs.api.sync_failed',
           shipment: shipment
         )
-      end      
+      end
     end
   end
 end
