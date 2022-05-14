@@ -11,6 +11,7 @@ SolidusBacktracs.configure do |config|
 
   ## API Configuration
   config.api_base = ENV['BACKTRACS_API_BASE'] || 'https://bactracstest.andlor.com'
+  config.api_retries = ENV['BACKTRACS_API_RETRIES'] || 3
 
   # Backtracs expects the endpoint to be protected by HTTP Basic Auth.
   # Set the username and password you desire for Backtracs to use.
@@ -32,7 +33,7 @@ SolidusBacktracs.configure do |config|
   config.sku_map = {}
   config.default_rma_type = "W"
   config.default_carrier = "FedExGrnd"
-  config.default_ship_method = "GROUND"  
+  config.default_ship_method = "GROUND"
   config.default_status = "OPEN"
   config.default_rp_location = "FG-NEW"
   config.shippable_skus = []

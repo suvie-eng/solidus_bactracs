@@ -10,7 +10,7 @@ module SolidusBacktracs
         @username = SolidusBacktracs.configuration.authentication_username
         @password = SolidusBacktracs.configuration.authentication_password
         @api_base = SolidusBacktracs.configuration.api_base
-        @retries  = SolidusBacktracs.configuration.api_retries || 3
+        @retries  = SolidusBacktracs.configuration.api_retries
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
