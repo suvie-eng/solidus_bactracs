@@ -19,15 +19,15 @@ RSpec.describe SolidusBacktracs::Shipment::PendingApiSyncQuery do
         stub_configuration(api_sync_threshold: 10.minutes)
         shipment = create(:order_ready_to_ship).shipments.first.tap do |s|
           s.order.update_columns(updated_at: 7.minutes.ago)
-          s.update_columns(shipstation_synced_at: 8.minutes.ago)
+          s.update_columns(backtracs_synced_at: 8.minutes.ago)
         end
         create(:order_ready_to_ship).shipments.first.tap do |s|
           s.order.update_columns(updated_at: 9.minutes.ago)
-          s.update_columns(shipstation_synced_at: 8.minutes.ago)
+          s.update_columns(backtracs_synced_at: 8.minutes.ago)
         end
         create(:order_ready_to_ship).shipments.first.tap do |s|
           s.order.update_columns(updated_at: 11.minutes.ago)
-          s.update_columns(shipstation_synced_at: 10.minutes.ago)
+          s.update_columns(backtracs_synced_at: 10.minutes.ago)
         end
 
         expect(described_class.apply(Spree::Shipment.all)).to match_array([shipment])
