@@ -20,7 +20,14 @@ module SolidusBacktracs
       end
 
       def query_shipments
-        shipments = SolidusBacktracs::Shipment::PendingApiSyncQuery.apply(::Spree::Shipment.joins(inventory_units: [:variant]).where("spree_variants.sku" => SolidusBacktracs.config.shippable_skus).where("spree_shipments.state" => :ready).where.not(shipstation_order_id: nil).distinct)
+        shipments = SolidusBacktracs::Shipment::PendingApiSyncQuery.apply(
+          ::Spree::Shipment
+            .joins(inventory_units: [:variant])
+            .where("spree_variants.sku" => SolidusBacktracs.config.shippable_skus)
+            .where("spree_shipments.state" => :ready)
+            .where(backtracs_synced_at: nil)
+            .distinct
+        )
       end
     end
   end
