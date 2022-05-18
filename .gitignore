@@ -18,3 +18,5 @@ spec/examples.txt
 .rvmrc
 .ruby-version
 .ruby-gemset
+.tool-versions
+TAGS
