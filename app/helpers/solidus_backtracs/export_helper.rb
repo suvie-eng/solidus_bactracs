@@ -30,23 +30,31 @@ module SolidusBacktracs
     end
 
     def self.backtracs_address(xml, order, type)
-      name = "#{type.to_s.titleize}To"
-      address = order.send("#{type}_address")
+      if type.present?
+        name = "#{type.to_s.titleize}To"
+        address = order.send("#{type}_address")
 
-      xml.__send__(name) {
-        xml.CompanyName   address.company ? address.company : address.name
-        xml.Contact       address.name
-        xml.ContactEmail  order.email
-        xml.Address1      address.address1
-        xml.Address2      address.address2
-        xml.City          address.city
-        xml.State         address.state ? address.state.abbr : address.state_name
-        xml.Zip           address.zipcode
-        xml.Phone         address.phone.present? ? address.phone : "000-000-0000"
-        xml.PhoneAlt      address.phone.present? ? address.phone : "000-000-0000"
-        xml.Country       address.country.iso
-      }
-    end    
+        xml.__send__(name) {
+          xml.CompanyName   address.company ? address.company : address.name
+          xml.Contact       address.name
+          xml.ContactEmail  order.email
+          xml.Address1      address.address1
+          xml.Address2      address.address2
+          xml.City          address.city
+          xml.State         address.state ? address.state.abbr : address.state_name
+          xml.Zip           address.zipcode
+          xml.Phone         address.phone.present? ? address.phone : "000-000-0000"
+          xml.PhoneAlt      address.phone.present? ? address.phone : "000-000-0000"
+          xml.Country       address.country.iso
+        }
+      end
+    else
+      Rails.logger.info {
+        message: 'missing address type',
+        order: order.id,
+        type: type
+      }.to_s
+    end
     # rubocop:enable all
   end
 end
