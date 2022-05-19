@@ -47,14 +47,13 @@ module SolidusBacktracs
           xml.PhoneAlt      address.phone.present? ? address.phone : "000-000-0000"
           xml.Country       address.country.iso
         }
+      else
+        Rails.logger.info {
+          message: 'missing address type',
+          order: order.id,
+          type: type
+        }.to_s
       end
-    else
-      Rails.logger.info {
-        message: 'missing address type',
-        order: order.id,
-        type: type
-      }.to_s
-    end
     # rubocop:enable all
   end
 end
