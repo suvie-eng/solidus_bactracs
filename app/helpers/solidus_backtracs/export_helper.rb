@@ -30,9 +30,9 @@ module SolidusBacktracs
     end
 
     def self.backtracs_address(xml, order, type)
-      if type.present?
+      address = order.send("#{type}_address")
+      if address.present?
         name = "#{type.to_s.titleize}To"
-        address = order.send("#{type}_address")
 
         xml.__send__(name) {
           xml.CompanyName   address.company ? address.company : address.name
@@ -48,12 +48,13 @@ module SolidusBacktracs
           xml.Country       address.country.iso
         }
       else
-        Rails.logger.info {
+        Rails.logger.info({
           message: 'missing address type',
           order: order.id,
           type: type
-        }.to_s
+        }.to_s)
       end
+    end
     # rubocop:enable all
   end
 end
