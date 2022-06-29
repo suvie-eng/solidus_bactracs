@@ -7,6 +7,7 @@ module SolidusBacktracs
 
       def perform
         shipments = query_shipments
+        Rails.logger.info("#{self.class.name} - #{shipments.count} shipments to sync to Bactracs")
 
         shipments.find_in_batches(batch_size: SolidusBacktracs.config.api_batch_size) do |batch|
           SyncShipmentsJob.perform_later(batch.to_a)
