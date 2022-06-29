@@ -1,26 +1,23 @@
-# Solidus ShipStation — Suvie fork
+# Solidus Bactracs
 
-[![CircleCI](https://circleci.com/gh/solidusio-contrib/solidus_backtracs.svg?style=shield)](https://circleci.com/gh/solidusio-contrib/solidus_backtracs)
-[![codecov](https://codecov.io/gh/solidusio-contrib/solidus_backtracs/branch/master/graph/badge.svg)](https://codecov.io/gh/solidusio-contrib/solidus_backtracs)
 
-This gem integrates [ShipStation](http://www.backtracs.com) with [Solidus](http://solidus.io). It
-enables ShipStation to pull shipments from the system and update tracking numbers.
+This gem integrates [Bactracs](http://www.backtracs.com) with [Solidus](http://solidus.io). It
+enables your Solidus system to push shipment RMAs to the system.
 
-This integration is a fork of [spree_backtracs](https://github.com/DynamoMTL/spree_backtracs)
-that adds Solidus and Rails 4.2+ compatibility.
+> This integration was cloned from [spree_shipstation](https://github.com/DynamoMTL/spree_shipstation) to provide some consistency with other Solidus<-->Shipping related patterns.
 
 ## Installation
 
-Add solidus_backtracs to your Gemfile:
+Add solidus_bactracs to your Gemfile:
 
 ```ruby
-gem 'solidus_backtracs', github: 'solidusio-contrib/solidus_backtracs'
+gem 'solidus_bactracs', github: 'suvie-eng/solidus_bactracs'
 ```
 
 Bundle your dependencies and run the installation generator:
 
 ```shell
-bin/rails generate solidus_backtracs:install
+bin/rails generate solidus_bactracs:install
 ```
 
 The installer will create a configuration initializer that you'll need to customize.
@@ -64,7 +61,7 @@ Cancelled               | `cancelled`        | `cancelled`
 On-Hold                 | `on-hold`          | `pending`
 
 Once you've configured the XML integration in your app and ShipStation, there's nothing else you
-need to do. ShipStation will 
+need to do. ShipStation will
 
 #### XML integration: Usage
 
@@ -76,7 +73,7 @@ There are a few gotchas you need to be aware of:
 
 - If you change the shipping method of an order in ShipStation, the change will not be reflected in
   Solidus and the tracking link might not work properly.
-- When `backtracs_capture_at_notification` is enabled, any errors during payment capture will
+- When `bactracs_capture_at_notification` is enabled, any errors during payment capture will
   prevent the update of the shipment's tracking number.
 
 ### API integration
@@ -117,7 +114,7 @@ look like:
 :schedule:
   schedule_shipment_syncs:
     every: ['1m', first_in: '0s']
-    class: 'SolidusBacktracs::Api::ScheduleShipmentSyncsJob'
+    class: 'SolidusBactracs::Api::ScheduleShipmentSyncsJob'
 ```
 
 This will schedule the job to run every minute. This is generally a good starting point, but feel
@@ -162,14 +159,14 @@ When testing your application's integration with this extension you may use its 
 Simply add this require statement to your `spec/spec_helper.rb`:
 
 ```ruby
-require 'solidus_backtracs/testing_support/factories'
+require 'solidus_bactracs/testing_support/factories'
 ```
 
 Or, if you are using `FactoryBot.definition_file_paths`, you can load Solidus core
 factories along with this extension's factories using this statement:
 
 ```ruby
-SolidusDevSupport::TestingSupport::Factories.load_for(SolidusBacktracs::Engine)
+SolidusDevSupport::TestingSupport::Factories.load_for(SolidusBactracs::Engine)
 ```
 
 ### Running the sandbox
