@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module SolidusBactracs
+module SolidusBacktracs
   VERSION = '3.1.0'
 end
