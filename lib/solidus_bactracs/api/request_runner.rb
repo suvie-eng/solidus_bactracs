@@ -22,7 +22,6 @@ module SolidusBactracs
             count += 1
             self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
           else
-            sguid = parse_authentication_response(@response, "Message")
             params = serializer.call(shipment, sguid)
 
             rma_response = call(method: :post, path: path, params: params)
@@ -30,6 +29,8 @@ module SolidusBactracs
               Rails.logger.info({ event: 'success CreateRMA', rma: shipment.number, response: parse_rma_creation_response(rma_response, "Message")})
               shipment_synced(shipment)
               return true
+            elsif rma_exists?(rma_response)
+              return false
             else
               clear_cache
               count += 1
@@ -105,6 +106,13 @@ module SolidusBactracs
 
       def create_rma_success?(response)
         parse_rma_creation_response(response) == 'true' && parse_rma_creation_response(response, "Message") == "ok"
+      end
+
+      def rma_exists?(response)
+        if parse_rma_creation_response(response, "Message").match(/rma .* already exists/)
+          Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
+          return true
+        end
       end
 
       def shipment_synced(shipment)
