@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+Different retry support for CreateRMA, as well as more logging
+
+## 3.0.0
+Re-release the gem under a new non-forked repo, since this gem is a non-mergeable divergence from the solidus_shipstation gem
+
 ## 2.2.0
 
 Support the Solidus Assembly gem, consider allowed SKUs within assemblies/bundles
