@@ -3,18 +3,18 @@
 require_relative 'lib/solidus_backtracs/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'solidus_backtracs'
+  spec.name = 'solidus_bactracs'
   spec.version = SolidusBacktracs::VERSION
-  spec.authors = ['Zeryab Ali']
-  spec.email = 'zkhan@suvie.com'
+  spec.authors = ['Zeryab Ali', 'Zachary Jones']
+  spec.email = 'techbilling@suvie.com'
 
-  spec.summary = 'A Solidus extension for integrating the Backtracs API.'
-  spec.homepage = 'https://github.com/suvie-eng/solidus_backtracs'
+  spec.summary = 'A Solidus extension for integrating the Bactracs API.'
+  spec.homepage = 'https://github.com/suvie-eng/solidus_bactracs'
   spec.license = 'BSD-3-Clause'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/suvie-eng/solidus_backtracs/'
-  spec.metadata['changelog_uri'] = 'https://github.com/suvie-eng/solidus_backtracs/blob/master/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/suvie-eng/solidus_bactracs/'
+  spec.metadata['changelog_uri'] = 'https://github.com/suvie-eng/solidus_bactracs/blob/master/CHANGELOG.md'
 
   spec.required_ruby_version = Gem::Requirement.new('>= 2.5')
 
