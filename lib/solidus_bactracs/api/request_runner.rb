@@ -15,38 +15,34 @@ module SolidusBactracs
 
       def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
         if count <= @retries
-          unless @username.present? || @password.present? || @api_base.present?
-            raise "Credentials not defined for Authentication"
-          end
+          sguid = authenticate! rescue nil
 
-          @response = Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour, skip_nil: true) do
-            self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
-          end
-
-          raise RequestError.from_response(@response) unless @response # just try again for @retries?
-          authenticted = parse_authentication_response(@response, "Result")
-          raise RequestError.from_response(@response) if authenticted == "false"
-          sguid = parse_authentication_response(@response, "Message")
-
-          if authenticted == 'false'
+          if !sguid.presence
             clear_cache
-            raise "User Not Authenticated"
+            count += 1
+            self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
           else
-            sguid = parse_authentication_response(@response, "Message")
             params = serializer.call(shipment, sguid)
 
             rma_response = call(method: :post, path: path, params: params)
-            unless parse_rma_creation_response(rma_response) == 'true'
+            if create_rma_success?(rma_response)
+              Rails.logger.info({ event: 'success CreateRMA', rma: shipment.number, response: parse_rma_creation_response(rma_response, "Message")})
+              shipment_synced(shipment)
+              return true
+            elsif rma_exists?(rma_response)
+              return false
+            else
               clear_cache
               count += 1
+              Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
               self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
             end
-            shipment_synced(shipment)
           end
         else
           shipment_sync_failed(shipment)
         end
       end
+
 
       def call(method: nil, path: nil, params: {})
         doc = {}
@@ -81,12 +77,42 @@ module SolidusBactracs
         @response = nil
       end
 
-      def parse_authentication_response(response, type)
-        response.dig("AuthenticationResponse", type)
+      def authenticate!()
+        unless @username.present? || @password.present? || @api_base.present?
+          raise "Credentials not defined for Authentication"
+        end
+
+        @response = Rails.cache.fetch("backtracks_cache_key", expires_in: 1.hour, skip_nil: true) do
+          self.call(method: :get, path: "/webservices/user/Authentication.asmx/Login?sUserName=#{@username}&sPassword=#{@password}")
+        end
+
+        raise RequestError.from_response(@response) unless @response # just try again for @retries?
+        if "false" == parse_authentication_response(@response, "Result")
+          Rails.logger.warn({ event: 'bactracs auth failed', error: parse_authentication_response(@response, "Message")})
+          raise RequestError.from_response(@response)
+        end
+        sguid = parse_authentication_response(@response, "Message")
+
+        return sguid
       end
 
-      def parse_rma_creation_response(response)
-        response.dig("Envelope", "Body", "CreateNewResponse", "CreateNewResult", "Result")
+      def parse_authentication_response(response, field)
+        response.dig("AuthenticationResponse", field)
+      end
+
+      def parse_rma_creation_response(response, field = "Result")
+        response.dig("Envelope", "Body", "CreateNewResponse", "CreateNewResult", field).to_s.downcase
+      end
+
+      def create_rma_success?(response)
+        parse_rma_creation_response(response) == 'true' && parse_rma_creation_response(response, "Message") == "ok"
+      end
+
+      def rma_exists?(response)
+        if parse_rma_creation_response(response, "Message").match(/rma .* already exists/)
+          Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
+          return true
+        end
       end
 
       def shipment_synced(shipment)
