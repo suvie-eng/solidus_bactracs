@@ -1,5 +1,6 @@
 name: CI
 # actions ref: https://github.com/fac/ruby-gem-push-action
+# https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
 
 on:
   push:
@@ -29,7 +30,8 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Build Gem
-      run: bundle exec rake build
+      # run: bundle exec rake build
+      run: gem build
 
     # Release production gem version from default branch
     - name: Release Gem
