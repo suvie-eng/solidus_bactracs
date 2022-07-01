@@ -64,7 +64,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
       expect(batch_syncer).not_to have_received(:call)
     end
 
-    it 'fires a solidus_backtracs.api.sync_skipped event' do
+    it 'fires a solidus_bactracs.api.sync_skipped event' do
       stub_const('Spree::Event', class_spy(Spree::Event))
       shipment = build_stubbed(:shipment) { |s| stub_syncability(s, false) }
       stub_successful_batch_syncer
@@ -72,7 +72,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
       described_class.perform_now([shipment])
 
       expect(Spree::Event).to have_received(:fire).with(
-        'solidus_backtracs.api.sync_skipped',
+        'solidus_bactracs.api.sync_skipped',
         shipment: shipment,
       )
     end

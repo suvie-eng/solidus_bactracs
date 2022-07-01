@@ -77,7 +77,7 @@ module SolidusBactracs
       end
 
       def clear_cache
-        Rails.cache.delete('backtracks_cache_key')
+        Rails.cache.delete('bactracks_cache_key')
         @response = nil
       end
 
@@ -90,17 +90,17 @@ module SolidusBactracs
       end
 
       def shipment_synced(shipment)
-        shipment.update_column(:backtracs_synced_at, Time.zone.now)
+        shipment.update_column(:bactracs_synced_at, Time.zone.now)
 
         ::Spree::Event.fire(
-          'solidus_backtracs.api.sync_completed',
+          'solidus_bactracs.api.sync_completed',
           shipment: shipment
         )
       end
 
       def shipment_sync_failed(shipment)
         ::Spree::Event.fire(
-          'solidus_backtracs.api.sync_failed',
+          'solidus_bactracs.api.sync_failed',
           shipment: shipment
         )
       end

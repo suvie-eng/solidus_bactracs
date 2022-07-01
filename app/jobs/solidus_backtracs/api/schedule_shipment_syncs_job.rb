@@ -26,7 +26,7 @@ module SolidusBactracs
             .joins(inventory_units: [:variant])
             .where("spree_variants.sku" => SolidusBactracs.config.shippable_skus)
             .where("spree_shipments.state" => :ready)
-            .where(backtracs_synced_at: nil)
+            .where(bactracs_synced_at: nil)
             .distinct
         )
       end

@@ -11,7 +11,7 @@ module SolidusBactracs
         def exportable
           ::Spree::Deprecation.warn <<~DEPRECATION
             `Spree::Shipment.exportable` is deprecated and will be removed in a future version
-            of solidus_backtracs. Please use `SolidusBactracs::Shipment::ExportableQuery.apply`.
+            of solidus_bactracs. Please use `SolidusBactracs::Shipment::ExportableQuery.apply`.
           DEPRECATION
 
           SolidusBactracs::Shipment::ExportableQuery.apply(self)
@@ -20,7 +20,7 @@ module SolidusBactracs
         def between(from, to)
           ::Spree::Deprecation.warn <<~DEPRECATION
             `Spree::Shipment.between` is deprecated and will be removed in a future version
-            of solidus_backtracs. Please use `SolidusBactracs::Shipment::BetweenQuery.apply`.
+            of solidus_bactracs. Please use `SolidusBactracs::Shipment::BetweenQuery.apply`.
           DEPRECATION
 
           SolidusBactracs::Shipment::BetweenQuery.apply(self, from: from, to: to)

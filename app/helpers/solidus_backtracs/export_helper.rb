@@ -29,7 +29,7 @@ module SolidusBactracs
       }
     end
 
-    def self.backtracs_address(xml, order, type)
+    def self.bactracs_address(xml, order, type)
       address = order.send("#{type}_address")
       if address.present?
         name = "#{type.to_s.titleize}To"

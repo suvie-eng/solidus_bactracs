@@ -4,7 +4,7 @@ SolidusBactracs.configure do |config|
   # Choose between Grams, Ounces or Pounds.
   config.weight_units = "Grams"
 
-  # Capture payment when Backtracs notifies a shipping label creation.
+  # Capture payment when Bactracs notifies a shipping label creation.
   # Set this to `true` and `Spree::Config.require_payment_to_ship` to `false` if you
   # want to charge your customers at the time of shipment.
   config.capture_at_notification = false
@@ -13,8 +13,8 @@ SolidusBactracs.configure do |config|
   config.api_base = ENV['BACKTRACS_API_BASE'] || 'https://bactracstest.andlor.com'
   config.api_retries = ENV['BACKTRACS_API_RETRIES'] || 3
 
-  # Backtracs expects the endpoint to be protected by HTTP Basic Auth.
-  # Set the username and password you desire for Backtracs to use.
+  # Bactracs expects the endpoint to be protected by HTTP Basic Auth.
+  # Set the username and password you desire for Bactracs to use.
   config.webhook_username = "smoking_jay_cutler"
   config.webhook_password = "my-awesome-password"
 
@@ -42,7 +42,7 @@ SolidusBactracs.configure do |config|
   ####### XML integration
   # Only uncomment these lines if you're going to use the XML integration.
 
-  # Export canceled shipments to Backtracs
+  # Export canceled shipments to Bactracs
   # Set this to `true` if you want canceled shipments included in the endpoint.
   # config.export_canceled_shipments = false
 
@@ -61,18 +61,18 @@ SolidusBactracs.configure do |config|
   #   SolidusBactracs::Api::ShipmentSerializer.new(store_id: '12345678').call(shipment)
   # end
 
-  # Override the logic used to match a Backtracs order to a shipment from a
+  # Override the logic used to match a Bactracs order to a shipment from a
   # given collection. This can be useful when you override the default serializer
   # and change the logic used to generate the order number.
-  # config.api_shipment_matcher = proc do |backtracs_order, shipments|
-  #   shipments.find { |shipment| shipment.number == backtracs_order['orderNumber'] }
+  # config.api_shipment_matcher = proc do |bactracs_order, shipments|
+  #   shipments.find { |shipment| shipment.number == bactracs_order['orderNumber'] }
   # end
 
-  # API key and secret for accessing the Backtracs API.
+  # API key and secret for accessing the Bactracs API.
   # config.api_key = "api-key"
   # config.api_secret = "api-secret"
 
-  # Number of shipments to import into Backtracs at once.
+  # Number of shipments to import into Bactracs at once.
   # If unsure, leave this set to 100, which is the maximum
   # number of shipments that can be imported at once.
   config.api_batch_size = 100

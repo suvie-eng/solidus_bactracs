@@ -24,7 +24,7 @@ module SolidusBactracs
             true
           else
             ::Spree::Event.fire(
-              'solidus_backtracs.api.sync_skipped',
+              'solidus_bactracs.api.sync_skipped',
               shipment: shipment,
             )
 

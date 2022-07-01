@@ -7,11 +7,11 @@ module SolidusBactracs
       source_root File.expand_path('templates', __dir__)
 
       def copy_initializer
-        template 'initializer.rb', 'config/initializers/solidus_backtracs.rb'
+        template 'initializer.rb', 'config/initializers/solidus_bactracs.rb'
       end
 
       def add_migrations
-        run 'bin/rails railties:install:migrations FROM=solidus_backtracs'
+        run 'bin/rails railties:install:migrations FROM=solidus_bactracs'
       end
 
       def run_migrations

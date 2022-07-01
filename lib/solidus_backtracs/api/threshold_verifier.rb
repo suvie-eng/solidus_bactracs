@@ -13,13 +13,13 @@ module SolidusBactracs
         private
 
         def shipment_requires_creation?(shipment)
-          shipment.backtracs_synced_at.nil? &&
+          shipment.bactracs_synced_at.nil? &&
             Time.zone.now - shipment.order.updated_at < SolidusBactracs.config.api_sync_threshold
         end
 
         def shipment_requires_update?(shipment)
-          shipment.backtracs_synced_at &&
-            shipment.backtracs_synced_at < shipment.order.updated_at &&
+          shipment.bactracs_synced_at &&
+            shipment.bactracs_synced_at < shipment.order.updated_at &&
             Time.zone.now - shipment.order.updated_at < SolidusBactracs.config.api_sync_threshold
         end
       end

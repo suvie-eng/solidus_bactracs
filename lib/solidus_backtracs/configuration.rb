@@ -41,8 +41,8 @@ module SolidusBactracs
       @error_handler = ->(_error, _extra = {}) {
         Rails.logger.error "#{error.inspect} (#{extra.inspect})"
       }
-      @api_shipment_matcher = proc do |backtracs_order, shipments|
-        shipments.find { |shipment| shipment.number == backtracs_order['orderNumber'] }
+      @api_shipment_matcher = proc do |bactracs_order, shipments|
+        shipments.find { |shipment| shipment.number == bactracs_order['orderNumber'] }
       end
 
       @shipment_notice_class = 'SolidusBactracs::ShipmentNotice'

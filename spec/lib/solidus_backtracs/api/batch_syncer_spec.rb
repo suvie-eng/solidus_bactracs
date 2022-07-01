@@ -20,7 +20,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
   describe '#call' do
     context 'when the API call is successful' do
       context 'when the sync operation succeeded' do
-        it 'updates the backtracs data on the shipment' do
+        it 'updates the bactracs data on the shipment' do
           freeze_time do
             shipment = instance_spy('Spree::Shipment', number: 'H123456')
             api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
@@ -40,12 +40,12 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
             build_batch_syncer(client: api_client).call([shipment])
 
             expect(shipment).to have_received(:update_columns).with(
-              backtracs_synced_at: Time.zone.now,
+              bactracs_synced_at: Time.zone.now,
             )
           end
         end
 
-        it 'emits a solidus_backtracs.api.sync_completed event' do
+        it 'emits a solidus_bactracs.api.sync_completed event' do
           stub_const('Spree::Event', class_spy(Spree::Event))
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
           api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
@@ -65,7 +65,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
           build_batch_syncer(client: api_client).call([shipment])
 
           expect(Spree::Event).to have_received(:fire).with(
-            'solidus_backtracs.api.sync_completed',
+            'solidus_bactracs.api.sync_completed',
             shipment: shipment,
             payload: {
               'orderNumber' => shipment.number,
@@ -77,7 +77,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
       end
 
       context 'when the sync operation failed' do
-        it 'does not update the backtracs data on the shipment' do
+        it 'does not update the bactracs data on the shipment' do
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
           api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
             allow(client).to receive(:bulk_create_orders).with([shipment]).and_return(
@@ -98,7 +98,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
           expect(shipment).not_to have_received(:update_columns)
         end
 
-        it 'emits a solidus_backtracs.api.sync_failed event' do
+        it 'emits a solidus_bactracs.api.sync_failed event' do
           stub_const('Spree::Event', class_spy(Spree::Event))
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
           api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
@@ -118,7 +118,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
           build_batch_syncer(client: api_client).call([shipment])
 
           expect(Spree::Event).to have_received(:fire).with(
-            'solidus_backtracs.api.sync_failed',
+            'solidus_bactracs.api.sync_failed',
             shipment: shipment,
             payload: {
               'orderNumber' => shipment.number,
@@ -131,7 +131,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
     end
 
     context 'when the API call hits a rate limit' do
-      it 'emits a solidus_backtracs.api.rate_limited event' do
+      it 'emits a solidus_bactracs.api.rate_limited event' do
         stub_const('Spree::Event', class_spy(Spree::Event))
         shipment = instance_double('Spree::Shipment')
         error = SolidusBactracs::Api::RateLimitedError.new(
@@ -151,7 +151,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
         end
 
         expect(Spree::Event).to have_received(:fire).with(
-          'solidus_backtracs.api.rate_limited',
+          'solidus_bactracs.api.rate_limited',
           shipments: [shipment],
           error: error,
         )
@@ -176,7 +176,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
     end
 
     context 'when the API call results in a server error' do
-      it 'emits a solidus_backtracs.api.sync_errored event' do
+      it 'emits a solidus_bactracs.api.sync_errored event' do
         stub_const('Spree::Event', class_spy(Spree::Event))
         shipment = instance_double('Spree::Shipment')
         error = SolidusBactracs::Api::RequestError.new(
@@ -195,7 +195,7 @@ RSpec.describe SolidusBactracs::Api::BatchSyncer do
         end
 
         expect(Spree::Event).to have_received(:fire).with(
-          'solidus_backtracs.api.sync_errored',
+          'solidus_bactracs.api.sync_errored',
           shipments: [shipment],
           error: error,
         )

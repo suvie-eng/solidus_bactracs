@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Spree
-  class BacktracsController < Spree::BaseController
+  class BactracsController < Spree::BaseController
     protect_from_forgery with: :null_session, only: :shipnotify
 
-    before_action :authenticate_backtracs
+    before_action :authenticate_bactracs
 
     def export
       @shipments = SolidusBactracs::Shipment::ExportableQuery.apply(Spree::Shipment.all)
@@ -36,7 +36,7 @@ module Spree
       Time.strptime("#{params[name]} UTC", '%m/%d/%Y %H:%M %Z')
     end
 
-    def authenticate_backtracs
+    def authenticate_bactracs
       authenticate_or_request_with_http_basic do |username, password|
         username == SolidusBactracs.configuration.username &&
           password == SolidusBactracs.configuration.password

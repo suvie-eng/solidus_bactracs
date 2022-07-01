@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Spree::BacktracsController do
+RSpec.describe Spree::BactracsController do
   render_views
 
   describe '#export' do
@@ -14,7 +14,7 @@ RSpec.describe Spree::BacktracsController do
 
     context 'when the authentication is valid' do
       it 'responds with 200 OK' do
-        stub_backtracs_auth
+        stub_bactracs_auth
         create(:order_ready_to_ship)
 
         get :export,
@@ -27,8 +27,8 @@ RSpec.describe Spree::BacktracsController do
         expect(response.status).to eq(200)
       end
 
-      it 'generates Backtracs-compliant XML' do
-        stub_backtracs_auth
+      it 'generates Bactracs-compliant XML' do
+        stub_bactracs_auth
         create(:order_ready_to_ship)
 
         get :export, params: {
@@ -37,7 +37,7 @@ RSpec.describe Spree::BacktracsController do
           format: 'xml'
         }
 
-        expect(response.body).to pass_validation('spec/fixtures/backtracs_xml_schema.xsd')
+        expect(response.body).to pass_validation('spec/fixtures/bactracs_xml_schema.xsd')
       end
     end
   end
@@ -46,7 +46,7 @@ RSpec.describe Spree::BacktracsController do
     context 'when the authentication is valid' do
       context 'when the shipment can be found' do
         it 'responds with 200 OK' do
-          stub_backtracs_auth
+          stub_bactracs_auth
           shipment = create(:order_ready_to_ship).shipments.first
 
           post :shipnotify, params: {
@@ -60,7 +60,7 @@ RSpec.describe Spree::BacktracsController do
         end
 
         it 'updates the shipment' do
-          stub_backtracs_auth
+          stub_bactracs_auth
           shipment = create(:order_ready_to_ship).shipments.first
 
           post :shipnotify, params: {
@@ -80,7 +80,7 @@ RSpec.describe Spree::BacktracsController do
 
       context 'when the shipment cannot be found' do
         it 'responds with 400 Bad Request' do
-          stub_backtracs_auth
+          stub_bactracs_auth
           shipment = create(:order_ready_to_ship).shipments.first
 
           post :shipnotify, params: {
@@ -96,7 +96,7 @@ RSpec.describe Spree::BacktracsController do
     end
   end
 
-  def stub_backtracs_auth(username = 'mario', password = 'lemieux')
+  def stub_bactracs_auth(username = 'mario', password = 'lemieux')
     stub_configuration(username: username, password: password)
     request.headers['Authorization'] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
   end

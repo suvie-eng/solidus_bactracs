@@ -5,19 +5,19 @@ module SolidusBactracs
     class PendingApiSyncQuery
       SQLITE_CONDITION = <<~SQL.squish
         (
-          spree_shipments.backtracs_synced_at IS NULL
+          spree_shipments.bactracs_synced_at IS NULL
         ) AND ((JULIANDAY(CURRENT_TIMESTAMP) - JULIANDAY(spree_orders.updated_at)) * 86400.0) < :threshold
       SQL
 
       POSTGRES_CONDITION = <<~SQL.squish
         (
-          spree_shipments.backtracs_synced_at IS NULL
+          spree_shipments.bactracs_synced_at IS NULL
         ) AND (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - spree_orders.updated_at))) < :threshold
       SQL
 
       MYSQL2_CONDITION = <<~SQL.squish
         (
-          spree_shipments.backtracs_synced_at IS NULL
+          spree_shipments.bactracs_synced_at IS NULL
         ) AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(spree_orders.updated_at)) < :threshold
       SQL
 
@@ -42,7 +42,7 @@ module SolidusBactracs
           when /mysql2/
             MYSQL2_CONDITION
           else
-            fail "Backtracs API sync not supported for DB adapter #{db_adapter}!"
+            fail "Bactracs API sync not supported for DB adapter #{db_adapter}!"
           end
         end
       end

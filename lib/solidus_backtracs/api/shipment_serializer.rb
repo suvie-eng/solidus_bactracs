@@ -38,8 +38,8 @@ module SolidusBactracs
                   xml.Ud1                     
                 }
                 xml.Customer {
-                  SolidusBactracs::ExportHelper.backtracs_address(xml, order, :ship)
-                  SolidusBactracs::ExportHelper.backtracs_address(xml, order, :bill)
+                  SolidusBactracs::ExportHelper.bactracs_address(xml, order, :ship)
+                  SolidusBactracs::ExportHelper.bactracs_address(xml, order, :bill)
                 }
                 xml.Rep {
                   xml.Code                    

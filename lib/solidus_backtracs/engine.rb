@@ -9,7 +9,7 @@ module SolidusBactracs
 
     isolate_namespace ::Spree
 
-    engine_name 'solidus_backtracs'
+    engine_name 'solidus_bactracs'
 
     # use rspec for tests
     config.generators do |g|
