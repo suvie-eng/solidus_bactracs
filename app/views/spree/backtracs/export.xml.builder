@@ -9,9 +9,9 @@ xml.Orders(pages: (@shipments.total_count / 50.0).ceil) {
     xml.Order {
       xml.OrderID        shipment.id
       xml.OrderNumber    shipment.number # do not use shipment.order.number as this presents lookup issues
-      xml.OrderDate      order.completed_at.strftime(SolidusBacktracs::ExportHelper::DATE_FORMAT)
+      xml.OrderDate      order.completed_at.strftime(SolidusBactracs::ExportHelper::DATE_FORMAT)
       xml.OrderStatus    shipment.state
-      xml.LastModified   [order.completed_at, shipment.updated_at].max.strftime(SolidusBacktracs::ExportHelper::DATE_FORMAT)
+      xml.LastModified   [order.completed_at, shipment.updated_at].max.strftime(SolidusBactracs::ExportHelper::DATE_FORMAT)
       xml.ShippingMethod shipment.shipping_method.try(:name)
       xml.OrderTotal     order.total
       xml.TaxAmount      order.tax_total
@@ -25,8 +25,8 @@ xml.Orders(pages: (@shipments.total_count / 50.0).ceil) {
 
       xml.Customer {
         xml.CustomerCode order.email.slice(0, 50)
-        SolidusBacktracs::ExportHelper.address(xml, order, :bill)
-        SolidusBacktracs::ExportHelper.address(xml, order, :ship)
+        SolidusBactracs::ExportHelper.address(xml, order, :bill)
+        SolidusBactracs::ExportHelper.address(xml, order, :ship)
       }
       xml.Items {
         shipment.line_items.each do |line|
@@ -36,7 +36,7 @@ xml.Orders(pages: (@shipments.total_count / 50.0).ceil) {
             xml.Name        [variant.product.name, variant.options_text].join(' ')
             xml.ImageUrl    variant.images.first.try(:attachment).try(:url)
             xml.Weight      variant.weight.to_f
-            xml.WeightUnits SolidusBacktracs.configuration.weight_units
+            xml.WeightUnits SolidusBactracs.configuration.weight_units
             xml.Quantity    line.quantity
             xml.UnitPrice   line.price
 

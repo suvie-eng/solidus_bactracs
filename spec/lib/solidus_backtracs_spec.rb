@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-RSpec.describe SolidusBacktracs do
+RSpec.describe SolidusBactracs do
   describe 'VERSION' do
     it 'is defined' do
-      expect(SolidusBacktracs::VERSION).to be_present
+      expect(SolidusBactracs::VERSION).to be_present
     end
   end
 end

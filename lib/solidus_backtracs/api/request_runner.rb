@@ -2,15 +2,15 @@
 require "uri"
 require "net/http"
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class RequestRunner
 
       def initialize
-        @username = SolidusBacktracs.configuration.authentication_username
-        @password = SolidusBacktracs.configuration.authentication_password
-        @api_base = SolidusBacktracs.configuration.api_base
-        @retries  = SolidusBacktracs.configuration.api_retries
+        @username = SolidusBactracs.configuration.authentication_username
+        @password = SolidusBactracs.configuration.authentication_password
+        @api_base = SolidusBactracs.configuration.api_base
+        @retries  = SolidusBactracs.configuration.api_retries
       end
 
       def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
@@ -57,10 +57,10 @@ module SolidusBacktracs
           method,
           URI.join(@api_base, path),
           body: doc.to_xml,
-          http_proxyaddr: SolidusBacktracs.configuration.proxy_address,
-          http_proxyport: SolidusBacktracs.configuration.proxy_port,
-          http_proxyuser: SolidusBacktracs.configuration.proxy_username,
-          http_proxypass: SolidusBacktracs.configuration.proxy_password,
+          http_proxyaddr: SolidusBactracs.configuration.proxy_address,
+          http_proxyport: SolidusBactracs.configuration.proxy_port,
+          http_proxyuser: SolidusBactracs.configuration.proxy_username,
+          http_proxypass: SolidusBactracs.configuration.proxy_password,
           headers: {
             'Content-Type' => 'text/xml',
           },

@@ -1,10 +1,10 @@
-RSpec.describe SolidusBacktracs::Api::BatchSyncer do
+RSpec.describe SolidusBactracs::Api::BatchSyncer do
   include ActiveSupport::Testing::TimeHelpers
 
   describe '.from_config' do
     it 'creates a syncer with the configured API client' do
-      client = instance_double(SolidusBacktracs::Api::Client)
-      allow(SolidusBacktracs::Api::Client).to receive(:from_config).and_return(client)
+      client = instance_double(SolidusBactracs::Api::Client)
+      allow(SolidusBactracs::Api::Client).to receive(:from_config).and_return(client)
       shipment_matcher = -> {}
       stub_configuration(api_shipment_matcher: shipment_matcher)
 
@@ -23,7 +23,7 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
         it 'updates the backtracs data on the shipment' do
           freeze_time do
             shipment = instance_spy('Spree::Shipment', number: 'H123456')
-            api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+            api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
               allow(client).to receive(:bulk_create_orders).with([shipment]).and_return(
                 {
                   'results' => [
@@ -48,7 +48,7 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
         it 'emits a solidus_backtracs.api.sync_completed event' do
           stub_const('Spree::Event', class_spy(Spree::Event))
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
-          api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+          api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
             allow(client).to receive(:bulk_create_orders).with([shipment]).and_return(
               {
                 'results' => [
@@ -79,7 +79,7 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
       context 'when the sync operation failed' do
         it 'does not update the backtracs data on the shipment' do
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
-          api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+          api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
             allow(client).to receive(:bulk_create_orders).with([shipment]).and_return(
               {
                 'results' => [
@@ -101,7 +101,7 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
         it 'emits a solidus_backtracs.api.sync_failed event' do
           stub_const('Spree::Event', class_spy(Spree::Event))
           shipment = instance_spy('Spree::Shipment', number: 'H123456')
-          api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+          api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
             allow(client).to receive(:bulk_create_orders).with([shipment]).and_return(
               {
                 'results' => [
@@ -134,19 +134,19 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
       it 'emits a solidus_backtracs.api.rate_limited event' do
         stub_const('Spree::Event', class_spy(Spree::Event))
         shipment = instance_double('Spree::Shipment')
-        error = SolidusBacktracs::Api::RateLimitedError.new(
+        error = SolidusBactracs::Api::RateLimitedError.new(
           response_headers: { 'X-Rate-Limit-Reset' => 20 },
           response_body: '{"message":"Too Many Requests"}',
           response_code: 429,
           retry_in: 20.seconds,
         )
-        api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+        api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
           allow(client).to receive(:bulk_create_orders).with([shipment]).and_raise(error)
         end
 
         begin
           build_batch_syncer(client: api_client).call([shipment])
-        rescue SolidusBacktracs::Api::RateLimitedError
+        rescue SolidusBactracs::Api::RateLimitedError
           # We want to ignore the error here, since we're testing for the event.
         end
 
@@ -159,13 +159,13 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
 
       it 're-raises the error' do
         shipment = instance_double('Spree::Shipment')
-        error = SolidusBacktracs::Api::RateLimitedError.new(
+        error = SolidusBactracs::Api::RateLimitedError.new(
           response_headers: { 'X-Rate-Limit-Reset' => 20 },
           response_body: '{"message":"Too Many Requests"}',
           response_code: 429,
           retry_in: 20.seconds,
         )
-        api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+        api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
           allow(client).to receive(:bulk_create_orders).with([shipment]).and_raise(error)
         end
 
@@ -179,18 +179,18 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
       it 'emits a solidus_backtracs.api.sync_errored event' do
         stub_const('Spree::Event', class_spy(Spree::Event))
         shipment = instance_double('Spree::Shipment')
-        error = SolidusBacktracs::Api::RequestError.new(
+        error = SolidusBactracs::Api::RequestError.new(
           response_headers: {},
           response_body: '{"message":"Internal Server Error"}',
           response_code: 500,
         )
-        api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+        api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
           allow(client).to receive(:bulk_create_orders).with([shipment]).and_raise(error)
         end
 
         begin
           build_batch_syncer(client: api_client).call([shipment])
-        rescue SolidusBacktracs::Api::RequestError
+        rescue SolidusBactracs::Api::RequestError
           # We want to ignore the error here, since we're testing for the event.
         end
 
@@ -204,12 +204,12 @@ RSpec.describe SolidusBacktracs::Api::BatchSyncer do
       it 're-raises the error' do
         stub_const('Spree::Event', class_spy(Spree::Event))
         shipment = instance_double('Spree::Shipment')
-        error = SolidusBacktracs::Api::RequestError.new(
+        error = SolidusBactracs::Api::RequestError.new(
           response_headers: {},
           response_body: '{"message":"Internal Server Error"}',
           response_code: 500,
         )
-        api_client = instance_double(SolidusBacktracs::Api::Client).tap do |client|
+        api_client = instance_double(SolidusBactracs::Api::Client).tap do |client|
           allow(client).to receive(:bulk_create_orders).with([shipment]).and_raise(error)
         end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SolidusBacktracs::Api::ScheduleShipmentSyncsJob do
+RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
   it 'schedules the shipment sync in batches' do
     stub_configuration(api_batch_size: 2)
     shipments = create_list(:shipment, 3)
@@ -10,20 +10,20 @@ RSpec.describe SolidusBacktracs::Api::ScheduleShipmentSyncsJob do
         .and_yield(shipments[0..1])
         .and_yield([shipments.last])
     end
-    allow(SolidusBacktracs::Shipment::PendingApiSyncQuery).to receive(:apply)
+    allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply)
       .and_return(relation)
 
     described_class.perform_now
 
-    expect(SolidusBacktracs::Api::SyncShipmentsJob).to have_been_enqueued.with(shipments[0..1])
-    expect(SolidusBacktracs::Api::SyncShipmentsJob).to have_been_enqueued.with([shipments.last])
+    expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with(shipments[0..1])
+    expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with([shipments.last])
   end
 
   it 'reports any errors to the handler' do
     error_handler = instance_spy('Proc')
     stub_configuration(error_handler: error_handler)
     error = RuntimeError.new('Something went wrong')
-    allow(SolidusBacktracs::Shipment::PendingApiSyncQuery).to receive(:apply).and_raise(error)
+    allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply).and_raise(error)
 
     described_class.perform_now
 

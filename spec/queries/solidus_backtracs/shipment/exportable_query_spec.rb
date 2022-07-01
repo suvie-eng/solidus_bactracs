@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Shipment::ExportableQuery do
+RSpec.describe SolidusBactracs::Shipment::ExportableQuery do
   describe '.apply' do
     context 'when capture_at_notification is false and export_canceled_shipments is false' do
       it 'returns ready shipments from complete orders' do

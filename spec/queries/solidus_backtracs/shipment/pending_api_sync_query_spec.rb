@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Shipment::PendingApiSyncQuery do
+RSpec.describe SolidusBactracs::Shipment::PendingApiSyncQuery do
   describe '.apply' do
     context 'when dealing with shipments that were never synced' do
       it 'returns the shipments that are within the threshold' do

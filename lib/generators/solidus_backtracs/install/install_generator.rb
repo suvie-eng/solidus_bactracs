@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Generators
     class InstallGenerator < Rails::Generators::Base
       class_option :auto_run_migrations, type: :boolean, default: false

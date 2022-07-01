@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Api::ShipmentSerializer do
+RSpec.describe SolidusBactracs::Api::ShipmentSerializer do
   describe '#call' do
     it 'serializes the shipment' do
       shipment = create(:order_ready_to_ship).shipments.first

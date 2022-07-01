@@ -2,7 +2,7 @@
 
 require 'builder'
 
-module SolidusBacktracs
+module SolidusBactracs
   module ExportHelper
     DATE_FORMAT = '%m/%d/%Y %H:%M'
     BACTRACS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'

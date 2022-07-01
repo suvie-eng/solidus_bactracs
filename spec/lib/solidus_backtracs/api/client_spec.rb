@@ -1,11 +1,11 @@
-RSpec.describe SolidusBacktracs::Api::Client do
+RSpec.describe SolidusBactracs::Api::Client do
   describe '.from_config' do
     it 'generates a client from the configuration' do
-      request_runner = instance_double('SolidusBacktracs::Api::RequestRunner')
+      request_runner = instance_double('SolidusBactracs::Api::RequestRunner')
       error_handler = instance_spy('Proc')
-      shipment_serializer = instance_spy('SolidusBacktracs::Api::Serializer')
-      allow(SolidusBacktracs::Api::RequestRunner).to receive(:from_config).and_return(request_runner)
-      allow(SolidusBacktracs.config).to receive_messages(
+      shipment_serializer = instance_spy('SolidusBactracs::Api::Serializer')
+      allow(SolidusBactracs::Api::RequestRunner).to receive(:from_config).and_return(request_runner)
+      allow(SolidusBactracs.config).to receive_messages(
         error_handler: error_handler,
         api_shipment_serializer: shipment_serializer,
       )
@@ -22,7 +22,7 @@ RSpec.describe SolidusBacktracs::Api::Client do
 
   describe '#bulk_create_orders' do
     it 'calls the bulk order creation endpoint' do
-      request_runner = instance_spy('SolidusBacktracs::Api::RequestRunner')
+      request_runner = instance_spy('SolidusBactracs::Api::RequestRunner')
       shipment = build_stubbed(:shipment)
       serialized_shipment = { 'key' => 'value' }
 
@@ -40,7 +40,7 @@ RSpec.describe SolidusBacktracs::Api::Client do
     end
 
     it 'does not fail for serialization errors' do
-      request_runner = instance_spy('SolidusBacktracs::Api::RequestRunner')
+      request_runner = instance_spy('SolidusBactracs::Api::RequestRunner')
       successful_shipment = build_stubbed(:shipment)
       serialized_shipment = { 'key' => 'value' }
       failing_shipment = build_stubbed(:shipment)
@@ -77,7 +77,7 @@ RSpec.describe SolidusBacktracs::Api::Client do
     end
 
     it 'skips the API call if all shipments failed serialization' do
-      request_runner = instance_spy('SolidusBacktracs::Api::RequestRunner')
+      request_runner = instance_spy('SolidusBactracs::Api::RequestRunner')
       failing_shipment = build_stubbed(:shipment)
 
       client = build_client(
@@ -96,14 +96,14 @@ RSpec.describe SolidusBacktracs::Api::Client do
 
   def build_client(options = {})
     described_class.new(**{
-      request_runner: instance_spy('SolidusBacktracs::Api::RequestRunner'),
+      request_runner: instance_spy('SolidusBactracs::Api::RequestRunner'),
       error_handler: instance_spy('Proc'),
       shipment_serializer: stub_shipment_serializer,
     }.merge(options))
   end
 
   def stub_shipment_serializer(results_map = {})
-    serializer = class_spy('SolidusBacktracs::Api::Serializer')
+    serializer = class_spy('SolidusBactracs::Api::Serializer')
 
     results_map.each_pair do |shipment, result_or_error|
       stub = allow(serializer).to receive(:call).with(shipment)

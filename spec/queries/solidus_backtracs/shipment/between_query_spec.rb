@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Shipment::BetweenQuery do
+RSpec.describe SolidusBactracs::Shipment::BetweenQuery do
   describe '.apply' do
     it 'returns shipments whose updated_at falls within the given time range' do
       shipment = create(:shipment) { |s| s.update_column(:updated_at, Time.zone.now) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   class Error < StandardError; end
 
   class OrderNotPaidError < Error

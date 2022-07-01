@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class ThresholdVerifier
       class << self
@@ -14,13 +14,13 @@ module SolidusBacktracs
 
         def shipment_requires_creation?(shipment)
           shipment.backtracs_synced_at.nil? &&
-            Time.zone.now - shipment.order.updated_at < SolidusBacktracs.config.api_sync_threshold
+            Time.zone.now - shipment.order.updated_at < SolidusBactracs.config.api_sync_threshold
         end
 
         def shipment_requires_update?(shipment)
           shipment.backtracs_synced_at &&
             shipment.backtracs_synced_at < shipment.order.updated_at &&
-            Time.zone.now - shipment.order.updated_at < SolidusBacktracs.config.api_sync_threshold
+            Time.zone.now - shipment.order.updated_at < SolidusBactracs.config.api_sync_threshold
         end
       end
     end

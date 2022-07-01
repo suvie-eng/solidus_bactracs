@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class ShipmentSerializer
 
       def initialize(shipment:)
         @shipment = shipment
-        @config = SolidusBacktracs.config
-        @property_id = ::Spree::Property.find_by(name: SolidusBacktracs.config.default_property_name)&.id
+        @config = SolidusBactracs.config
+        @property_id = ::Spree::Property.find_by(name: SolidusBactracs.config.default_property_name)&.id
       end
 
       def call(sguid: nil)
@@ -32,14 +32,14 @@ module SolidusBacktracs
                 xml.Ship {
                   xml.Carrier                 @config.default_carrier
                   xml.ShipMethod              @config.default_ship_method
-                  xml.ShipDate                @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                  xml.ShipDate                @shipment.created_at.strftime(SolidusBactracs::ExportHelper::BACTRACS_DATE_FORMAT)
                   xml.TrackingNumber          @shipment.tracking
                   xml.SerialNumber            @shipment.number
                   xml.Ud1                     
                 }
                 xml.Customer {
-                  SolidusBacktracs::ExportHelper.backtracs_address(xml, order, :ship)
-                  SolidusBacktracs::ExportHelper.backtracs_address(xml, order, :bill)
+                  SolidusBactracs::ExportHelper.backtracs_address(xml, order, :ship)
+                  SolidusBactracs::ExportHelper.backtracs_address(xml, order, :bill)
                 }
                 xml.Rep {
                   xml.Code                    
@@ -60,8 +60,8 @@ module SolidusBacktracs
                     end
                   end
                 }
-                xml.OrderDate     order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
-                xml.CreateDate    @shipment.created_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                xml.OrderDate     order.completed_at.strftime(SolidusBactracs::ExportHelper::BACTRACS_DATE_FORMAT)
+                xml.CreateDate    @shipment.created_at.strftime(SolidusBactracs::ExportHelper::BACTRACS_DATE_FORMAT)
                 xml.Status        @config.default_status
                 xml.RMAId         @shipment.id
                 xml.ClientGuid
@@ -86,7 +86,7 @@ module SolidusBacktracs
           xml.CurrentWarranties       
           xml.DFComments              
           xml.DFStatus                @shipment.state
-          xml.PurchaseDate            order.completed_at.strftime(SolidusBacktracs::ExportHelper::BACTRACS_DATE_FORMAT)
+          xml.PurchaseDate            order.completed_at.strftime(SolidusBactracs::ExportHelper::BACTRACS_DATE_FORMAT)
           xml.ServiceProvider         shipment_notice&.service
           xml.WarrantyRepair          
           xml.RMALineTest             

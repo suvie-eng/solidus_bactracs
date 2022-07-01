@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class BatchSyncer
       class << self
         def from_config
           new(
-            client: SolidusBacktracs::Api::Client.from_config,
-            shipment_matcher: SolidusBacktracs.config.api_shipment_matcher,
+            client: SolidusBactracs::Api::Client.from_config,
+            shipment_matcher: SolidusBactracs.config.api_shipment_matcher,
           )
         end
       end

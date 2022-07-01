@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class SyncShipmentsJob < ApplicationJob
       queue_as :default
@@ -13,7 +13,7 @@ module SolidusBacktracs
       rescue RateLimitedError => e
         self.class.set(wait: e.retry_in).perform_later
       rescue StandardError => e
-        SolidusBacktracs.config.error_handler.call(e, {})
+        SolidusBactracs.config.error_handler.call(e, {})
       end
 
       private

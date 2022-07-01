@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   class ShipmentNotice
     attr_reader :shipment_number, :shipment_tracking
 
@@ -38,7 +38,7 @@ module SolidusBacktracs
     def process_payment
       return if shipment.order.paid?
 
-      unless SolidusBacktracs.configuration.capture_at_notification
+      unless SolidusBactracs.configuration.capture_at_notification
         raise OrderNotPaidError, shipment.order
       end
 

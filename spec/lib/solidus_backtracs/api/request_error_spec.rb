@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Api::RequestError do
+RSpec.describe SolidusBactracs::Api::RequestError do
   describe '.from_response' do
     it 'extracts the status code, body and headers from the response' do
       response = instance_double(

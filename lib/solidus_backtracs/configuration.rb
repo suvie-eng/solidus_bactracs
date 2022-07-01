@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   class Configuration
     attr_accessor(
       :webhook_username,
@@ -45,7 +45,7 @@ module SolidusBacktracs
         shipments.find { |shipment| shipment.number == backtracs_order['orderNumber'] }
       end
 
-      @shipment_notice_class = 'SolidusBacktracs::ShipmentNotice'
+      @shipment_notice_class = 'SolidusBactracs::ShipmentNotice'
     end
   end
 

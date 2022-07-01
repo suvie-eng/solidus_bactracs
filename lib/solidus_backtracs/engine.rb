@@ -3,7 +3,7 @@
 require 'solidus_core'
 require 'solidus_support'
 
-module SolidusBacktracs
+module SolidusBactracs
   class Engine < Rails::Engine
     include SolidusSupport::EngineExtensions
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Shipment
     class BetweenQuery
       def self.apply(scope, from:, to:)

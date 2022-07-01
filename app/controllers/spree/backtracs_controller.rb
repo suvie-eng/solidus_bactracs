@@ -7,8 +7,8 @@ module Spree
     before_action :authenticate_backtracs
 
     def export
-      @shipments = SolidusBacktracs::Shipment::ExportableQuery.apply(Spree::Shipment.all)
-      @shipments = SolidusBacktracs::Shipment::BetweenQuery.apply(
+      @shipments = SolidusBactracs::Shipment::ExportableQuery.apply(Spree::Shipment.all)
+      @shipments = SolidusBactracs::Shipment::BetweenQuery.apply(
         @shipments,
         from: date_param(:start_date),
         to: date_param(:end_date),
@@ -21,10 +21,10 @@ module Spree
     end
 
     def shipnotify
-      shipment_notice_class = SolidusBacktracs.configuration.shipment_notice_class.constantize
+      shipment_notice_class = SolidusBactracs.configuration.shipment_notice_class.constantize
       shipment_notice_class.from_payload(params.to_unsafe_h).apply
       head :ok
-    rescue SolidusBacktracs::Error => e
+    rescue SolidusBactracs::Error => e
       head :bad_request
     end
 
@@ -38,8 +38,8 @@ module Spree
 
     def authenticate_backtracs
       authenticate_or_request_with_http_basic do |username, password|
-        username == SolidusBacktracs.configuration.username &&
-          password == SolidusBacktracs.configuration.password
+        username == SolidusBactracs.configuration.username &&
+          password == SolidusBactracs.configuration.password
       end
     end
   end

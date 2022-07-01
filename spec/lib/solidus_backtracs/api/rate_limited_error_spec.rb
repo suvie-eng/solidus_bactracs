@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Api::RateLimitedError do
+RSpec.describe SolidusBactracs::Api::RateLimitedError do
   describe '.from_response' do
     it 'extracts the status code, body, headers and retry time from the response' do
       response = instance_double(

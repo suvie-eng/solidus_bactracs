@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Shipment
     class PendingApiSyncQuery
       SQLITE_CONDITION = <<~SQL.squish
@@ -26,7 +26,7 @@ module SolidusBacktracs
           scope
             .joins(:order)
             .merge(::Spree::Order.complete)
-            .where(condition_for_adapter, threshold: SolidusBacktracs.config.api_sync_threshold / 1.second)
+            .where(condition_for_adapter, threshold: SolidusBactracs.config.api_sync_threshold / 1.second)
         end
 
         private

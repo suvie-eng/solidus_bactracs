@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class SyncShipmentJob < ApplicationJob
       queue_as :default

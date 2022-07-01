@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SolidusBacktracs
+module SolidusBactracs
   module Api
     class RequestError < RuntimeError
       attr_reader :response_code, :response_body, :response_headers

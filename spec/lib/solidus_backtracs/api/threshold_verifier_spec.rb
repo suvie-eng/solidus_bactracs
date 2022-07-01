@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Api::ThresholdVerifier do
+RSpec.describe SolidusBactracs::Api::ThresholdVerifier do
   context "when the shipment's order was completed" do
     context 'when the shipment was never synced with Backtracs yet' do
       it 'returns true when the shipment was never synced with backtracs yet' do

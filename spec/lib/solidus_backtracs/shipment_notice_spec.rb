@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SolidusBacktracs::ShipmentNotice do
+RSpec.describe SolidusBactracs::ShipmentNotice do
   shared_examples 'ships or updates the shipment' do
     context 'when the order was not shipped yet' do
       # rubocop:disable RSpec/MultipleExpectations
@@ -60,7 +60,7 @@ RSpec.describe SolidusBacktracs::ShipmentNotice do
 
           shipment_notice = build_shipment_notice(order.shipments.first)
 
-          expect { shipment_notice.apply }.to raise_error(SolidusBacktracs::PaymentError) do |e|
+          expect { shipment_notice.apply }.to raise_error(SolidusBactracs::PaymentError) do |e|
             expect(e.cause).to be_instance_of(Spree::Core::GatewayError)
           end
         end
@@ -84,7 +84,7 @@ RSpec.describe SolidusBacktracs::ShipmentNotice do
 
         shipment_notice = build_shipment_notice(order.shipments.first)
 
-        expect { shipment_notice.apply }.to raise_error(SolidusBacktracs::OrderNotPaidError)
+        expect { shipment_notice.apply }.to raise_error(SolidusBactracs::OrderNotPaidError)
       end
     end
   end
@@ -103,7 +103,7 @@ RSpec.describe SolidusBacktracs::ShipmentNotice do
   end
 
   def build_shipment_notice(shipment, shipment_tracking: '1Z1231234')
-    SolidusBacktracs::ShipmentNotice.new(
+    SolidusBactracs::ShipmentNotice.new(
       shipment_number: shipment.number,
       shipment_tracking: shipment_tracking,
     )

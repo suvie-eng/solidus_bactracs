@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-SolidusBacktracs.configure do |config|
+SolidusBactracs.configure do |config|
   # Choose between Grams, Ounces or Pounds.
   config.weight_units = "Grams"
 
@@ -49,7 +49,7 @@ SolidusBacktracs.configure do |config|
   # You can customize the class used to receive notifications from the POST request
   # Make sure it has a class method `from_payload` which receives the notification hash
   # and an instance method `apply`
-  # config.shipment_notice_class = 'SolidusBacktracs::ShipmentNotice'
+  # config.shipment_notice_class = 'SolidusBactracs::ShipmentNotice'
 
   ####### API integration
   # Only uncomment these lines if you're going to use the API integration.
@@ -58,7 +58,7 @@ SolidusBacktracs.configure do |config|
   # that responds to `#call`. At the very least, you'll need to uncomment the
   # following lines and customize your store ID.
   # config.api_shipment_serializer = proc do |shipment|
-  #   SolidusBacktracs::Api::ShipmentSerializer.new(store_id: '12345678').call(shipment)
+  #   SolidusBactracs::Api::ShipmentSerializer.new(store_id: '12345678').call(shipment)
   # end
 
   # Override the logic used to match a Backtracs order to a shipment from a
@@ -89,4 +89,34 @@ SolidusBacktracs.configure do |config|
   config.error_handler = -> (error, context = {}) {
     Sentry.capture_exception(error, extra: context)
   }
+end
+
+class Spree
+  class Shipment
+    def normalize_valid_variants_from_bundles
+      self.line_items.reduce([]) do |variants, line_item|
+        if line_item.product.respond_to?(:assembly?) && line_item.product.assembly?
+          variants += line_item.product.parts.reject(&:invalid_part?)
+        else
+          variants << line_item.variant
+        end
+        variants
+      end
+    end
+
+    private
+
+    def invalid_part?(part)
+      part.product
+        .product_properties
+        .where(property_id: default_property_id)
+        .present?
+    end
+
+    def default_property_id
+      ::Spree::Property.find_by(
+        name: SolidusBactracs.config.default_property_name,
+      )&.id
+    end
+  end
 end

@@ -4,7 +4,7 @@ RSpec.describe Spree::Shipment do
   describe '.between' do
     it 'delegates to BetweenQuery' do
       shipment = build_stubbed(:shipment)
-      allow(SolidusBacktracs::Shipment::BetweenQuery).to receive(:apply).with(
+      allow(SolidusBactracs::Shipment::BetweenQuery).to receive(:apply).with(
         any_args,
         from: Time.zone.yesterday,
         to: Time.zone.today,
@@ -29,7 +29,7 @@ RSpec.describe Spree::Shipment do
   describe '.exportable' do
     it 'delegates to ExportableQuery' do
       shipment = build_stubbed(:shipment)
-      allow(SolidusBacktracs::Shipment::ExportableQuery).to receive(:apply).and_return([shipment])
+      allow(SolidusBactracs::Shipment::ExportableQuery).to receive(:apply).and_return([shipment])
 
       result = Spree::Deprecation.silence do
         described_class.exportable

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe SolidusBacktracs::Api::SyncShipmentsJob do
+RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
   include ActiveSupport::Testing::TimeHelpers
 
   context 'when a shipment is syncable' do
@@ -20,7 +20,7 @@ RSpec.describe SolidusBacktracs::Api::SyncShipmentsJob do
         it 'retries intelligently when hitting a rate limit' do
           freeze_time do
             shipment = build_stubbed(:shipment) { |s| stub_syncability(s, true) }
-            stub_failing_batch_syncer(SolidusBacktracs::Api::RateLimitedError.new(
+            stub_failing_batch_syncer(SolidusBactracs::Api::RateLimitedError.new(
               response_code: 429,
               response_headers: { 'X-Rate-Limit-Reset' => 30 },
               response_body: '{"message":"Too Many Requests"}',
@@ -39,7 +39,7 @@ RSpec.describe SolidusBacktracs::Api::SyncShipmentsJob do
           error_handler = instance_spy('Proc')
           stub_configuration(error_handler: error_handler)
           shipment = build_stubbed(:shipment) { |s| stub_syncability(s, true) }
-          error = SolidusBacktracs::Api::RequestError.new(
+          error = SolidusBactracs::Api::RequestError.new(
             response_code: 500,
             response_headers: {},
             response_body: '{"message":"Internal Server Error"}',
@@ -81,21 +81,21 @@ RSpec.describe SolidusBacktracs::Api::SyncShipmentsJob do
   private
 
   def stub_successful_batch_syncer
-    instance_spy(SolidusBacktracs::Api::BatchSyncer).tap do |batch_syncer|
-      allow(SolidusBacktracs::Api::BatchSyncer).to receive(:from_config).and_return(batch_syncer)
+    instance_spy(SolidusBactracs::Api::BatchSyncer).tap do |batch_syncer|
+      allow(SolidusBactracs::Api::BatchSyncer).to receive(:from_config).and_return(batch_syncer)
     end
   end
 
   def stub_failing_batch_syncer(error)
-    instance_double(SolidusBacktracs::Api::BatchSyncer).tap do |batch_syncer|
-      allow(SolidusBacktracs::Api::BatchSyncer).to receive(:from_config).and_return(batch_syncer)
+    instance_double(SolidusBactracs::Api::BatchSyncer).tap do |batch_syncer|
+      allow(SolidusBactracs::Api::BatchSyncer).to receive(:from_config).and_return(batch_syncer)
 
       allow(batch_syncer).to receive(:call).and_raise(error)
     end
   end
 
   def stub_syncability(shipment, result)
-    allow(SolidusBacktracs::Api::ThresholdVerifier).to receive(:call)
+    allow(SolidusBactracs::Api::ThresholdVerifier).to receive(:call)
       .with(shipment)
       .and_return(result)
   end

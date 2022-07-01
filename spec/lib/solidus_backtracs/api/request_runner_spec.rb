@@ -1,4 +1,4 @@
-RSpec.describe SolidusBacktracs::Api::RequestRunner do
+RSpec.describe SolidusBactracs::Api::RequestRunner do
   #TODO
   describe '.from_config' do
     it 'builds a runner using credentials from the configuration' do
@@ -43,7 +43,7 @@ RSpec.describe SolidusBacktracs::Api::RequestRunner do
 
         expect {
           request_runner.call(:post, '/test')
-        }.to raise_error(SolidusBacktracs::Api::RateLimitedError)
+        }.to raise_error(SolidusBactracs::Api::RateLimitedError)
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe SolidusBacktracs::Api::RequestRunner do
 
         expect {
           request_runner.call(:post, '/test')
-        }.to raise_error(SolidusBacktracs::Api::RequestError)
+        }.to raise_error(SolidusBactracs::Api::RequestError)
       end
     end
   end
