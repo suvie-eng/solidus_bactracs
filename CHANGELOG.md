@@ -7,7 +7,7 @@ Retry logic for the authenticated request
 
 ## 2.1.0
 
-New auth and API patterns for Backtracs
+New auth and API patterns for Bactracs
 Support specific SKUs to be mapped
 
 ## 2.0.0

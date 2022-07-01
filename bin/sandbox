@@ -25,7 +25,7 @@ else
   BRANCH="master"
 fi
 
-extension_name="solidus_backtracs"
+extension_name="solidus_bactracs"
 
 # Stay away from the bundler env of the containing extension.
 function unbundled {
