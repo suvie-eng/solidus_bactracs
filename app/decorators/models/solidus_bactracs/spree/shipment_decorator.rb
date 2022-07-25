@@ -7,6 +7,19 @@ module SolidusBactracs
         base.singleton_class.prepend ClassMethods
       end
 
+      def verify_bactracs_sync!
+        if bactracs_sync_verified_at.nil?
+          # API call to verify RMAs of shipments
+          if BactracsService.new.rma_was_synced?(self)
+            self.update_column(:bactracs_sync_verified_at, Time.now)
+          else
+            self.update_column(:bactracs_synced_at, nil)
+          end
+        end
+      rescue => e
+        Rails.logger.error({ message: "#{e.message}, file: shipment_decorator.rb", shipment_number: number })
+      end
+
       module ClassMethods
         def exportable
           ::Spree::Deprecation.warn <<~DEPRECATION

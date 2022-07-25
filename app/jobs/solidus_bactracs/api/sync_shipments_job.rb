@@ -10,6 +10,10 @@ module SolidusBactracs
         return if shipments.empty?
 
         sync_shipments(shipments)
+
+        # Verify bactracs sync
+        shipments.each { |shipment| VerifyBactracsSyncWorker.perform_async(shipment.id) }
+
       rescue RateLimitedError => e
         self.class.set(wait: e.retry_in).perform_later
       rescue StandardError => e
