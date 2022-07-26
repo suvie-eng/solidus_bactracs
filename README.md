@@ -28,7 +28,8 @@ used by the extension.
 
 ## Usage
 
-This extension can integrate with ShipStation in two ways.
+This extension can integrate with Bactracs via SOAP-based XML API integration.  The gem currently makes SOAP 1.1 format calls, though the API support SOAP 1.2
+
 
 ### XML integration
 
