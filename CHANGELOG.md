@@ -1,9 +1,12 @@
 # Changelog
 
+## 3.1.2
+Fully include retry support tables and methods within the gem. Earlier in 3.1.x some migrations, etc, were expected to be handled by the host rails app.
+
 ## 3.1.0
 Different retry support for CreateRMA, as well as more logging
 
-## 3.0.0
+## 3.0.x
 Re-release the gem under a new non-forked repo, since this gem is a non-mergeable divergence from the solidus_shipstation gem
 
 ## 2.2.0
