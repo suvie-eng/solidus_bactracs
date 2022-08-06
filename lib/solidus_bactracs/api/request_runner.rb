@@ -13,18 +13,18 @@ module SolidusBactracs
         @retries  = SolidusBactracs.configuration.api_retries
       end
 
-      def authenticated_call(method: nil, path: nil, serializer: nil, shipment: nil, count: 0)
+      def authenticated_call(serializer: nil, shipment: nil, method: :post, path: '/webservices/rma/rmaservice.asmx', count: 0)
         if count <= @retries
           sguid = authenticate! rescue nil
 
           if !sguid.presence
             clear_cache
             count += 1
-            self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
+            self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count)
           else
             params = serializer.call(shipment, sguid)
 
-            rma_response = call(method: :post, path: path, params: params)
+            rma_response = call(method: method, path: path, params: params)
             if create_rma_success?(rma_response)
               Rails.logger.info({ event: 'success CreateRMA', rma: shipment.number, response: parse_rma_creation_response(rma_response, "Message")})
               shipment_synced(shipment)
@@ -35,11 +35,12 @@ module SolidusBactracs
               clear_cache
               count += 1
               Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
-              self.authenticated_call(method: :post, path: '/webservices/rma/rmaservice.asmx', serializer: serializer, shipment: shipment, count: count)
+              self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count)
             end
           end
         else
           shipment_sync_failed(shipment)
+          return false
         end
       end
 
@@ -77,7 +78,7 @@ module SolidusBactracs
         @response = nil
       end
 
-      def authenticate!()
+      def authenticate!
         unless @username.present? || @password.present? || @api_base.present?
           raise "Credentials not defined for Authentication"
         end
@@ -110,7 +111,7 @@ module SolidusBactracs
 
       def rma_exists?(response)
         if parse_rma_creation_response(response, "Message").match(/rma .* already exists/)
-          Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
+          Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(response, "Message")})
           return true
         end
       end
