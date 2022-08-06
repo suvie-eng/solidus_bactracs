@@ -31,8 +31,8 @@ module SolidusBactracs
       @syncer.client.shipment_serializer.call(shipment, @runner.authenticate!)
     end
 
-    def try_one
-      puts "trying shipment #{(shipment = @shipments[@cursor]).id}"
+    def try_one(a_shipment = nil)
+      puts "trying shipment #{(shipment = a_shipment || @shipments[@cursor]).id}"
       # resp = @runner.call(:post, '/orders/createorders', [serialize(shipment)])
       resp = @runner.authenticated_call(shipment: shipment, serializer: @syncer.client.shipment_serializer)
       if resp

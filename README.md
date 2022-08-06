@@ -31,6 +31,7 @@ used by the extension.
 This extension can integrate with Bactracs via SOAP-based XML API integration.  The gem currently makes SOAP 1.1 format calls, though the API support SOAP 1.2
 
 
+
 ### XML integration
 
 The [XML integration](https://help.bactracs.com/hc/en-us/articles/360025856192-Custom-Store-Development-Guide)
@@ -42,29 +43,27 @@ created and updated shipments in your Solidus store.
 ⛔️ This section is outdated and inaccurate.
 
 In order to enable the XML integration, make sure to configure the relevant section of the
-configuration initializer, and configure your ShipStation store accordingly:
+configuration initializer, and configure your Bactracs/Andlor site accordingly:
 
 - **Username**: the username defined in your configuration.
 - **Password**: the password defined in your configuration.
 - **URL to custom page**: `https://yourdomain.com/bactracs.xml`.
 
-You can also configure your ShipStation store to pull the XML feed automatically on a recurring
+You can also configure your Bactracs/Andlor site to pull the XML feed automatically on a recurring
 basis, or manually by clicking the "Refresh stores" button.
 
-There are five shipment states for an order (= shipment) in ShipStation. These states do not
-necessarily align with Solidus, but you can configure ShipStation to create a mapping for your
+There are five shipment states for an order (= shipment) in Bactracs. These states do not
+necessarily align with Solidus, but you can configure Bactracs to create a mapping for your
 specific needs. Here's the recommended mapping:
 
-Bactracs description    | Bactracs status    | Solidus status
+Bactracs RMA Type    | Bactracs status    | Solidus status
 ------------------------|--------------------|---------------
-Awaiting Payment        | `unpaid`           | `pending`
-Awaiting Shipment       | `paid`             | `ready`
-Shipped                 | `shipped`          | `shipped`
-Cancelled               | `cancelled`        | `cancelled`
-On-Hold                 | `on-hold`          | `pending`
+Type 1        | `unpaid`           | `pending`
+Type W       | `paid`             | `ready`
+Type 3                 | `shipped`          | `shipped`
+Type 4               | `cancelled`        | `cancelled`
 
-Once you've configured the XML integration in your app and ShipStation, there's nothing else you
-need to do. ShipStation will
+
 
 #### XML integration: Usage
 
@@ -74,23 +73,23 @@ There's nothing you need to do. Once properly configured, the integration just w
 
 There are a few gotchas you need to be aware of:
 
-- If you change the shipping method of an order in ShipStation, the change will not be reflected in
+- If you change the shipping method of an order in Bactracs, the change will not be reflected in
   Solidus and the tracking link might not work properly.
 - When `bactracs_capture_at_notification` is enabled, any errors during payment capture will
   prevent the update of the shipment's tracking number.
 
 ### API integration
 
-The [API integration](https://www.bactracs.com/docs/api/) works by calling the ShipStation API
+The [API integration](https://www.bactracs.com/docs/api/) works by calling the Bactracs API
 to sync all of your shipments continuously.
 
-Because ShipStation has very low rate limits (i.e., 40 reqs/minute at the time of writing), the
+Because Bactracs has very low rate limits (i.e., 40 reqs/minute at the time of writing), the
 API integration does not send an API request for every single shipment update, as you would expect
 from a traditional API integration.
 
 Instead, a background job runs on a recurring basis and batches together all the shipments that need
-to be created or updated in ShipStation. These shipments are then sent in groups of 100 (by default)
-to ShipStation's [bulk order upsert endpoint](https://www.bactracs.com/docs/api/orders/create-update-multiple-orders/).
+to be created or updated in ShipStation. These shipments are then sent one at a time
+to Bactracs [RMA creation endpoint](https://www.bactracs.com/docs/api/orders/create-update-multiple-orders/).
 
 This allows us to work around Bactracs's rate limit and sync up to 4000 shipments/minute.
 
@@ -144,6 +143,85 @@ This is a problem that is faced by all recurring jobs. The solution is two-fold:
    in syncing your shipments more often than once a minute.
 
 ## Development
+
+Because of the object abstractions in this gem, some find it difficult to test API responses vis the console.  To ease such console work, a 'console harness' was developed that provides several affordances to exploratory development.
+
+Create a new harness in the console via 
+
+```ruby
+h = SolidusBactracs::ConsoleHarness.new
+```
+
+#### `.try_one`
+
+The easiest way to test the API, seeing both the output of the shipment when serialized as a XML SOAP request, and the result from the Bactracs API.
+
+```ruby
+h.try_one
+```
+
+or try a few
+
+```ruby
+h.try_batch(4)
+```
+
+maybe you have a shipment with particular issues, e.g. shipment number `H123456789`
+
+```ruby
+h.shipment_number('H123456789')
+
+h.try_one(h.shipment_number('H123456789'))
+```
+
+`.shipment_number` retries that shipment from the scope of available `h.shipments`.
+
+#### `.refresh`
+
+If that was successful, you may find your list of shipments has one or more shipments that are already synced
+
+```ruby
+h.shipments.size # => 7
+h.refresh
+h.shipments.size # => 6
+```
+
+#### `.cursor`
+
+You can set where in the recordset you want to continue trying from
+
+```
+h.cursor = 5
+h.try_one
+```
+
+#### `.batch`
+
+You can also change the default batch size
+
+```
+h.batch = 10
+h.try_batch
+# output from 10 runs, if not errors occur
+```
+
+#### deep objects
+
+Several deeply-nested objects are exposed for convenience
+
+* runner
+* syncer
+* sync (job)
+
+```
+h.serialize(shipment)
+# see the output of serialization
+
+h.runner.authenticated_call(shipment: h.shipments[0], serializer: h.syncer.client.shipment_serializer)
+```
+
+Remember that you can monkey patch code in the console, to test the improvement the harness or the gem itself.
+
 
 ### Testing the extension
 
