@@ -117,7 +117,7 @@ module SolidusBactracs
       end
 
       def shipment_synced(shipment)
-        shipment.update_column(:bactracs_synced_at, Time.zone.now)
+        shipment.update_attribute(:bactracs_synced_at, Time.zone.now)
 
         ::Spree::Event.fire(
           'solidus_bactracs.api.sync_completed',
