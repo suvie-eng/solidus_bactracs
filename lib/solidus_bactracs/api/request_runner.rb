@@ -13,16 +13,16 @@ module SolidusBactracs
         @retries  = SolidusBactracs.configuration.api_retries
       end
 
-      def authenticated_call(serializer: nil, shipment: nil, method: :post, path: '/webservices/rma/rmaservice.asmx', count: 0)
+      def authenticated_call(serializer: nil, shipment: nil, method: :post, path: '/webservices/rma/rmaservice.asmx', count: 0, rma_type: nil)
         if count <= @retries
           sguid = authenticate! rescue nil
 
           if !sguid.presence
             clear_cache
             count += 1
-            self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count)
+            self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count, rma_type: rma_type)
           else
-            params = serializer.call(shipment, sguid)
+            params = serializer.call(shipment, sguid, rma_type)
 
             rma_response = call(method: method, path: path, params: params)
             if create_rma_success?(rma_response)
@@ -35,7 +35,7 @@ module SolidusBactracs
               clear_cache
               count += 1
               Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(rma_response, "Message")})
-              self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count)
+              self.authenticated_call(method: method, path: path, serializer: serializer, shipment: shipment, count: count, rma_type: rma_type)
             end
           end
         else

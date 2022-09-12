@@ -19,9 +19,9 @@ module SolidusBactracs
         @shipment_matcher = shipment_matcher
       end
 
-      def call(shipments)
+      def call(shipments, is_trade_up)
         begin
-          response = client.bulk_create_orders(shipments)
+          response = client.bulk_create_orders(shipments, is_trade_up)
         rescue RateLimitedError => e
           ::Spree::Event.fire(
             'solidus_bactracs.api.rate_limited',
