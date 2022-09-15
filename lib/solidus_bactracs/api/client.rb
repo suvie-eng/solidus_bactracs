@@ -21,17 +21,13 @@ module SolidusBactracs
         @shipment_serializer = shipment_serializer
       end
 
-      def bulk_create_orders(shipments, is_trade_up)
-        if is_trade_up
-          # TODO add implementation for Return Label
-        end
+      def bulk_create_orders(shipments)
         shipments.each do |shipment|
           SolidusBactracs::Api::SyncShipmentJob.perform_now(
             shipment_id: shipment.id,
             error_handler: @error_handler,
             shipment_serializer: @shipment_serializer,
-            request_runner: @request_runner,
-            rma_type: is_trade_up ? "4" : SolidusBactracs.config.default_rma_type
+            request_runner: @request_runner
           )
         end.compact
       end

@@ -5,16 +5,14 @@ module SolidusBactracs
     class SyncShipmentsJob < ApplicationJob
       queue_as :default
 
-      def perform(shipments, is_trade_up)
+      def perform(shipments)
         shipments = select_shipments(shipments)
         return if shipments.empty?
 
-        sync_shipments(shipments, is_trade_up)
+        sync_shipments(shipments)
 
         # Verify bactracs sync
-        unless is_trade_up?
-          shipments.each { |shipment| VerifyBactracsSyncWorker.perform_async(shipment.id) }
-        end
+        shipments.each { |shipment| VerifyBactracsSyncWorker.perform_async(shipment.id) }
 
       rescue RateLimitedError => e
         self.class.set(wait: e.retry_in).perform_later
@@ -39,8 +37,8 @@ module SolidusBactracs
         end
       end
 
-      def sync_shipments(shipments, is_trade_up)
-        BatchSyncer.from_config.call(shipments, is_trade_up)
+      def sync_shipments(shipments)
+        BatchSyncer.from_config.call(shipments)
       end
     end
   end

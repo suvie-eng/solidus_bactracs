@@ -68,6 +68,11 @@ SolidusBactracs.configure do |config|
   #   shipments.find { |shipment| shipment.number == bactracs_order['orderNumber'] }
   # end
 
+  # Override the logic used to send a rma type for a specific Shipment.
+  config.evaluate_rma_type = proc do |shipment|
+    "W"
+  end
+
   # API key and secret for accessing the Bactracs API.
   # config.api_key = "api-key"
   # config.api_secret = "api-secret"
