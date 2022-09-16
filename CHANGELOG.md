@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.3.0
+Exposed a config var that holds an evaluator for the type of RMA being sent through bactracs.  `config.evaluate_rma_type` . You should overwrite this with your own means of determining the RMA type for a given shipment.
+
 ## 3.1.2
 Fully include retry support tables and methods within the gem. Earlier in 3.1.x some migrations, etc, were expected to be handled by the host rails app.
 

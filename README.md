@@ -98,9 +98,19 @@ implementation, but the extension abstracts it all away for you.
 
 #### API integration: Configuration
 
-In order to enable the API integration, make sure to configure the relevant section of the
-configuration initializer. At the very least, the integration needs to know your API credentials
-and store ID, but there are additional options you can configure — just look at the initializer!
+In order to enable the API integration, make sure to configure the relevant section of the configuration initializer. At the very least, the integration needs to know your API credentials and store ID, but there are additional options you can configure — just look at the initializer!
+
+##### RMA Type
+
+This gem exposes a config var that holds an evaluator for the type of RMA being sent through bactracs.  E.G. `1`, `2`, `W`, etc.
+
+```
+config.evaluate_rma_type = proc do |shipment|
+ "W"
+end
+```
+
+You should overwrite this with your own means of determining the RMA type for a given shipment.
 
 #### API integration: Usage
 
@@ -146,7 +156,7 @@ This is a problem that is faced by all recurring jobs. The solution is two-fold:
 
 Because of the object abstractions in this gem, some find it difficult to test API responses vis the console.  To ease such console work, a 'console harness' was developed that provides several affordances to exploratory development.
 
-Create a new harness in the console via 
+Create a new harness in the console via
 
 ```ruby
 h = SolidusBactracs::ConsoleHarness.new
