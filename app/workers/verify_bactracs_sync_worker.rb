@@ -6,9 +6,7 @@ class VerifyBactracsSyncWorker
   sidekiq_options queue: 'default'
 
   def perform(shipment_id)
-    shipment = Spree::Shipment.find_by(id: shipment_id)
-    if shipment
-      shipment.verify_bactracs_sync!
-    end
+    shipment = Spree::Shipment.find_by!(id: shipment_id)
+    shipment.verify_bactracs_sync!
   end
 end

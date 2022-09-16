@@ -12,6 +12,7 @@ module SolidusBactracs
       :api_batch_size,
       :api_sync_threshold,
       :api_shipment_serializer,
+      :evaluate_rma_type,
       :api_key,
       :api_secret,
       :api_shipment_matcher,

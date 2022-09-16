@@ -10,7 +10,7 @@ module SolidusBactracs
         @property_id = ::Spree::Property.find_by(name: SolidusBactracs.config.default_property_name)&.id
       end
 
-      def call(sguid: nil, rma_type: @config.default_rma_type)
+      def call(sguid: nil)
         order = @shipment.order
         user = @shipment.user
 
@@ -23,7 +23,7 @@ module SolidusBactracs
               xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
-                xml.RMATypeName               rma_type
+                xml.RMATypeName               @shipment.rma_type.present? ? @shipment.rma_type : @config.evaluate_rma_type
                 xml.RMASubTypeName
                 xml.CustomerRef
                 xml.InboundShippingPriority
