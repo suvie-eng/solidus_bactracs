@@ -21,10 +21,10 @@ module SolidusBactracs
       end
 
       def query_shipments
-        shipments = SolidusBactracs::Shipment::PendingApiSyncQuery.apply(all_elegible_shipments)
+        shipments = SolidusBactracs::Shipment::PendingApiSyncQuery.apply(all_eligible_shipments)
       end
 
-      def all_elegible_shipments(skus: SolidusBactracs.config.shippable_skus, state: :ready)
+      def all_eligible_shipments(skus: SolidusBactracs.config.shippable_skus, state: :ready)
         ::Spree::Shipment
             .joins(inventory_units: [:variant])
             .where("spree_variants.sku" => skus)
