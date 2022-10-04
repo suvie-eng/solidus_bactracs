@@ -9,7 +9,7 @@ module SolidusBactracs
       @syncer = SolidusBactracs::Api::BatchSyncer.from_config
       @sync = SolidusBactracs::Api::ScheduleShipmentSyncsJob.new
       @shipments = SolidusBactracs::Api::ScheduleShipmentSyncsJob.new.query_shipments
-      @shipments_elegible = SolidusBactracs::Api::ScheduleShipmentSyncsJob.new.all_elegible_shipments
+      @shipments_elegible = SolidusBactracs::Api::ScheduleShipmentSyncsJob.new.all_eligible_shipments
       @cursor = 0
       @batch = 4
     end
@@ -18,11 +18,11 @@ module SolidusBactracs
       @shipments = SolidusBactracs::Api::ScheduleShipmentSyncsJob.new.query_shipments
     end
 
-    def shipment(id)
+    def has_shipment?(id)
       @shipments.find_by(id: id)
     end
 
-    def shipment_number(ship_number)
+    def has_shipment_number?(ship_number)
       @shipments.find_by(number: ship_number)
     end
 

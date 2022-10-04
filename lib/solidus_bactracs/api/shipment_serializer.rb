@@ -13,6 +13,7 @@ module SolidusBactracs
       def call(sguid: nil)
         order = @shipment.order
         user = @shipment.user
+        rma_type = safe_rma_type
 
         xml = Builder::XmlMarkup.new
         xml.instruct!(:xml, :encoding => "UTF-8")
@@ -23,7 +24,7 @@ module SolidusBactracs
               xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
-                xml.RMATypeName               @shipment.rma_type.present? ? @shipment.rma_type : @config.evaluate_rma_type
+                xml.RMATypeName               rma_type
                 xml.RMASubTypeName
                 xml.CustomerRef
                 xml.InboundShippingPriority
@@ -94,6 +95,11 @@ module SolidusBactracs
           xml.InboundShipWeight       variant.weight.to_f
           xml.RPLocation              @config.default_rp_location
         }
+      end
+
+      def safe_rma_type
+        rma_type = @shipment.rma_type if (@shipment.respond_to?(:rma_type) && @shipment.rma_type.present?)
+        rma_type ||= @config.evaluate_rma_type.call(@shipment)
       end
 
       def find_sku_variant(variant)
