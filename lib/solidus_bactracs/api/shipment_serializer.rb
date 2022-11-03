@@ -14,6 +14,7 @@ module SolidusBactracs
         order = @shipment.order
         user = @shipment.user
         rma_type = safe_rma_type
+        rp_location = get_rp_location
 
         xml = Builder::XmlMarkup.new
         xml.instruct!(:xml, :encoding => "UTF-8")
@@ -93,13 +94,18 @@ module SolidusBactracs
           xml.WarrantyRepair
           xml.RMALineTest
           xml.InboundShipWeight       variant.weight.to_f
-          xml.RPLocation              @config.default_rp_location
+          xml.RPLocation              rp_location
         }
       end
 
       def safe_rma_type
         rma_type = @shipment.rma_type if (@shipment.respond_to?(:rma_type) && @shipment.rma_type.present?)
         rma_type ||= @config.evaluate_rma_type.call(@shipment)
+      end
+
+      def get_rp_location
+        rp_location = @shipment.get_rma_rp_location if @shipment.get_rma_rp_location
+        @config.default_rp_location.call(@shipment)
       end
 
       def find_sku_variant(variant)
