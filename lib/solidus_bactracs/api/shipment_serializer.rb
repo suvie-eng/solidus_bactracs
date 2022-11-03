@@ -105,7 +105,7 @@ module SolidusBactracs
 
       def get_rp_location
         rp_location = @shipment.get_rma_rp_location if @shipment.get_rma_rp_location
-        rp_location ||= @config.default_rp_location.call(@shipment)
+        @config.default_rp_location.call(@shipment)
       end
 
       def find_sku_variant(variant)
