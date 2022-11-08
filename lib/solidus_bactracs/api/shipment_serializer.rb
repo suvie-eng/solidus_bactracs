@@ -15,6 +15,7 @@ module SolidusBactracs
         user = @shipment.user
         rma_type = safe_rma_type
         rp_location = get_rp_location
+        df_part = get_df_part
 
         xml = Builder::XmlMarkup.new
         xml.instruct!(:xml, :encoding => "UTF-8")
@@ -95,6 +96,7 @@ module SolidusBactracs
           xml.RMALineTest
           xml.InboundShipWeight       variant.weight.to_f
           xml.RPLocation              rp_location
+          xml.DFPart                  df_part
         }
       end
 
@@ -104,12 +106,24 @@ module SolidusBactracs
       end
 
       def get_rp_location
+        #Double verifing
+        return nil if rma_type == "4"
+
         rp_location = @shipment.get_rma_rp_location if @shipment.get_rma_rp_location
         @config.default_rp_location.call(@shipment)
       end
 
       def find_sku_variant(variant)
         @config.sku_map[variant.sku].present? ? @config.sku_map[variant.sku] : variant.sku
+      end
+
+      def get_df_part
+        df_part =
+          if rma_type == "4"
+            @shipment.number
+          else
+            nil
+          end rescue nil
       end
     end
   end

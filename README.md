@@ -112,6 +112,11 @@ end
 
 You should overwrite this with your own means of determining the RMA type for a given shipment.
 
+##### DF Part
+Andlor uses the key "DFPart" to enable the indication of which item was 'defective' and being returned.  This only applies to Type 4 RMAs.
+
+Currently, the DF Part is the `number` on the shipment, and there is not yet an override method.
+
 #### API integration: Usage
 
 Once you've configured the integration, you will also need to enqueue the `ScheduleShipmentSyncsJob`
