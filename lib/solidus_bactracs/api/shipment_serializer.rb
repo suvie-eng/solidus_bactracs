@@ -13,8 +13,6 @@ module SolidusBactracs
       def call(sguid: nil)
         order = @shipment.order
         user = @shipment.user
-        rma_type = safe_rma_type
-        rp_location = get_rp_location
 
         xml = Builder::XmlMarkup.new
         xml.instruct!(:xml, :encoding => "UTF-8")
