@@ -76,6 +76,9 @@ module SolidusBactracs
       end
 
       def line_items_xml(xml: nil, line_item: nil, variant: nil, order: nil)
+        rp_location = get_rp_location
+        df_part = get_df_part
+
         shipment_notice = @shipment.shipment_notice
         xml.RMALine {
           xml.DFItem                  find_sku_variant(variant)
