@@ -13,7 +13,6 @@ module SolidusBactracs
       def call(sguid: nil)
         order = @shipment.order
         user = @shipment.user
-        rma_type = safe_rma_type
 
         xml = Builder::XmlMarkup.new
         xml.instruct!(:xml, :encoding => "UTF-8")
@@ -24,7 +23,7 @@ module SolidusBactracs
               xml.sGuid                       sguid
               xml.NewRMA {
                 xml.RMANumber                 @shipment.number
-                xml.RMATypeName               rma_type
+                xml.RMATypeName               safe_rma_type
                 xml.RMASubTypeName
                 xml.CustomerRef
                 xml.InboundShippingPriority
@@ -75,9 +74,6 @@ module SolidusBactracs
       end
 
       def line_items_xml(xml: nil, line_item: nil, variant: nil, order: nil)
-        rp_location = get_rp_location
-        df_part = get_df_part
-
         shipment_notice = @shipment.shipment_notice
         xml.RMALine {
           xml.DFItem                  find_sku_variant(variant)
@@ -96,8 +92,8 @@ module SolidusBactracs
           xml.WarrantyRepair
           xml.RMALineTest
           xml.InboundShipWeight       variant.weight.to_f
-          xml.RPLocation              rp_location
-          xml.DFPart                  df_part
+          xml.RPLocation              get_rp_location
+          xml.DFPart                  get_df_part
         }
       end
 
@@ -108,9 +104,8 @@ module SolidusBactracs
 
       def get_rp_location
         #Double verifing
-        return nil if rma_type == "4"
+        return nil if safe_rma_type == "4"
 
-        rp_location = @shipment.get_rma_rp_location if @shipment.get_rma_rp_location
         @config.default_rp_location.call(@shipment)
       end
 
@@ -120,7 +115,7 @@ module SolidusBactracs
 
       def get_df_part
         df_part =
-          if rma_type == "4"
+          if safe_rma_type == "4"
             @shipment.number
           else
             nil
