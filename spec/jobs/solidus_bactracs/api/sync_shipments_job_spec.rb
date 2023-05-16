@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "sidekiq"
 
 RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
   include ActiveSupport::Testing::TimeHelpers
