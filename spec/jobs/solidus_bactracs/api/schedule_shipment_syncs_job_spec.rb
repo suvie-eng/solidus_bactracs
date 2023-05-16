@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "sidekiq"
 
 RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
   it 'schedules the shipment sync in batches' do
