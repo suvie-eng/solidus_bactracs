@@ -13,7 +13,7 @@ RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
     allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply)
       .and_return(relation)
 
-    described_class.perform_now
+    described_class.new.perform
 
     expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with(shipments[0..1])
     expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with([shipments.last])
@@ -25,7 +25,7 @@ RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
     error = RuntimeError.new('Something went wrong')
     allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply).and_raise(error)
 
-    described_class.perform_now
+    described_class.new.perform
 
     expect(error_handler).to have_received(:call).with(error, {})
   end
