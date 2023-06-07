@@ -2,17 +2,14 @@
 
 module SolidusBactracs
   module Api
-    class ScheduleShipmentSyncsJob# < ApplicationJob
-      include Sidekiq::Worker
-
-      sidekiq_options queue: 'default'
+    class ScheduleShipmentSyncsJob < BaseSyncJob
 
       def perform
         shipments = query_shipments
         Rails.logger.info("#{self.class.name} - #{shipments.count} shipments to sync to Bactracs")
 
         shipments.find_in_batches(batch_size: SolidusBactracs.config.api_batch_size) do |batch|
-          SyncShipmentsJob.perform_async(batch.pluck(:id))
+          SyncShipmentsJob.perform_later(batch.pluck(:id))
         end
       rescue StandardError => e
         SolidusBactracs.config.error_handler.call(e, {})

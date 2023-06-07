@@ -32,7 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'httparty', '~> 0.18'
   spec.add_dependency 'solidus_core', ['>= 2.0.0', '< 4']
   spec.add_dependency 'solidus_support', '~> 0.5'
-  spec.add_dependency 'sidekiq'
 
   spec.add_development_dependency 'rails-controller-testing'
   spec.add_development_dependency 'rspec-xsd'

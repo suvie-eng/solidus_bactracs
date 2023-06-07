@@ -2,10 +2,7 @@
 
 module SolidusBactracs
   module Api
-    class SyncShipmentsJob# < ApplicationJob
-      include Sidekiq::Worker
-
-      sidekiq_options queue: 'default'
+    class SyncShipmentsJob < BaseSyncJob
 
       def perform(shipment_ids)
         shipments = ::Spree::Shipment.where(id: shipment_ids)
@@ -15,10 +12,10 @@ module SolidusBactracs
         sync_shipments(shipments)
 
         # Verify bactracs sync
-        shipments.each { |shipment| VerifyBactracsSyncWorker.perform_async(shipment.id) }
+        shipments.each { |shipment| VerifyBactracsSyncWorker.perform_later(shipment.id) }
 
       rescue RateLimitedError => e
-        self.class.set(wait: e.retry_in).perform_async
+        self.class.set(wait: e.retry_in).perform_later
       rescue StandardError => e
         SolidusBactracs.config.error_handler.call(e, {})
       end

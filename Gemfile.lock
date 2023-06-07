@@ -67,9 +67,8 @@ GIT
 PATH
   remote: .
   specs:
-    solidus_bactracs (3.5.1)
+    solidus_bactracs (3.6.0)
       httparty (~> 0.18)
-      sidekiq
       solidus_core (>= 2.0.0, < 4)
       solidus_support (~> 0.5)
 
@@ -198,7 +197,6 @@ GEM
     codecov (0.6.0)
       simplecov (>= 0.15, < 0.22)
     concurrent-ruby (1.1.10)
-    connection_pool (2.4.0)
     console (1.15.3)
       fiber-local
     crack (0.4.5)
@@ -399,8 +397,6 @@ GEM
       activerecord (>= 6.0.4)
       activesupport (>= 6.0.4)
       i18n
-    redis-client (0.14.1)
-      connection_pool
     regexp_parser (2.5.0)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -474,11 +470,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sidekiq (7.1.0)
-      concurrent-ruby (< 2)
-      connection_pool (>= 2.3.0)
-      rack (>= 2.2.4)
-      redis-client (>= 0.14.0)
     simplecov (0.21.2)
       docile (~> 1.1)
       simplecov-html (~> 0.11)

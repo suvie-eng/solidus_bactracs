@@ -3,7 +3,7 @@
 namespace :solidus_bactracs do
   desc 'Run export jobs to send shipments to Bactracs'
   task export: :environment do
-    SolidusBactracs::Api::ScheduleShipmentSyncsJob.perform_async
+    SolidusBactracs::Api::ScheduleShipmentSyncsJob.perform_later
   end
 
   desc "Verify bactracs RMA creation"
