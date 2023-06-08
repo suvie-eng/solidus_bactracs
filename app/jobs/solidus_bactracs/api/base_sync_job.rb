@@ -8,11 +8,11 @@ if defined?(Sidekiq)
 
     sidekiq_options queue: 'default'
 
-    def perform_later(*args)
+    def self.perform_later(*args)
       perform_async(*args)
     end
 
-    def perform_now(*args)
+    def self.perform_now(*args)
       perform_sync(*args)
     end
   end
