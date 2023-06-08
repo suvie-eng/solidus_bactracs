@@ -1,5 +1,9 @@
+# class SolidusBactracs::Api::BaseSyncJob
+
+# end
+
 if defined?(Sidekiq)
-  class BaseSyncJob
+  class SolidusBactracs::Api::BaseSyncJob
     include Sidekiq::Worker
 
     sidekiq_options queue: 'default'
@@ -13,7 +17,7 @@ if defined?(Sidekiq)
     end
   end
 else
-  class BaseSyncJob < ApplicationJob
+  class SolidusBactracs::Api::BaseSyncJob < ApplicationJob
 
   end
 end
