@@ -2,7 +2,7 @@
 
 module SolidusBactracs
   module Api
-    class SyncShipmentJob < BaseSyncJob
+    class SyncShipmentJob < SolidusBactracs::Api::BaseSyncJob
 
       def perform(shipment_id: nil, error_handler: nil, shipment_serializer: nil, request_runner: nil)
         shipment = ::Spree::Shipment.find(shipment_id)

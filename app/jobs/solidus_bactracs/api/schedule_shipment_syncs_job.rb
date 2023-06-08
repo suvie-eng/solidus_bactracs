@@ -2,7 +2,7 @@
 
 module SolidusBactracs
   module Api
-    class ScheduleShipmentSyncsJob < BaseSyncJob
+    class ScheduleShipmentSyncsJob < SolidusBactracs::Api::BaseSyncJob
 
       def perform
         shipments = query_shipments
