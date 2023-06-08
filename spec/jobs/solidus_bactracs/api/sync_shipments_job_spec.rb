@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "sidekiq"
-
 RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
   include ActiveSupport::Testing::TimeHelpers
 
@@ -10,7 +8,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
         shipment = build_stubbed(:shipment) { |s| stub_syncability(s, true) }
         batch_syncer = stub_successful_batch_syncer
 
-        described_class.new.perform(shipment.id)
+        described_class.perform_now(shipment.id)
 
         expect(batch_syncer).to have_received(:call).with([shipment])
       end
@@ -28,7 +26,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
               retry_in: 30.seconds,
             ))
 
-            described_class.new.perform(shipment.id)
+            described_class.perform_now(shipment.id)
 
             expect(described_class).to have_been_enqueued.at(30.seconds.from_now)
           end
@@ -47,7 +45,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
           )
           stub_failing_batch_syncer(error)
 
-          described_class.new.perform(shipment.id)
+          described_class.perform_now(shipment.id)
 
           expect(error_handler).to have_received(:call).with(error, {})
         end
@@ -60,7 +58,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
       shipment = build_stubbed(:shipment) { |s| stub_syncability(s, false) }
       batch_syncer = stub_successful_batch_syncer
 
-      described_class.new.perform(shipment.id)
+      described_class.perform_now(shipment.id)
 
       expect(batch_syncer).not_to have_received(:call)
     end
@@ -70,7 +68,7 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
       shipment = build_stubbed(:shipment) { |s| stub_syncability(s, false) }
       stub_successful_batch_syncer
 
-      described_class.new.perform(shipment.id)
+      described_class.perform_now(shipment.id)
 
       expect(Spree::Event).to have_received(:fire).with(
         'solidus_bactracs.api.sync_skipped',

@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "sidekiq"
-
 RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
   it 'schedules the shipment sync in batches' do
     stub_configuration(api_batch_size: 2)
@@ -14,7 +12,7 @@ RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
     allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply)
       .and_return(relation)
 
-    described_class.new.perform
+    described_class.perform_now
 
     expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with(shipments[0..1])
     expect(SolidusBactracs::Api::SyncShipmentsJob).to have_been_enqueued.with([shipments.last])
@@ -26,7 +24,7 @@ RSpec.describe SolidusBactracs::Api::ScheduleShipmentSyncsJob do
     error = RuntimeError.new('Something went wrong')
     allow(SolidusBactracs::Shipment::PendingApiSyncQuery).to receive(:apply).and_raise(error)
 
-    described_class.new.perform
+    described_class.perform_now
 
     expect(error_handler).to have_received(:call).with(error, {})
   end

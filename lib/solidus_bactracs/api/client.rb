@@ -23,7 +23,7 @@ module SolidusBactracs
 
       def bulk_create_orders(shipments)
         shipments.each do |shipment|
-          SolidusBactracs::Api::SyncShipmentJob.new.perform(
+          SolidusBactracs::Api::SyncShipmentJob.perform_now(
             shipment_id: shipment.id,
             error_handler: @error_handler,
             shipment_serializer: @shipment_serializer,
