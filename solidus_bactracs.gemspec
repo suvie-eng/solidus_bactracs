@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = 'https://github.com/suvie-eng/solidus_bactracs/blob/master/CHANGELOG.md'
   spec.metadata['allowed_push_host'] = "https://rubygems.org"
 
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.5')
+  spec.required_ruby_version = Gem::Requirement.new('>= 3.1')
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'httparty', '~> 0.18'
   spec.add_dependency 'solidus_core', ['>= 2.0.0', '< 4']
   spec.add_dependency 'solidus_support', '~> 0.5'
+  spec.add_dependency 'sidekiq'
 
   spec.add_development_dependency 'rails-controller-testing'
   spec.add_development_dependency 'rspec-xsd'
