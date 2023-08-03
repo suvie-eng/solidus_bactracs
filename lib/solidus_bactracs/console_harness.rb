@@ -36,7 +36,7 @@ module SolidusBactracs
       # resp = @runner.call(:post, '/orders/createorders', [serialize(shipment)])
       resp = @runner.authenticated_call(shipment: shipment, serializer: @syncer.client.shipment_serializer)
       if resp
-        @cursor += 1
+        @cursor += 1 if (a_shipment == @shipments[@cursor] || shipment == @shipments[@cursor])
         return resp
       end
     ensure
