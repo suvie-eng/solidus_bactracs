@@ -30,6 +30,7 @@ module SolidusBactracs
               shipment_synced(shipment)
               return true
             elsif rma_exists?(rma_response)
+              shipment_synced(shipment)
               return false
             else
               clear_cache
