@@ -29,8 +29,7 @@ module SolidusBactracs
               Rails.logger.info({ event: 'success CreateRMA', rma: shipment.number, response: parse_rma_creation_response(rma_response, "Message")})
               shipment_synced(shipment)
               return true
-            elsif rma_exists?(rma_response)
-              shipment_synced(shipment)
+            elsif rma_exists?(rma_response, shipment) or rma_fail?(rma_response)
               return false
             else
               clear_cache
@@ -90,7 +89,7 @@ module SolidusBactracs
 
         raise RequestError.from_response(@response) unless @response # just try again for @retries?
         if "false" == parse_authentication_response(@response, "Result")
-          Rails.logger.warn({ event: 'bactracs auth failed', error: parse_authentication_response(@response, "Message")})
+          Rails.logger.error({ event: 'bactracs auth failed', error: parse_authentication_response(@response, "Message")})
           raise RequestError.from_response(@response)
         end
         sguid = parse_authentication_response(@response, "Message")
@@ -110,12 +109,21 @@ module SolidusBactracs
         parse_rma_creation_response(response) == 'true' && parse_rma_creation_response(response, "Message") == "ok"
       end
 
-      def rma_exists?(response)
-        if parse_rma_creation_response(response, "Message").match(/rma .* already exists/)
-          Rails.logger.warn({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(response, "Message")})
+      def rma_fail?(response)
+        if parse_rma_creation_response(response, "Message").match(/failed CreateRMA/)
+          Rails.logger.error({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(response, "Message")})
           return true
         end
       end
+
+      def rma_exists?(response, shipment)
+        if parse_rma_creation_response(response, "Message").match(/rma .* already exists/)
+          Rails.logger.error({ event: 'bactracs failed CreateRMA', error: parse_rma_creation_response(response, "Message")})
+          shipment_synced(shipment)
+          return true
+        end
+      end
+
 
       def shipment_synced(shipment)
         shipment.update_attribute(:bactracs_synced_at, Time.zone.now)

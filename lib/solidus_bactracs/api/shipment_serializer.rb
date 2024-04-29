@@ -69,8 +69,9 @@ module SolidusBactracs
             end
           end
         end
-        Rails.logger.info(xml.to_s)
-        xml
+        # Rails.logger.info(xml.to_s)
+        @xml = xml.to_xml.sub(/<to_xml\/>$/,'')
+        return @xml
       end
 
       def line_items_xml(xml: nil, line_item: nil, variant: nil, order: nil)
