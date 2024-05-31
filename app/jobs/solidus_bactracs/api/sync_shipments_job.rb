@@ -27,10 +27,7 @@ module SolidusBactracs
           if ThresholdVerifier.call(shipment)
             true
           else
-            ::Spree::Event.fire(
-              'solidus_bactracs.api.sync_skipped',
-              shipment: shipment,
-            )
+            ::Spree::Bus.publish(:'solidus_bactracs.api.sync_skipped', shipment:)
 
             false
           end
