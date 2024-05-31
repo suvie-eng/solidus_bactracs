@@ -4,6 +4,8 @@
 This gem integrates [Bactracs](http://www.bactracs.com) with [Solidus](http://solidus.io). It
 enables your Solidus system to push shipment RMAs to the system.
 
+> Currently this requires Solidus ~ 4.x
+
 > This integration was cloned from [spree_shipstation](https://github.com/DynamoMTL/spree_shipstation) to provide some consistency with other Solidus<-->Shipping related patterns.
 
 ## Installation
