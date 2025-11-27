@@ -7,6 +7,12 @@ module SolidusBactracs
         base.singleton_class.prepend ClassMethods
       end
 
+      def verify_bactracs_sync
+        verify_bactracs_sync!
+      rescue => e
+        Rails.logger.error({ message: "#{e.message}, file: shipment_decorator.rb", shipment_number: number })
+      end
+
       def verify_bactracs_sync!
         if bactracs_sync_verified_at.nil?
           # API call to verify RMAs of shipments
@@ -14,10 +20,9 @@ module SolidusBactracs
             self.update_column(:bactracs_sync_verified_at, Time.now)
           else
             self.update_column(:bactracs_synced_at, nil)
+            raise "Bactracs sync verification failed for shipment #{number}"
           end
         end
-      rescue => e
-        Rails.logger.error({ message: "#{e.message}, file: shipment_decorator.rb", shipment_number: number })
       end
 
       module ClassMethods
