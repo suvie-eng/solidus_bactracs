@@ -10,7 +10,7 @@ namespace :solidus_bactracs do
   task verify_bactracs_sync: :environment do
     Spree::Shipment.not_bactracs_sync_verified.find_each(batch_size: 200) do |shipment|
       # set shipment sync at and bactracs_sync_verified_at attributes by verifying RMA
-      shipment.verify_bactracs_sync!
+      shipment.verify_bactracs_sync
     end
   end
 end
