@@ -12,7 +12,23 @@ RSpec.describe SolidusBactracs::Api::SyncShipmentsJob do
 
         described_class.new.perform(shipment.id)
 
-        expect(batch_syncer).to have_received(:call).with([shipment])
+        # Verify bactracs sync
+        shipments.each { |shipment| SolidusBactracs.config.api_verify_worker.constantize.perform_async(shipment.id) }
+
+        expect(VerifyBactracsSyncWorker).to have_received(:perform_async).with(shipment.id)
+      end
+
+      context 'when a custom verification worker is configured' do
+        it 'uses the configured worker' do
+          stub_const('MyCustomWorker', class_spy('MyCustomWorker'))
+          stub_configuration(api_verify_worker: 'MyCustomWorker')
+          shipment = build_stubbed(:shipment) { |s| stub_syncability(s, true) }
+          stub_successful_batch_syncer
+
+          described_class.new.perform(shipment.id)
+
+          expect(MyCustomWorker).to have_received(:perform_async).with(shipment.id)
+        end
       end
     end
 

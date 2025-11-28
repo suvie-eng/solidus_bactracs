@@ -15,7 +15,7 @@ module SolidusBactracs
         sync_shipments(shipments)
 
         # Verify bactracs sync
-        shipments.each { |shipment| VerifyBactracsSyncWorker.perform_async(shipment.id) }
+        shipments.each { |shipment| worker_klass.perform_sync(shipment.id) }
 
       rescue RateLimitedError => e
         self.class.set(wait: e.retry_in).perform_async
@@ -35,6 +35,10 @@ module SolidusBactracs
             false
           end
         end
+      end
+
+      def worker_klass
+        @worker_klass ||= SolidusBactracs.config.api_verify_worker.constantize
       end
 
       def sync_shipments(shipments)

@@ -12,10 +12,14 @@ module SolidusBactracs
         Rails.logger.info("#{self.class.name} - #{shipments.count} shipments to sync to Bactracs")
 
         shipments.find_in_batches(batch_size: SolidusBactracs.config.api_batch_size) do |batch|
-          SyncShipmentsJob.perform_async(batch.pluck(:id))
+          worker_klass.perform_async(batch.pluck(:id))
         end
       rescue StandardError => e
         SolidusBactracs.config.error_handler.call(e, {})
+      end
+
+      def worker_klass
+        @worker_klass ||= SolidusBactracs.config.api_sync_worker.constantize
       end
 
       def shippable_skus

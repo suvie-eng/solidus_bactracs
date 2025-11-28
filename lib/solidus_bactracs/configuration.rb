@@ -33,7 +33,9 @@ module SolidusBactracs
       :default_property_name,
       :sku_map,
       :default_rma_type,
-      :shippable_skus
+      :shippable_skus,
+      :api_sync_worker,
+      :api_verify_worker
     )
 
     def initialize
@@ -47,6 +49,8 @@ module SolidusBactracs
       end
 
       @shipment_notice_class = 'SolidusBactracs::ShipmentNotice'
+      @api_sync_worker = 'SolidusBactracs::Api::SyncShipmentsJob'
+      @api_verify_worker = 'VerifyBactracsSyncWorker'
     end
   end
 
